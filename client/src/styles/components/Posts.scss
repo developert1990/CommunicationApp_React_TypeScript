@@ -1,0 +1,108 @@
+@import 'variables.scss';
+
+.posts {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing;
+    border-bottom: 1px solid $borderColor;
+}
+
+.mainContentContainer {
+    display: flex;
+    flex: 1;
+    cursor: pointer;
+}
+
+.postContentContainer {
+    padding-left: $spacing;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.username,
+.date {
+    color: $greyText;
+}
+
+.displayName {
+    font-weight: bold;
+}
+
+.postFooter {
+    display: flex;
+    align-items: center;
+}
+
+.postFooter .postButtonContainer {
+    flex: 1;
+    display: flex;
+}
+
+.postFooter .postButtonContainer button {
+    padding: 2px 7px;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    color: $greyButtonText;
+}
+
+button i, button span{
+    pointer-events: none;
+}
+
+
+.postButtonContainer button:hover{
+    background-color: #d4edff;
+    color: red;
+    border-radius: 50%;
+}
+.header{
+    position: relative;
+    height: 32px;
+}
+.header a:hover {
+    text-decoration: underline;
+}
+
+.header a,
+.header span {
+    padding-right: 5px;
+}
+
+.active, .numOfLikes{
+    color: red;
+}
+
+.reply{
+    color: #3f51b5;
+}
+
+.deleteIcon{
+    display: none;
+}
+.postContentContainer:hover .deleteIcon{
+    display: inline-block;
+}
+
+.deleteBtn{
+    position: absolute;
+    right:50px;
+    top: 0px;
+    margin: 0;
+    padding: 0;
+}
+
+.deleteBtn button:hover{
+    color: red;
+    background-color: #d4edff;
+    border-radius: 50%;
+}
+
+.reply_section{
+    border-top: 1px solid $borderColor;
+    padding-top: 15px;
+}
+
