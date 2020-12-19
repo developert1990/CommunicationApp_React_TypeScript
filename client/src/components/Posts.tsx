@@ -41,6 +41,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
 
     const handleLikeBtn = async (postId: string) => {
+        console.log('userInfoDetail: ', userInfoDetail)
         const { data } = await Axios.put(`${API_BASE}/postText/like/${postId}`, userInfoDetail, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
@@ -65,7 +66,13 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
         const { data } = await Axios.put(`${API_BASE}/postText/reply/${postId}/${signinInfo._id}`, { reply: text }, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
-        console.log('리플라이 추가data', data)
+        console.log('리플라이 추가data', data);
+
+        const updatedData: UpdatedPostDataType = data;
+        const updatedPostedData: postDataType = updatedData.updatePost;
+        console.log('updatedPostedData: ', updatedPostedData)
+        setUpdatedPostData(updatedPostedData);
+
         dispatch(postLists());
         setText('');
     }

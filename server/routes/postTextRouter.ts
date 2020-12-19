@@ -57,9 +57,10 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Requ
     const postId = req.params.postId;
     const user = req.body;
     // const userId = req.params.userId;
-    // console.log('user: ', user)
+    console.log('user: ', user)
     const userId = user._id;
     const isLiked = user.likes && user.likes.includes(postId);
+    console.log('isLiked: ', isLiked)
 
     const option = isLiked ? "$pull" : "$addToSet"; // pull은 어레이 remove역할, addToSet 은 push 역할을 한다.
     console.log('isLiked: ', isLiked)

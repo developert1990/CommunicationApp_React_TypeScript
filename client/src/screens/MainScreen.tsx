@@ -4,6 +4,7 @@ import { Posts } from '../components/Posts';
 import { useDispatch, useSelector } from 'react-redux';
 import { initialAppStateType } from '../store';
 import { postLists, postTextArea } from '../actions/postActions';
+import { userDetail } from '../actions/userActions';
 
 export const MainScreen = () => {
 
@@ -35,6 +36,7 @@ export const MainScreen = () => {
     useEffect(() => {
         console.log("메인에 유즈이펙트")
         dispatch(postLists());
+        dispatch(userDetail());
     }, [dispatch, postedSuccess, successDelete])
 
     return (

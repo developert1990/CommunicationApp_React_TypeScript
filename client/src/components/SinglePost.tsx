@@ -93,7 +93,7 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
                             <div className="postButtonContainer">
                                 <button onClick={() => handleLikeBtn(post._id)}>
                                     <Badge badgeContent={updatedPostData?.likes.length} color="error">
-                                        <FavoriteBorderIcon className={`far fa-heart ${post.replies.length === 0 ? "inactive" : "active"}`} />
+                                        <FavoriteBorderIcon className={`far fa-heart ${updatedPostData?.likes.length === 0 ? "inactive" : "active"}`} />
                                     </Badge>
                                 </button>
                             </div>

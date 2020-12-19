@@ -52,7 +52,7 @@ export const userDetail = () => async (dispatch: ThunkDispatch<any, any, any>, g
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
 
-        console.log("유저 디테일 뽑음", data)
+        // console.log("유저 디테일 뽑음", data)
         dispatch({ type: USER_DETAIL_SUCCESS, payload: data });
     } catch (error) {
         dispatch({

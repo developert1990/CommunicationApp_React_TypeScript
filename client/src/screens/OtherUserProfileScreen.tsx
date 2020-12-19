@@ -92,10 +92,8 @@ export const OtherUserProfileScreen = () => {
                     </div>
 
                     <div className="postsContainer">
-                        <BrowserRouter>
-                            <Route path={`/profile/:userId/replies`} component={Replies} />
-                            <Route path={`/profile/:userId`} component={ProfilePosts} exact />
-                        </BrowserRouter>
+                        <Route path={`/profile/:userId/replies`} render={() => (<div>리플라이</div>)} />
+                        <Route path={`/profile/:userId`} component={ProfilePosts} exact />
                     </div>
                 </div>
             }
