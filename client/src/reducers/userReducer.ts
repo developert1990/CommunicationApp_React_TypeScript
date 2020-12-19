@@ -1,4 +1,4 @@
-import { USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_REGISTER_FAIL, USER_REGISTER_RESET, USER_SINGIN_REQUEST, USER_SINGIN_SUCCESS, USER_SINGIN_FAIL, USER_SIGNOUT, USER_DETAIL_SUCCESS, USER_DETAIL_REQUEST, USER_DETAIL_FAIL } from './../constants/userConstants';
+import { USER_REGISTER_REQUEST, USER_REGISTER_SUCCESS, USER_REGISTER_FAIL, USER_REGISTER_RESET, USER_SINGIN_REQUEST, USER_SINGIN_SUCCESS, USER_SINGIN_FAIL, USER_SIGNOUT, USER_DETAIL_SUCCESS, USER_DETAIL_REQUEST, USER_DETAIL_FAIL, USER_INFO_REQUEST, USER_INFO_SUCCESS, USER_INFO_FAIL } from './../constants/userConstants';
 import { userActionType } from '../actions/types'
 
 export interface RegisterType {
@@ -75,13 +75,13 @@ export const userSinginReducer = (state = userSigninInitialState, action: userAc
 
 
 export interface userDetailInitialStateType {
-    userInfo: SigninType | undefined;
+    userDetail: SigninType | undefined;
     loading: boolean;
     error: string;
 }
 
 export const userDetailInitialState: userDetailInitialStateType = {
-    userInfo: undefined,
+    userDetail: undefined,
     loading: false,
     error: '',
 }
@@ -92,8 +92,38 @@ export const userDetailReducer = (state = userDetailInitialState, action: userAc
         case USER_DETAIL_REQUEST:
             return { loading: true }
         case USER_DETAIL_SUCCESS:
-            return { loading: false, userInfo: action.payload };
+            return { loading: false, userDetail: action.payload };
         case USER_DETAIL_FAIL:
+            return { laoding: false, error: action.payload }
+
+        default:
+            return state;
+    }
+}
+
+
+
+
+export interface userInfoInitialStateType {
+    userInfo: SigninType | undefined;
+    loading: boolean;
+    error: string;
+}
+
+export const userInfoInitialState: userInfoInitialStateType = {
+    userInfo: undefined,
+    loading: false,
+    error: '',
+}
+
+export const userInfoReducer = (state = userInfoInitialState, action: userActionType) => {
+
+    switch (action.type) {
+        case USER_INFO_REQUEST:
+            return { loading: true }
+        case USER_INFO_SUCCESS:
+            return { loading: false, userInfo: action.payload };
+        case USER_INFO_FAIL:
             return { laoding: false, error: action.payload }
 
         default:

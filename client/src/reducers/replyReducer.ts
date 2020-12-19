@@ -1,5 +1,5 @@
 import { SigninType } from './userReducer';
-import { REPLY_DELETE_REQUEST, REPLY_DELETE_SUCCESS, REPLY_DELETE_FAIL, REPLY_LIST_REQUEST, REPLY_LIST_SUCCESS, REPLY_LIST_FAIL, REPLY_LIST_RESET } from './../constants/replyConstants';
+import { REPLY_DELETE_REQUEST, REPLY_DELETE_SUCCESS, REPLY_DELETE_FAIL, REPLY_LIST_REQUEST, REPLY_LIST_SUCCESS, REPLY_LIST_FAIL, REPLY_LIST_RESET, REPLY_DELETE_RESET } from './../constants/replyConstants';
 import { replyActionType } from './../actions/types.d';
 
 export interface ReplyListType {
@@ -58,6 +58,8 @@ export const replyDeleteReducer = (state = replyDeleteInitialState, action: repl
             return { loading: false, success: true };
         case REPLY_DELETE_FAIL:
             return { loading: false, error: action.payload };
+        case REPLY_DELETE_RESET:
+            return {};
         default:
             return state;
     }

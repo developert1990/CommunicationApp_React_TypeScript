@@ -31,7 +31,7 @@ export const listReply = (postId: string) => async (dispatch: ThunkDispatch<any,
         const { data } = await Axios.get(`${API_BASE}/reply/list/${postId}`, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         })
-        console.log('리스트 data: ', data)
+        // console.log('리스트 data: ', data)
         dispatch({ type: REPLY_LIST_SUCCESS, payload: data })
     } catch (error) {
         dispatch({

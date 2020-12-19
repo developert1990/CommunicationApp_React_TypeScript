@@ -6,6 +6,7 @@ import { postDataType, replyType } from '../reducers/postReducer';
 import { timeDifference, useStyles } from '../utils/utils';
 import { deleteReply, listReply } from '../actions/replyActions';
 import { SigninType } from '../reducers/userReducer';
+import { REPLY_DELETE_RESET } from '../constants/replyConstants';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Pagination, { UsePaginationProps } from '@material-ui/lab/Pagination';
@@ -42,8 +43,12 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, list }) => {
     });
 
     useEffect(() => {
+        if (successDelete) {
+            dispatch(postLists());
+            dispatch({ type: REPLY_DELETE_RESET })
+        }
         // dispatch(listReply(post._id))
-    }, [dispatch, post._id, successDelete])
+    }, [dispatch, successDelete])
 
 
     // pagination

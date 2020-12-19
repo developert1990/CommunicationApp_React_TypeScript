@@ -102,6 +102,12 @@ userRouter.get('/detail/:userId', isAuth, expressAsyncHandler(async (req: Reques
     const userId = req.params.userId;
     const user = await User.findById(userId);
     res.status(200).send(user);
+}));
+
+userRouter.get('/info/:userId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    res.status(200).send(user);
 }))
 
 

@@ -1,0 +1,95 @@
+
+
+
+.profileHeaderContainer .coverPhotoContainer{
+    height: 180px;
+    background-color: $redLight;
+    position: relative;
+}
+
+.profileHeaderContainer .userImageContainer{
+    height: 132px;
+    width: 132px;
+    margin-left: $spacing;
+    position: absolute;
+    bottom: -66px;
+}
+
+.profileHeaderContainer .userImageContainer img{
+    border: 4px solid #fff;
+}
+
+.profileHeaderContainer .profileButtonContainer{
+    text-align: right;
+    padding: $spacing;
+    min-height: 66px;
+}
+
+.profileButton, .followButton{
+    border: 1px solid $redLight;
+    color: $redLight;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 60px;
+    display: inline-block;
+    margin-left: $spacing;
+}
+
+.profileButton:hover , .followButton:hover{
+    background-color: $redLightBackground;
+}
+
+.followButton.following{
+    background-color: $redLight;
+    color: #fff;
+}
+
+.profileHeaderContainer .userDetailsContainer{
+    display: flex;
+    flex-direction: column;
+    padding: 0 $spacing;
+}
+
+.followersContainer .value{
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.followersContainer span:not(.value){
+    color: $greyText;
+}
+
+.followersContainer a{
+    margin-right: $spacing;
+}
+
+.followersContainer a:hover{
+    border-bottom: 1px solid #000;
+    text-decoration: none;
+}
+
+.tabsContainer{
+    display: flex;
+    border-bottom: 1px solid $borderColor;
+    flex-shrink: 0;
+}
+
+.tab {
+    flex: 1;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $greyText;
+    font-weight: bold;
+}
+
+.tab.active{
+    color: $redLight;
+    border-bottom: 2px solid $redLight;
+}
+
+.tab:hover{
+    color: $redLight;
+    background-color: $redLightBackground;
+}

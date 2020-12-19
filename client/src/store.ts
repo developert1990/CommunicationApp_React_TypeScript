@@ -1,6 +1,6 @@
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer, ReplyListInitialStateType, replyListInitialState, replyListReducer } from './reducers/replyReducer';
 import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer } from './reducers/postReducer';
-import { UserRegisterInitialStateType, userRegisterReducer, userRegisterInitialState, UserSigninInitialStateType, userSigninInitialState, userSinginReducer, userDetailInitialStateType, userDetailInitialState, userDetailReducer } from './reducers/userReducer';
+import { UserRegisterInitialStateType, userRegisterReducer, userRegisterInitialState, UserSigninInitialStateType, userSigninInitialState, userSinginReducer, userDetailInitialStateType, userDetailInitialState, userDetailReducer, userInfoReducer, userInfoInitialStateType, userInfoInitialState } from './reducers/userReducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
@@ -10,18 +10,21 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 export interface initialAppStateType {
     registerStore: UserRegisterInitialStateType,
     signinStore: UserSigninInitialStateType,
-    userInfoStore: userDetailInitialStateType,
+    userDetailStore: userDetailInitialStateType,
+    userInfoStore: userInfoInitialStateType,
     postTextStore: postTextInitalStateType,
     postListStore: postListInitialStateType,
     postDeleteStore: postDeleteInitialStateType,
     replyDeleteStore: ReplyDeleteInitialStatetype,
     replyListStore: ReplyListInitialStateType,
+
 }
 
 export const initialAppState: initialAppStateType = {
     registerStore: userRegisterInitialState,
     signinStore: userSigninInitialState,
-    userInfoStore: userDetailInitialState,
+    userDetailStore: userDetailInitialState,
+    userInfoStore: userInfoInitialState,
     postTextStore: postTextInitialState,
     postListStore: postListInitialState,
     postDeleteStore: postDeleteInitialState,
@@ -32,7 +35,8 @@ export const initialAppState: initialAppStateType = {
 export const reducer = combineReducers({
     registerStore: userRegisterReducer,
     signinStore: userSinginReducer,
-    userInfoStore: userDetailReducer,
+    userDetailStore: userDetailReducer,
+    userInfoStore: userInfoReducer,
     postTextStore: postTextReducer,
     postListStore: postListReducer,
     postDeleteStore: postDeleteReducer,

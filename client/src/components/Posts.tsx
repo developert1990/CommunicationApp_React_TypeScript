@@ -11,6 +11,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { UserImage } from './UserImage';
 import { Reply } from './Reply';
 import { listReply } from '../actions/replyActions';
+import { postLists } from '../actions/postActions';
 
 export interface PostsPropsType {
     post: postDataType;
@@ -25,14 +26,13 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
     const [updatedPostData, setUpdatedPostData] = useState<postDataType>(post);
     const [show, setShow] = useState(false);
     const [text, setText] = useState<string>('');
-    const [replyList, setReplyList] = useState<replyType[]>([]);
 
 
     const signinStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinStore;
 
-    const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
-    const { userInfo: userInfoDetail } = userInfoStore;
+    const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
+    const { userDetail: userInfoDetail } = userDetailStore;
 
     const replyListStore = useSelector((state: initialAppStateType) => state.replyListStore);
     const { list } = replyListStore;
@@ -53,6 +53,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
 
 
+
     const handleClose = () => setShow(false);
 
     const textAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -65,9 +66,15 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
         console.log('리플라이 추가data', data)
-        dispatch(listReply(post._id));
+        dispatch(postLists());
         setText('');
     }
+
+
+    useEffect(() => {
+        dispatch(listReply(post._id));
+    }, [dispatch, post._id])
+
 
 
 
@@ -79,7 +86,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>POST</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="modal_body_mainContentContainer">
                     <SinglePost post={post} setShow={setShow} handleLikeBtn={() => handleLikeBtn(post._id)} updatedPostData={updatedPostData} list={list} />

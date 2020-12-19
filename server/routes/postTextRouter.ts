@@ -106,8 +106,8 @@ postTextRouter.put('/reply/:postId/:userId', isAuth, expressAsyncHandler(async (
         }
 
         typedPost.replies.push(reply);
-        const updatedPost = await typedPost.save();
-        res.status(201).send({ message: "Replied successfully" });
+        const updatePost = await typedPost.save();
+        res.status(201).send({ message: "Replied successfully", updatePost: updatePost });
     } else {
         res.status(404).send({ message: 'Can not reply on this post' });
     }

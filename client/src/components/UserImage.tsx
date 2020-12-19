@@ -3,7 +3,7 @@ import { API_BASE } from '../config';
 import { SigninType } from '../reducers/userReducer';
 
 interface UserImageProps {
-    userInfo: SigninType
+    userInfo: SigninType;
 }
 
 export const UserImage: React.FC<UserImageProps> = ({ userInfo }) => {
