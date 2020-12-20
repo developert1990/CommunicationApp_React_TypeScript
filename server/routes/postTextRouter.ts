@@ -38,7 +38,7 @@ postTextRouter.post('/upload', isAuth, expressAsyncHandler(async (req: CustomReq
 }));
 
 
-// post 된 List 뽑은 API
+// 해당유가가 post한거 List 뽑은 API
 postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     console.log("list 뽑으러 들어옴");
     const postLists = await Post.find({ "postedBy": req.userId }).sort({ "createdAt": -1 });
@@ -51,6 +51,24 @@ postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomReques
     }
 
 }));
+
+
+// 가입된 유저의 모든 post의 List 뽑은 API
+postTextRouter.get('/allList', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    console.log("list 뽑으러 들어옴");
+    const postLists = await Post.find().sort({ "createdAt": -1 });
+    if (postLists) {
+        const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
+        console.log('populatedPostLists: ', populatedPostLists);
+        res.status(200).send(populatedPostLists); // 201번은 무언가가 성공적으로 create 되었다는 뜻이다.
+    } else {
+        res.status(401).send({ message: "Posted data not found" });
+    }
+
+}));
+
+
+
 
 // Post에 like button 클릭 API
 postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
