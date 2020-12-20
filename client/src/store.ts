@@ -16,7 +16,7 @@ export interface initialAppStateType {
     postListStore: postListInitialStateType,
     postDeleteStore: postDeleteInitialStateType,
     replyDeleteStore: ReplyDeleteInitialStatetype,
-    replyListStore: ReplyListInitialStateType,
+    // replyListStore: ReplyListInitialStateType,
 
 }
 
@@ -29,7 +29,7 @@ export const initialAppState: initialAppStateType = {
     postListStore: postListInitialState,
     postDeleteStore: postDeleteInitialState,
     replyDeleteStore: replyDeleteInitialState,
-    replyListStore: replyListInitialState,
+    // replyListStore: replyListInitialState,
 }
 
 export const reducer = combineReducers({
@@ -41,7 +41,7 @@ export const reducer = combineReducers({
     postListStore: postListReducer,
     postDeleteStore: postDeleteReducer,
     replyDeleteStore: replyDeleteReducer,
-    replyListStore: replyListReducer,
+    // replyListStore: replyListReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

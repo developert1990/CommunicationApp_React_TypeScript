@@ -1,17 +1,15 @@
 import Axios from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userDetail } from '../actions/userActions';
 import { API_BASE } from '../config';
-import { postDataType, replyType } from '../reducers/postReducer';
+import { postDataType } from '../reducers/postReducer';
 import { initialAppStateType } from '../store';
 import { SinglePost } from './SinglePost';
 
 import { Button, Modal } from 'react-bootstrap';
 import { UserImage } from './UserImage';
 import { Reply } from './Reply';
-import { listReply } from '../actions/replyActions';
-import { postLists } from '../actions/postActions';
 
 export interface PostsPropsType {
     post: postDataType;
@@ -34,8 +32,6 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
     const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
     const { userDetail: userInfoDetail } = userDetailStore;
 
-    const replyListStore = useSelector((state: initialAppStateType) => state.replyListStore);
-    const { list } = replyListStore;
 
     const dispatch = useDispatch();
 
@@ -47,7 +43,6 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
         });
         const updatedData: UpdatedPostDataType = data;
         const updatedPostedData: postDataType = updatedData.updatePost;
-        console.log('updatedPostedData: ', updatedPostedData)
         setUpdatedPostData(updatedPostedData);
         dispatch(userDetail());
     }
@@ -63,24 +58,16 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
 
     const submitReply = async (postId: string) => {
-        const { data } = await Axios.put(`${API_BASE}/postText/reply/${postId}/${signinInfo._id}`, { reply: text }, {
+        const { data } = await Axios.put(`${API_BASE}/reply/add/${postId}/${signinInfo._id}`, { reply: text }, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
-        console.log('리플라이 추가data', data);
 
         const updatedData: UpdatedPostDataType = data;
         const updatedPostedData: postDataType = updatedData.updatePost;
-        console.log('updatedPostedData: ', updatedPostedData)
         setUpdatedPostData(updatedPostedData);
 
-        dispatch(postLists());
         setText('');
     }
-
-
-    useEffect(() => {
-        dispatch(listReply(post._id));
-    }, [dispatch, post._id])
 
 
 
@@ -89,18 +76,18 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
     return (
         post &&
         <>
-            <SinglePost post={post} setShow={setShow} handleLikeBtn={() => handleLikeBtn(post._id)} updatedPostData={updatedPostData} list={list} />
+            <SinglePost post={post} setShow={setShow} handleLikeBtn={() => handleLikeBtn(post._id)} updatedPostData={updatedPostData} />
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>POST</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="modal_body_mainContentContainer">
-                    <SinglePost post={post} setShow={setShow} handleLikeBtn={() => handleLikeBtn(post._id)} updatedPostData={updatedPostData} list={list} />
+                    <SinglePost post={post} setShow={setShow} handleLikeBtn={() => handleLikeBtn(post._id)} updatedPostData={updatedPostData} />
 
 
                     <div className="reply_section">
-                        <Reply post={post} signinInfo={signinInfo} list={list} />
+                        <Reply post={post} signinInfo={signinInfo} updatedPostData={updatedPostData} setUpdatedPostData={setUpdatedPostData} />
                     </div>
 
                 </Modal.Body>

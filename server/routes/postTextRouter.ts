@@ -1,5 +1,5 @@
-import { replySchemaType } from './../models/postTextModel';
-import { isAuth } from './../utils/utils';
+
+import { isAuth, getUpdatedPost } from './../utils/utils';
 import { CustomRequest } from './../types.d';
 import expressAsyncHandler from 'express-async-handler';
 import express, { Response, Request } from 'express';
@@ -57,22 +57,18 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Requ
     const postId = req.params.postId;
     const user = req.body;
     // const userId = req.params.userId;
-    console.log('user: ', user)
     const userId = user._id;
     const isLiked = user.likes && user.likes.includes(postId);
-    console.log('isLiked: ', isLiked)
 
     const option = isLiked ? "$pull" : "$addToSet"; // pull은 어레이 remove역할, addToSet 은 push 역할을 한다.
-    console.log('isLiked: ', isLiked)
-    console.log('option: ', option)
-    console.log('userId: ', userId)
     // insert user likes
     await User.findByIdAndUpdate(userId, { [option]: { likes: postId } }, { new: true });
     // insert post likes
 
     const updatePost = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true });
-
-    res.status(200).send({ message: "updated", updatePost: updatePost });
+    const typedUpdatePost = updatePost as postSchemaType;
+    const populatedPostLists = await getUpdatedPost(typedUpdatePost);
+    res.status(200).send({ message: "updated", updatePost: populatedPostLists });
 }));
 
 // post delete API
@@ -88,34 +84,7 @@ postTextRouter.delete('/delete/:postId', isAuth, expressAsyncHandler(async (req:
 }));
 
 
-// add reply API
-postTextRouter.put('/reply/:postId/:userId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
-    // console.log('req.body', req.body.reply)
-    // console.log('req.body.postId', req.params.postId)
 
-    const postId = req.params.postId;
-    const userId = req.params.userId;
-    const comment = req.body.reply as string;
-    const post = await Post.findById(postId);
-    // console.log('post: ', post)
-
-    const typedPost = post as postSchemaType;
-    if (typedPost) {
-        const reply: replySchemaType = {
-            repliedBy: userId,
-            comment: comment,
-        }
-
-        typedPost.replies.push(reply);
-        const updatePost = await typedPost.save();
-        res.status(201).send({ message: "Replied successfully", updatePost: updatePost });
-    } else {
-        res.status(404).send({ message: 'Can not reply on this post' });
-    }
-
-
-
-}))
 
 
 

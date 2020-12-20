@@ -34,10 +34,9 @@ export const MainScreen = () => {
     }
 
     useEffect(() => {
-        console.log("메인에 유즈이펙트")
         dispatch(postLists());
         dispatch(userDetail());
-    }, [dispatch, postedSuccess, successDelete])
+    }, [dispatch, postedSuccess])
 
     return (
         <>

@@ -1,7 +1,9 @@
+import { postSchemaType } from './../models/postTextModel';
 import { NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { CustomRequest, userFromDBType } from '../types';
 import { Response } from 'express';
+import User from '../models/userModel';
 
 export const generateToken = (user: userFromDBType) => {
     // console.log('process.env.JWT_SECRET', process.env.JWT_SECRET);
@@ -43,4 +45,10 @@ export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) =>
         res.status(401).send({ message: 'No Token' });
     }
 
+}
+
+
+export const getUpdatedPost = async (post: postSchemaType) => {
+    const result = await User.populate(post, [{ path: "postedBy" }, { path: "replies.repliedBy" }]);
+    return result;
 }

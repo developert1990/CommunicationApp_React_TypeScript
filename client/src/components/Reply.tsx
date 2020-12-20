@@ -1,10 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postLists } from '../actions/postActions';
 import { API_BASE } from '../config';
 import { postDataType, replyType } from '../reducers/postReducer';
 import { timeDifference, useStyles } from '../utils/utils';
-import { deleteReply, listReply } from '../actions/replyActions';
+import { deleteReply } from '../actions/replyActions';
 import { SigninType } from '../reducers/userReducer';
 import { REPLY_DELETE_RESET } from '../constants/replyConstants';
 
@@ -15,10 +14,11 @@ import { initialAppStateType } from '../store';
 export interface ReplyPropsType {
     post: postDataType;
     signinInfo: SigninType;
-    list: replyType[];
+    updatedPostData: postDataType;
+    setUpdatedPostData: Dispatch<SetStateAction<postDataType>>
 }
 
-export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, list }) => {
+export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostData, setUpdatedPostData }) => {
 
     const getRepliedTime = (reply: replyType) => {
         const repliedTime = timeDifference(new Date().valueOf(), new Date(reply.createdAt).valueOf());
@@ -26,7 +26,7 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, list }) => {
     }
 
     const replyDeleteStore = useSelector((state: initialAppStateType) => state.replyDeleteStore);
-    const { error: errorDelete, loading: loadingDelete, success: successDelete } = replyDeleteStore;
+    const { error: errorDelete, loading: loadingDelete, result: resultDelete } = replyDeleteStore;
 
 
     const dispatch = useDispatch();
@@ -36,19 +36,16 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, list }) => {
         dispatch(deleteReply(replyId, postId));
     }
 
-    const sortedReplies = list && list.sort((reply_A, reply_B) => {
+    if (resultDelete) {
+        setUpdatedPostData(resultDelete); // delete 하고 난 후에 해당 post데이터를 setUpdatePostData 로 state에 넣어준다. 
+        dispatch({ type: REPLY_DELETE_RESET }) // 여기 리셋을 시켜줘야 버그(reply 를 delete 하고난 후에 heart 클릭하면 작동안함) 해결됬음
+    }
+
+    const sortedReplies = updatedPostData.replies && updatedPostData.replies.sort((reply_A, reply_B) => {
         const A_time = new Date(reply_A.createdAt).valueOf();
         const B_time = new Date(reply_B.createdAt).valueOf();
         return B_time - A_time;
     });
-
-    useEffect(() => {
-        if (successDelete) {
-            dispatch(postLists());
-            dispatch({ type: REPLY_DELETE_RESET })
-        }
-        // dispatch(listReply(post._id))
-    }, [dispatch, successDelete])
 
 
     // pagination
@@ -75,7 +72,9 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, list }) => {
         <div>
             { sortedReplies && sortedReplies.length !== 0 &&
                 <div >
+                    {console.log('pageData: ', pageData)}
                     {
+                        pageData &&
                         pageData.map((reply) => {
                             return (
                                 <div className="each__reply">

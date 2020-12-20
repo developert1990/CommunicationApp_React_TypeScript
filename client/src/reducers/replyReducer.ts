@@ -1,3 +1,4 @@
+import { postDataType } from './postReducer';
 import { SigninType } from './userReducer';
 import { REPLY_DELETE_REQUEST, REPLY_DELETE_SUCCESS, REPLY_DELETE_FAIL, REPLY_LIST_REQUEST, REPLY_LIST_SUCCESS, REPLY_LIST_FAIL, REPLY_LIST_RESET, REPLY_DELETE_RESET } from './../constants/replyConstants';
 import { replyActionType } from './../actions/types.d';
@@ -40,14 +41,14 @@ export const replyListReducer = (state = replyListInitialState, action: replyAct
 export interface ReplyDeleteInitialStatetype {
     error: string;
     loading: boolean;
-    success: boolean;
+    result: postDataType | undefined;
 }
 
 
 export const replyDeleteInitialState: ReplyDeleteInitialStatetype = {
     error: '',
     loading: false,
-    success: false,
+    result: undefined,
 }
 
 export const replyDeleteReducer = (state = replyDeleteInitialState, action: replyActionType) => {
@@ -55,7 +56,7 @@ export const replyDeleteReducer = (state = replyDeleteInitialState, action: repl
         case REPLY_DELETE_REQUEST:
             return { loading: true }
         case REPLY_DELETE_SUCCESS:
-            return { loading: false, success: true };
+            return { loading: false, result: action.payload };
         case REPLY_DELETE_FAIL:
             return { loading: false, error: action.payload };
         case REPLY_DELETE_RESET:

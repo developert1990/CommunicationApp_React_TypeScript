@@ -11,7 +11,7 @@ export const deleteReply = (replyId: string, postId: string) => async (dispatch:
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
         console.log('댓글 딜리트 후에 데이터data', data);
-        dispatch({ type: REPLY_DELETE_SUCCESS });
+        dispatch({ type: REPLY_DELETE_SUCCESS, payload: data });
     } catch (error) {
         dispatch({
             type: REPLY_DELETE_FAIL,

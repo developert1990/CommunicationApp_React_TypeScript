@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { postDataType, replyType } from '../reducers/postReducer';
+import { postDataType } from '../reducers/postReducer';
 import { API_BASE } from '../config';
 import { timeDifference } from '../utils/utils';
 
@@ -19,10 +19,8 @@ export interface SinglePostPropsType {
     setShow?: Dispatch<SetStateAction<boolean>>;
     handleLikeBtn: (postId: string) => any;
     updatedPostData?: postDataType;
-    list?: replyType[];
 }
-export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handleLikeBtn, updatedPostData, list }) => {
-
+export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handleLikeBtn, updatedPostData }) => {
     const signinStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinStore;
 
@@ -84,8 +82,8 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
                         <div className="postFooter">
                             <div className="postButtonContainer">
                                 <button onClick={() => commentsHandle(post._id)} >
-                                    <Badge badgeContent={post.replies.length} color="primary">
-                                        <QuestionAnswerOutlinedIcon className={post.replies.length === 0 ? "noReply" : "reply"} />
+                                    <Badge badgeContent={updatedPostData?.replies.length} color="primary">
+                                        <QuestionAnswerOutlinedIcon className={updatedPostData?.replies.length === 0 ? "noReply" : "reply"} />
                                     </Badge>
                                 </button>
                             </div>
