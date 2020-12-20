@@ -1,5 +1,5 @@
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer, ReplyListInitialStateType, replyListInitialState, replyListReducer } from './reducers/replyReducer';
-import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer } from './reducers/postReducer';
+import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer } from './reducers/postReducer';
 import { UserRegisterInitialStateType, userRegisterReducer, userRegisterInitialState, UserSigninInitialStateType, userSigninInitialState, userSinginReducer, userDetailInitialStateType, userDetailInitialState, userDetailReducer, userInfoReducer, userInfoInitialStateType, userInfoInitialState } from './reducers/userReducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
@@ -16,6 +16,7 @@ export interface initialAppStateType {
     postListStore: postListInitialStateType,
     postDeleteStore: postDeleteInitialStateType,
     replyDeleteStore: ReplyDeleteInitialStatetype,
+    postListByOneUserStore: postListByOneUserInitialStateType,
     // replyListStore: ReplyListInitialStateType,
 
 }
@@ -29,6 +30,7 @@ export const initialAppState: initialAppStateType = {
     postListStore: postListInitialState,
     postDeleteStore: postDeleteInitialState,
     replyDeleteStore: replyDeleteInitialState,
+    postListByOneUserStore: postListByOneUserInitialState,
     // replyListStore: replyListInitialState,
 }
 
@@ -41,6 +43,7 @@ export const reducer = combineReducers({
     postListStore: postListReducer,
     postDeleteStore: postDeleteReducer,
     replyDeleteStore: replyDeleteReducer,
+    postListByOneUserStore: postListByOneUserReducer,
     // replyListStore: replyListReducer,
 })
 const initialState = {}

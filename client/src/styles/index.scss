@@ -4,6 +4,7 @@
 @import './components/Posts.scss';
 @import './components/Reply.scss';
 @import './components/OtherUserProfileScreen.scss';
+@import './components/ProfileReplies.scss';
 
 
 *{
@@ -21,5 +22,6 @@ code {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    padding: 25px;
 }
 

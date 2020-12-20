@@ -15,7 +15,7 @@ export interface ReplyPropsType {
     post: postDataType;
     signinInfo: SigninType;
     updatedPostData: postDataType;
-    setUpdatedPostData: Dispatch<SetStateAction<postDataType>>
+    setUpdatedPostData?: Dispatch<SetStateAction<postDataType>>;
 }
 
 export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostData, setUpdatedPostData }) => {
@@ -36,7 +36,7 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
         dispatch(deleteReply(replyId, postId));
     }
 
-    if (resultDelete) {
+    if (resultDelete && setUpdatedPostData !== undefined) {
         setUpdatedPostData(resultDelete); // delete 하고 난 후에 해당 post데이터를 setUpdatePostData 로 state에 넣어준다. 
         dispatch({ type: REPLY_DELETE_RESET }) // 여기 리셋을 시켜줘야 버그(reply 를 delete 하고난 후에 heart 클릭하면 작동안함) 해결됬음
     }
@@ -68,11 +68,12 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
     // ****************************
 
 
+
     return (
         <div>
+            {console.log('sortedReplies', sortedReplies)}
             { sortedReplies && sortedReplies.length !== 0 &&
                 <div >
-                    {console.log('pageData: ', pageData)}
                     {
                         pageData &&
                         pageData.map((reply) => {

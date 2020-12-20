@@ -1,6 +1,6 @@
 import { API_BASE } from './../config/index';
 import Axios from 'axios';
-import { POST_REQUEST, POST_SUCCESS, POST_FAIL, POST_LIST_REQUEST, POST_LIST_FAIL, POST_LIST_SUCCESS, POST_DELETE_REQUEST, POST_DELETE_SUCCESS, POST_DELETE_FAIL } from './../constants/postConstants';
+import { POST_REQUEST, POST_SUCCESS, POST_FAIL, POST_LIST_REQUEST, POST_LIST_FAIL, POST_LIST_SUCCESS, POST_DELETE_REQUEST, POST_DELETE_SUCCESS, POST_DELETE_FAIL, POST_LIST_ONEUSER_REQUEST, POST_LIST_ONEUSER_SUCCESS, POST_LIST_ONEUSER_FAIL } from './../constants/postConstants';
 import { ThunkDispatch } from 'redux-thunk';
 
 export const postTextArea = (text: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
@@ -24,7 +24,6 @@ export const postTextArea = (text: string) => async (dispatch: ThunkDispatch<any
 export const postLists = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     dispatch({ type: POST_LIST_REQUEST });
     const { signinStore: { signinInfo } } = getState();
-    // console.log('signinInfo  postLists에서: ', signinInfo)
     try {
         const { data } = await Axios.get(`${API_BASE}/postText/list`, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
@@ -53,6 +52,27 @@ export const postDelete = (postId: string) => async (dispatch: ThunkDispatch<any
     } catch (error) {
         dispatch({
             type: POST_DELETE_FAIL,
+            payload: error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message
+        })
+    }
+}
+
+
+export const getPostsByOneUser = (userId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    dispatch({ type: POST_LIST_ONEUSER_REQUEST });
+    const { signinStore: { signinInfo } } = getState();
+    // console.log('signinInfo  postLists에서: ', signinInfo)
+    try {
+        const { data } = await Axios.get(`${API_BASE}/postText/list/${userId}`, {
+            headers: { Authorization: `Hong ${signinInfo.token}` }
+        });
+        console.log('한 유저에 의해 포스팅 된 모든 post 뽑기 data: ', data)
+        dispatch({ type: POST_LIST_ONEUSER_SUCCESS, payload: data });
+    } catch (error) {
+        dispatch({
+            type: POST_LIST_ONEUSER_FAIL,
             payload: error.response && error.response.data.message
                 ? error.response.data.message
                 : error.message

@@ -17,8 +17,6 @@ export const MainScreen = () => {
     const postListStore = useSelector((state: initialAppStateType) => state.postListStore);
     const { error: errorList, list: postList, loading: loadingList } = postListStore;
 
-    const postDeleteStore = useSelector((state: initialAppStateType) => state.postDeleteStore);
-    const { error: errorDelete, loading: loadingDelete, success: successDelete } = postDeleteStore;
 
 
     const [text, setText] = useState<string>('');

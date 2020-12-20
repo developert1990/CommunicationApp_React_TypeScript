@@ -7,23 +7,20 @@ import { API_BASE } from '../config';
 
 import EmailIcon from '@material-ui/icons/Email';
 
-import { Replies } from '../components/Replies';
+import { ProfileReplies } from '../components/ProfileReplies';
 import { ProfilePosts } from '../components/ProfilePosts';
 import { SigninType } from '../reducers/userReducer';
 
 
 
 export const OtherUserProfileScreen = () => {
-    const [selectedTab, setSelectedTab] = useState<Boolean>(false);
 
     const location = useLocation();
     const dispatch = useDispatch();
-    const user = location.state;
-    console.log('user:  ', user);
-    const typedUser = user as SigninType;
+    const postedUser = location.state;
+    const typedUser = postedUser as SigninType;
     const userId = typedUser._id
 
-    console.log('userId', userId)
 
     const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
     const { userInfo: userInfoData, error, loading } = userInfoStore;
@@ -32,7 +29,18 @@ export const OtherUserProfileScreen = () => {
     const { signinInfo, error: errorSignin, loading: loadingSignin } = signinInfoStore;
 
 
-    console.log('userInfoData: ', userInfoData);
+    // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
+    const [activePost, setActivePost] = useState<boolean>(true);
+    const [activeReplies, setActiveReplies] = useState<boolean>(false);
+    const handleActivePost = () => {
+        setActivePost(true);
+        setActiveReplies(false);
+    }
+    const handleActiveReplies = () => {
+        setActiveReplies(true);
+        setActivePost(false);
+    }
+    // *************************************************************
     useEffect(() => {
         dispatch(userInfo(userId as string))
     }, [dispatch, userId])
@@ -83,16 +91,20 @@ export const OtherUserProfileScreen = () => {
                             pathname: `/profile/${userInfoData.userName}`,
                             state: userInfoData
                         }}
-                            className="tab active">Posts</Link>
+                            className={`tab ${activePost ? "active" : ""}`}
+                            onClick={handleActivePost}
+                        >Posts</Link>
                         <Link to={{
                             pathname: `/profile/${userInfoData.userName}/replies`,
                             state: userInfoData
                         }}
-                            className="tab">Replies</Link>
+                            className={`tab ${activeReplies ? "active" : ""}`}
+                            onClick={handleActiveReplies}
+                        >Replies</Link>
                     </div>
 
                     <div className="postsContainer">
-                        <Route path={`/profile/:userId/replies`} render={() => (<div>리플라이</div>)} />
+                        <Route path={`/profile/:userId/replies`} component={ProfileReplies} />
                         <Route path={`/profile/:userId`} component={ProfilePosts} exact />
                     </div>
                 </div>
