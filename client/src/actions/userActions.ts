@@ -1,4 +1,4 @@
-import { USER_REGISTER_REQUEST, USER_REGISTER_FAIL, USER_REGISTER_SUCCESS, USER_SINGIN_REQUEST, USER_SINGIN_FAIL, USER_SINGIN_SUCCESS, USER_SIGNOUT, USER_DETAIL_REQUEST, USER_DETAIL_SUCCESS, USER_DETAIL_FAIL, USER_INFO_REQUEST, USER_INFO_SUCCESS, USER_INFO_FAIL } from './../constants/userConstants';
+import { USER_REGISTER_REQUEST, USER_REGISTER_FAIL, USER_REGISTER_SUCCESS, USER_SINGIN_REQUEST, USER_SINGIN_FAIL, USER_SINGIN_SUCCESS, USER_SIGNOUT, USER_DETAIL_REQUEST, USER_DETAIL_SUCCESS, USER_DETAIL_FAIL, USER_INFO_REQUEST, USER_INFO_SUCCESS, USER_INFO_FAIL, USER_INFO_RESET } from './../constants/userConstants';
 import Axios from 'axios';
 import { ThunkDispatch } from 'redux-thunk';
 import { API_BASE } from '../config/index';
@@ -75,7 +75,6 @@ export const userInfo = (userId: string) => async (dispatch: ThunkDispatch<any, 
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
 
-        console.log("유저 인포 뽑음", data)
         dispatch({ type: USER_INFO_SUCCESS, payload: data });
     } catch (error) {
         dispatch({

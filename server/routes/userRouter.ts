@@ -1,3 +1,4 @@
+import { UserSchemaType } from './../models/userModel';
 import { isAuth } from './../utils/utils';
 import { CustomRequest, userDataType, userFromDBType } from './../types.d';
 import express, { Request, Response } from 'express';
@@ -7,7 +8,7 @@ import bcrypt from 'bcrypt';
 import { generateToken } from '../utils/utils';
 import { create } from 'ts-node';
 
-const app = express();
+
 
 const userRouter = express.Router();
 
@@ -81,7 +82,9 @@ userRouter.post('/signin', expressAsyncHandler(async (req: CustomRequest, res: R
                 email: typedUser.email,
                 profilePic: typedUser.profilePic,
                 likes: typedUser.likes,
-                token: generateToken(typedUser)
+                followers: typedUser.followers,
+                following: typedUser.following,
+                token: generateToken(typedUser),
             });
             return;
         }
@@ -108,6 +111,27 @@ userRouter.get('/info/:userId', isAuth, expressAsyncHandler(async (req: Request,
     const userId = req.params.userId;
     const user = await User.findById(userId);
     res.status(200).send(user);
+}))
+
+userRouter.put('/follow/:toFollowId/:signedInId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+    console.log("팔로우버튼눌러서 들어");
+    const toFollowId = req.params.toFollowId;
+    const signedInId = req.params.signedInId;
+    const user = await User.findById(toFollowId);
+    const typedUser = user as UserSchemaType;
+    if (user) {
+        const isFollowing = typedUser.followers && typedUser.followers.includes(signedInId);
+        const option = isFollowing ? "$pull" : "$addToSet";
+        // 로그인한 유저의 계정db에 following 에 내가 follow를 하는 유저의 아이디를 저장
+        await User.findByIdAndUpdate(signedInId, { [option]: { following: toFollowId } }, { new: true });
+        console.log('isFollowing: ', isFollowing)
+
+        // 내가 follow 하는 유저의 계정db에 나를 follow한 유저의 아이디를 저장
+        const result = await User.findByIdAndUpdate(toFollowId, { [option]: { followers: signedInId } }, { new: true });
+        res.status(200).send(result)
+    } else {
+        res.status(400).send({ message: "No user found" });
+    }
 }))
 
 

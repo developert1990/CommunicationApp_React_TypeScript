@@ -1,5 +1,5 @@
 export * from './SigninScreen';
 export * from './RegisterScreen';
-export * from './MainScreen';
+export * from './HomeScreen';
 export * from './ProfileScreen';
 export * from './OtherUserProfileScreen';

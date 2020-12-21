@@ -1,11 +1,15 @@
 import Axios from 'axios'
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import { signout } from '../actions/userActions'
 import { API_BASE } from '../config'
+import { initialAppStateType } from '../store'
 
 export const Navbar = () => {
+
+    const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
+    const { signinInfo } = signinInfoStore;
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -24,7 +28,11 @@ export const Navbar = () => {
             <Link to="/"><i className="fas fa-search"></i></Link>
             <Link to="/"><i className="fas fa-bell"></i></Link>
             <Link to="/"><i className="fas fa-envelope"></i></Link>
-            <Link to="/profile"><i className="fas fa-user"></i></Link>
+            <Link to={{
+                pathname: `/profile/${signinInfo.userName}`,
+                state: signinInfo,
+
+            }}><i className="fas fa-user"></i></Link>
             <Link to="/" onClick={handleSignout}><i className="fas fa-sign-out-alt"></i></Link>
         </div>
     )

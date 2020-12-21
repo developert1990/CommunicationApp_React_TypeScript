@@ -1,5 +1,5 @@
-import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer, ReplyListInitialStateType, replyListInitialState, replyListReducer } from './reducers/replyReducer';
-import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer } from './reducers/postReducer';
+import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
+import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer, allPostListInitialStateType, allPostListInitialState, allPostListReducer } from './reducers/postReducer';
 import { UserRegisterInitialStateType, userRegisterReducer, userRegisterInitialState, UserSigninInitialStateType, userSigninInitialState, userSinginReducer, userDetailInitialStateType, userDetailInitialState, userDetailReducer, userInfoReducer, userInfoInitialStateType, userInfoInitialState } from './reducers/userReducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
@@ -17,7 +17,7 @@ export interface initialAppStateType {
     postDeleteStore: postDeleteInitialStateType,
     replyDeleteStore: ReplyDeleteInitialStatetype,
     postListByOneUserStore: postListByOneUserInitialStateType,
-    // replyListStore: ReplyListInitialStateType,
+    allPostListReducer: allPostListInitialStateType,
 
 }
 
@@ -31,7 +31,7 @@ export const initialAppState: initialAppStateType = {
     postDeleteStore: postDeleteInitialState,
     replyDeleteStore: replyDeleteInitialState,
     postListByOneUserStore: postListByOneUserInitialState,
-    // replyListStore: replyListInitialState,
+    allPostListReducer: allPostListInitialState,
 }
 
 export const reducer = combineReducers({
@@ -44,7 +44,7 @@ export const reducer = combineReducers({
     postDeleteStore: postDeleteReducer,
     replyDeleteStore: replyDeleteReducer,
     postListByOneUserStore: postListByOneUserReducer,
-    // replyListStore: replyListReducer,
+    allPostListReducer: allPostListReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

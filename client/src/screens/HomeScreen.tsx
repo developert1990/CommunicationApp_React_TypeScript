@@ -1,26 +1,26 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { UserImage } from '../components/UserImage';
-import { Posts } from '../components/Posts';
 import { useDispatch, useSelector } from 'react-redux';
+import { allPostLists, postTextArea } from '../actions/postActions';
+import { Posts } from '../components/Posts';
+import { UserImage } from '../components/UserImage';
 import { initialAppStateType } from '../store';
-import { postLists, postTextArea } from '../actions/postActions';
-import { userDetail } from '../actions/userActions';
-
-export const MainScreen = () => {
-
-    const userInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
-    const { signinInfo } = userInfoStore;
-
-    const postContentStore = useSelector((state: initialAppStateType) => state.postTextStore);
-    const { success: postedSuccess, error, loading } = postContentStore;
-
-    const postListStore = useSelector((state: initialAppStateType) => state.postListStore);
-    const { error: errorList, list: postList, loading: loadingList } = postListStore;
 
 
+export const HomeScreen = () => {
 
     const [text, setText] = useState<string>('');
+
+    const allPostListStroe = useSelector((state: initialAppStateType) => state.allPostListReducer);
+    const { allList, error, loading } = allPostListStroe;
+
+    const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
+    const { signinInfo } = signinInfoStore;
+
+    const postContentStore = useSelector((state: initialAppStateType) => state.postTextStore);
+    const { success: postedSuccess, error: errorPostContent, loading: loadingPostContent } = postContentStore;
+
     const dispatch = useDispatch();
+
 
     const textAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value);
@@ -31,9 +31,9 @@ export const MainScreen = () => {
         setText('');
     }
 
+
     useEffect(() => {
-        dispatch(postLists());
-        dispatch(userDetail());
+        dispatch(allPostLists());
     }, [dispatch, postedSuccess])
 
     return (
@@ -56,8 +56,8 @@ export const MainScreen = () => {
                         {error && "error 떳음"}
                         {loading && "로딩중"}
                         {
-                            postList &&
-                            postList.map((post) => {
+                            allList &&
+                            allList.map((post) => {
                                 return <Posts post={post} key={post.createdAt} />
                             })
 

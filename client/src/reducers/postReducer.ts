@@ -1,5 +1,5 @@
 import { SigninType } from './userReducer';
-import { POST_REQUEST, POST_SUCCESS, POST_FAIL, POST_LIST_REQUEST, POST_LIST_SUCCESS, POST_LIST_FAIL, POST_LIST_RESET, POST_DELETE_REQUEST, POST_DELETE_SUCCESS, POST_DELETE_FAIL, POST_DELETE_RESET, POST_LIST_ONEUSER_REQUEST, POST_LIST_ONEUSER_SUCCESS, POST_LIST_ONEUSER_FAIL, POST_LIST_ONEUSER_RESET } from './../constants/postConstants';
+import { POST_REQUEST, POST_SUCCESS, POST_FAIL, POST_LIST_REQUEST, POST_LIST_SUCCESS, POST_LIST_FAIL, POST_LIST_RESET, POST_DELETE_REQUEST, POST_DELETE_SUCCESS, POST_DELETE_FAIL, POST_DELETE_RESET, POST_LIST_ONEUSER_REQUEST, POST_LIST_ONEUSER_SUCCESS, POST_LIST_ONEUSER_FAIL, POST_LIST_ONEUSER_RESET, POST_ALL_LIST_REQUEST, POST_ALL_LIST_SUCCESS, POST_ALL_LIST_FAIL, POST_ALL_LIST_RESET } from './../constants/postConstants';
 import { postTextActionType } from './../actions/types.d';
 
 // export interface dataType {
@@ -132,6 +132,38 @@ export const postListByOneUserReducer = (state = postListByOneUserInitialState, 
         case POST_LIST_ONEUSER_FAIL:
             return { loading: false, error: action.payload };
         case POST_LIST_ONEUSER_RESET:
+            return {};
+        default:
+            return state;
+    }
+}
+
+
+
+
+
+
+export interface allPostListInitialStateType {
+    error: string;
+    loading: boolean;
+    allList: postDataType[];
+}
+
+export const allPostListInitialState: allPostListInitialStateType = {
+    error: '',
+    loading: false,
+    allList: [],
+}
+
+export const allPostListReducer = (state = allPostListInitialState, action: postTextActionType) => {
+    switch (action.type) {
+        case POST_ALL_LIST_REQUEST:
+            return { loading: true };
+        case POST_ALL_LIST_SUCCESS:
+            return { loading: false, allList: action.payload };
+        case POST_ALL_LIST_FAIL:
+            return { loading: false, error: action.payload };
+        case POST_ALL_LIST_RESET:
             return {};
         default:
             return state;

@@ -89,7 +89,6 @@ export const getPostsByOneUser = (userId: string) => async (dispatch: ThunkDispa
         const { data } = await Axios.get(`${API_BASE}/postText/list/${userId}`, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
-        console.log('한 유저에 의해 포스팅 된 모든 post 뽑기 data: ', data)
         dispatch({ type: POST_LIST_ONEUSER_SUCCESS, payload: data });
     } catch (error) {
         dispatch({

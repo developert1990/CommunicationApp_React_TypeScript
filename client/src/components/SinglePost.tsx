@@ -11,7 +11,6 @@ import { postDelete } from '../actions/postActions';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { initialAppStateType } from '../store';
-import { listReply } from '../actions/replyActions';
 
 
 export interface SinglePostPropsType {
@@ -38,7 +37,7 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
     }
 
     const commentsHandle = (postId: string) => {
-        dispatch(listReply(postId));
+        // dispatch(listReply(postId));
         if (setShow) {
             setShow(true);
         }

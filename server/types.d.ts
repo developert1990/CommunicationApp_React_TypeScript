@@ -9,6 +9,8 @@ export interface userDataType {
     email: string;
     profilePic: string;
     password: string;
+    following: string[];
+    followers: string[];
 }
 
 export interface userFromDBType extends Document {
@@ -20,6 +22,8 @@ export interface userFromDBType extends Document {
     profilePic: string;
     password: string;
     likes: string[];
+    following: string[];
+    followers: string[];
     token: () => string;
 }
 

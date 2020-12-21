@@ -1,4 +1,16 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
+
+export interface UserSchemaType extends Document {
+    firstName: string;
+    lastName: string;
+    userName: string;
+    email: string;
+    password: string;
+    profilePic: string;
+    likes: string[];
+    following: string[];
+    followers: string[];
+}
 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true, trim: true },
@@ -8,6 +20,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     profilePic: { type: String, default: "profilePic.png" },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, {
     timestamps: true
 }

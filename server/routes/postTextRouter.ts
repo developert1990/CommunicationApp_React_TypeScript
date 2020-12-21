@@ -81,8 +81,8 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Requ
     const option = isLiked ? "$pull" : "$addToSet"; // pull은 어레이 remove역할, addToSet 은 push 역할을 한다.
     // insert user likes
     await User.findByIdAndUpdate(userId, { [option]: { likes: postId } }, { new: true });
-    // insert post likes
 
+    // insert post likes
     const updatePost = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true });
     const typedUpdatePost = updatePost as postSchemaType;
     const populatedPostLists = await getUpdatedPost(typedUpdatePost);
