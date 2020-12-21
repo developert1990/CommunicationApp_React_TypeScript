@@ -46,8 +46,12 @@ export const OtherUserProfileScreen = () => {
             ? false : true
     }
 
+    // 팔로우 버튼 클릭 할 경우에 바뀌는 state
     const [followBtnCheck, setFollowBtnCheck] = useState<boolean>(userInfoData as SigninType && filter(userInfoData as SigninType));
-
+    // 팔로우 버튼 클릭할때 팔로워 숫자 변화주는 state
+    const [numOfFollowers, setNumOfFollowers] = useState<number>(userInfoData as SigninType && userInfoData?.followers.length as number);
+    // 선택한 유저의 following state 보여줌
+    // const [numOfFollowing, setNumOfFollowing] = useState<number>(userInfoData as SigninType && userInfoData?.following.length as number);
 
 
     // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
@@ -71,6 +75,7 @@ export const OtherUserProfileScreen = () => {
         const result = await data as SigninType;
         const checkFollowFromData = filter(result);
         setFollowBtnCheck(checkFollowFromData)
+        setNumOfFollowers(result.followers.length);
     }
 
 
@@ -93,7 +98,6 @@ export const OtherUserProfileScreen = () => {
             {userInfoData &&
 
                 <div className="mainSectionContainer col-10 col-md-8">
-                    {console.log('filter(userInfoData): ', filter(userInfoData))}
                     <div className="profileHeaderContainer">
                         <div className="coverPhotoContainer">
                             <div className="userImageContainer">
@@ -122,13 +126,15 @@ export const OtherUserProfileScreen = () => {
                             <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
                             <span className="username">@{userInfoData.userName}</span>
                             {/* <span className="description">{userInfoData.description}</span> */}
+                            {console.log('numOfFollowers: ', numOfFollowers)}
+                            {console.log('userInfoData.followers.length: ', userInfoData.followers.length)}
                             <div className="followersContainer">
                                 <Link to={`/profile/${userInfoData.userName}/following`}>
-                                    <span className="value">{0}</span>
+                                    <span className="value">{userInfoData.following.length}</span>
                                     <span>Following</span>
                                 </Link>
                                 <Link to={`/profile/${userInfoData.userName}/followers`}>
-                                    <span className="value">{0}</span>
+                                    <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
                                     <span>Followers</span>
                                 </Link>
                             </div>
