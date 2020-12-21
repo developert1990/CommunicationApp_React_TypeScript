@@ -38,15 +38,16 @@ export const OtherUserProfileScreen = () => {
     const { userDetail: userDetailInfo, loading: loadingUserDetail } = userDetailStore;
 
     const filter = (result: SigninType) => {
-        console.log('signinInfo?._id: ', signinInfo?._id)
-        console.log('result.following.filter=>>> ', result.followers.filter(data => data))
+        // console.log('signinInfo?._id: ', signinInfo?._id)
+        // console.log('result.following.filter=>>> ', result.followers.filter(data => data))
         return userInfoData && result?.following && (
             result.followers.filter(data => data === signinInfo?._id).length === 0
         )
             ? false : true
     }
 
-    // const [btn, setBtn] = useState<boolean>();
+    const [followBtnCheck, setFollowBtnCheck] = useState<boolean>(userInfoData as SigninType && filter(userInfoData as SigninType));
+
 
 
     // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
@@ -66,16 +67,15 @@ export const OtherUserProfileScreen = () => {
         const { data } = await Axios.put(`${API_BASE}/users/follow/${userInfoData?._id}/${signinInfo._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
-        // dispatch(userDetail());
-        // dispatch(userInfo(userId as string))
+
         const result = await data as SigninType;
-        console.log('result', result)
         const checkFollowFromData = filter(result);
-        console.log('checkFollowFromData', checkFollowFromData)
+        setFollowBtnCheck(checkFollowFromData)
     }
 
 
     useEffect(() => {
+        console.log("유즈이펙")
         dispatch(userInfo(userId as string))
         dispatch(userDetail());
 
@@ -108,7 +108,11 @@ export const OtherUserProfileScreen = () => {
                                         <Link to={`/messages/${userInfoData._id}`} className="profileButton">
                                             <EmailIcon />
                                         </Link>
-                                        <button onClick={handleFollow} className="profileButton">{filter(userInfoData) ? "Following" : "Follow"}</button>
+                                        <button onClick={handleFollow} className="profileButton">{
+                                            followBtnCheck === undefined ? filter(userInfoData) ? "Following" : "Follow" :
+                                                followBtnCheck ? "Following" : "Follow"
+                                        }
+                                        </button>
                                     </div>
 
                                 )
