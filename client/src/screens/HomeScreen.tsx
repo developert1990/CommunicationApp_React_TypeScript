@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { allPostLists, postTextArea } from '../actions/postActions';
+import { userDetail } from '../actions/userActions';
 import { Posts } from '../components/Posts';
 import { UserImage } from '../components/UserImage';
 import { initialAppStateType } from '../store';
@@ -19,6 +20,9 @@ export const HomeScreen = () => {
     const postContentStore = useSelector((state: initialAppStateType) => state.postTextStore);
     const { success: postedSuccess, error: errorPostContent, loading: loadingPostContent } = postContentStore;
 
+    const userDetailInfoStore = useSelector((state: initialAppStateType) => state.userDetailStore);
+    const { userDetail: userDetailInfo } = userDetailInfoStore;
+
     const dispatch = useDispatch();
 
 
@@ -30,10 +34,11 @@ export const HomeScreen = () => {
         dispatch(postTextArea(text));
         setText('');
     }
-
+    console.log('userDetailInfo: 홈스크린에서 ', userDetailInfo?.profilePic);
 
     useEffect(() => {
         dispatch(allPostLists());
+        dispatch(userDetail());
     }, [dispatch, postedSuccess])
 
     return (
@@ -43,7 +48,8 @@ export const HomeScreen = () => {
                     <h1>Home</h1>
                 </div>
                 <div className="postFormContainer">
-                    <UserImage userInfo={signinInfo} />
+                    {/* userDetailInfo를 넘겨주는 이유는 signinInfo는 유저가 로그인할때 그 유저의 데이터이므로 변화가 없다. 그래서 user의 데이터에 변동이있을경우에는 detail을 뽑아서 갱신해주기위함이다. 이렇게 넘겨줘야 user profile photo를 변경할 경우 바로 변경이 된다. */}
+                    <UserImage userInfo={signinInfo} userDetailInfo={userDetailInfo} />
                     <div className="textareaContainer">
                         <textarea className="postTextarea" placeholder="What's happening?" value={text} onChange={textAreaChange}></textarea>
                         <div className="buttonContainer">

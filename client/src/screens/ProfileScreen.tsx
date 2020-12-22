@@ -1,70 +1,251 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { UserImage } from '../components/UserImage';
-import { Posts } from '../components/Posts';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter, Link, Route, useLocation, useParams } from 'react-router-dom';
 import { initialAppStateType } from '../store';
-import { postLists, postTextArea } from '../actions/postActions';
-import { userDetail } from '../actions/userActions';
+import { signin, userInfo, userDetail } from '../actions/userActions';
+import { API_BASE } from '../config';
+import { FollowModal } from '../components/FollowModal';
+import { ProfileReplies } from '../components/ProfileReplies';
+import { ProfilePosts } from '../components/ProfilePosts';
+import { SigninType } from '../reducers/userReducer';
+import Axios from 'axios';
+import { USER_INFO_RESET } from '../constants/userConstants';
+import { ImgUploadModal } from '../components/ImgUploadModal';
+
+
+
+import EmailIcon from '@material-ui/icons/Email';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import { Modal } from 'react-bootstrap';
+
+
+
 
 export const ProfileScreen = () => {
-
-    const userInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
-    const { signinInfo } = userInfoStore;
-
-    const postContentStore = useSelector((state: initialAppStateType) => state.postTextStore);
-    const { success: postedSuccess, error, loading } = postContentStore;
-
-    const postListStore = useSelector((state: initialAppStateType) => state.postListStore);
-    const { error: errorList, list: postList, loading: loadingList } = postListStore;
-
-
-
-    const [text, setText] = useState<string>('');
+    const location = useLocation();
     const dispatch = useDispatch();
+    const postedUser = location.state;
+    const typedUser = postedUser as SigninType;
+    const userId = typedUser._id
 
-    const textAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setText(e.target.value);
+
+
+
+    // 내가 클릭한 유저의 정보
+    const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
+    const { userInfo: userInfoData, error, loading } = userInfoStore;
+
+    // 내가 로그인한 정보
+    const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
+    const { signinInfo, error: errorSignin, loading: loadingSignin } = signinInfoStore;
+
+    // 유저 업데이트된 디테일
+    const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
+    const { userDetail: userDetailInfo, loading: loadingUserDetail } = userDetailStore;
+
+
+
+    // 이 setUserProfilePic 을 ImgUploadModal 로 넘겨서 프로필사진을 수정하면 db에서 이미지 이름을 받아와서 변경이 될 경우에 useEffect에 dependency로 인해 리랜더가 되게끔 해주었다.
+    const [userProfilePic, setUserProfilePic] = useState<string>(userDetailInfo?.profilePic as string);
+
+    const filter = (result: SigninType) => {
+        // console.log('signinInfo?._id: ', signinInfo?._id)
+        // console.log('result.following.filter=>>> ', result.followers.filter(data => data))
+        return userInfoData && result?.following && (
+            result.followers.filter(data => data === signinInfo?._id).length === 0
+        )
+            ? false : true
     }
 
-    const submitPost = () => {
-        dispatch(postTextArea(text));
-        setText('');
+    // 팔로우 버튼 클릭 할 경우에 바뀌는 state
+    const [followBtnCheck, setFollowBtnCheck] = useState<boolean>(userInfoData as SigninType && filter(userInfoData as SigninType));
+    // 팔로우 버튼 클릭할때 팔로워 숫자 변화주는 state
+    const [numOfFollowers, setNumOfFollowers] = useState<number>(userInfoData as SigninType && userInfoData?.followers.length as number);
+    // 선택한 유저의 following state 보여줌
+    // const [numOfFollowing, setNumOfFollowing] = useState<number>(userInfoData as SigninType && userInfoData?.following.length as number);
+
+
+    // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
+    const [activePost, setActivePost] = useState<boolean>(true);
+    const [activeReplies, setActiveReplies] = useState<boolean>(false);
+    const handleActivePost = () => {
+        setActivePost(true);
+        setActiveReplies(false);
     }
+    const handleActiveReplies = () => {
+        setActiveReplies(true);
+        setActivePost(false);
+    }
+    // *************************************************************
+
+    const handleFollow = async () => {
+        const { data } = await Axios.put(`${API_BASE}/users/follow/${userInfoData?._id}/${signinInfo._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
+            headers: { Authorization: `Hong ${signinInfo.token}` }
+        });
+
+        const result = await data as SigninType;
+        const checkFollowFromData = filter(result);
+        setFollowBtnCheck(checkFollowFromData)
+        setNumOfFollowers(result.followers.length);
+    }
+
 
     useEffect(() => {
-        dispatch(postLists());
-        // dispatch(userDetail());
-    }, [dispatch, postedSuccess])
+        console.log("유즈이펙")
+        dispatch(userInfo(userId as string))
+        dispatch(userDetail());
+
+        return () => { // 언마운트 될때 실행한다. 즉 이 페이지의 랜더가 끝날때 비워준다
+            dispatch({ type: USER_INFO_RESET });
+        }
+
+    }, [dispatch, userId, userProfilePic])
+
+
+
+
+
+
+
+    // Follow modal control ----------------------------------------
+    const [show, setShow] = useState(false);
+    const [sendFollowers, setSendFollowers] = useState<string>(userInfoData?._id as string);
+    const [chooseBtn, setChooseBtn] = useState<string>('');
+    const handleClose = () => setShow(false);
+
+    // Following 하는거 보기
+    const handleShowFollowing = () => {
+        setSendFollowers(userInfoData?._id as string);
+        setChooseBtn("following");
+        setShow(true);
+    }
+
+    // Followers 보기
+    const handleShowFollowers = () => {
+        setSendFollowers(userInfoData?._id as string);
+        setChooseBtn("followers");
+        setShow(true);
+    }
+    // -------------------------------------------------------------
+
+    // Image Upload Modal control --------------------------
+    const [showImgUploadModal, setShowImgUploadModal] = useState<boolean>(false);
+
+
+    const handleShowImageUpload = () => {
+        setShowImgUploadModal(true);
+    }
+    const handleCloseImageUpload = () => {
+        setShowImgUploadModal(false);
+    }
+
+    // -----------------------------------------------------
+
+
 
     return (
         <>
-            <div className="mainSectionContainer col-10 col-md-8"> {/* 기본 스크린일때 이 태그의 크기가 10을꽉 채운다 */}
-                <div className="titleContainer">
-                    <h1>Home</h1>
-                </div>
-                <div className="postFormContainer">
-                    <UserImage userInfo={signinInfo} />
-                    <div className="textareaContainer">
-                        <textarea className="postTextarea" placeholder="What's happening?" value={text} onChange={textAreaChange}></textarea>
-                        <div className="buttonContainer">
-                            <button className="submitPostButton" disabled={text ? false : true} onClick={submitPost}>Post</button>
-                        </div>
-                    </div>
-                </div>
-                {
-                    <div className="posts">
-                        {error && "error 떳음"}
-                        {loading && "로딩중"}
-                        {
-                            postList &&
-                            postList.map((post) => {
-                                return <Posts post={post} key={post.createdAt} />
-                            })
+            {error && "error message..."}
+            {loading && "loading... "}
+            {userInfoData &&
 
-                        }
+                <div className="mainSectionContainer col-10 col-md-8">
+                    <div className="profileHeaderContainer">
+                        <div className="coverPhotoContainer">
+                            {
+                                userInfoData._id === signinInfo._id && (
+                                    <button className="coverPhotoButton">
+                                        <AddAPhotoIcon />
+                                    </button>
+                                )
+                            }
+                            <div className="userImageContainer">
+                                <img src={`${API_BASE}/uploads/images/${userInfoData.profilePic}`} alt="" />
+                                {
+                                    userInfoData._id === signinInfo._id && (
+                                        <button
+                                            onClick={handleShowImageUpload}
+                                            className="profilePictureButton"><AddAPhotoIcon /></button>
+                                    )
+                                }
+                            </div>
+                            <Modal className="followModal" show={showImgUploadModal} onHide={handleCloseImageUpload}>
+                                <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userProfilePic} />
+                            </Modal>
+                        </div>
+                        <div className="profileButtonContainer">
+                            {
+                                // 여기 !== 이렇게 바꿔야함
+                                userInfoData._id !== signinInfo._id && (
+                                    <div>
+                                        <Link to={`/messages/${userInfoData._id}`} className="profileButton">
+                                            <EmailIcon />
+                                        </Link>
+                                        <button onClick={handleFollow} className="profileButton">{
+                                            followBtnCheck === undefined ? filter(userInfoData) ? "Following" : "Follow" :
+                                                followBtnCheck ? "Following" : "Follow"
+                                        }
+                                        </button>
+                                    </div>
+
+                                )
+                            }
+                        </div>
+                        {/* Modal */}
+                        <div className="userDetailsContainer">
+                            <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
+                            <span className="username">@{userInfoData.userName}</span>
+                            {/* <span className="description">{userInfoData.description}</span> */}
+                            {/* {console.log('numOfFollowers: ', numOfFollowers)}
+                            {console.log('userInfoData.followers.length: ', userInfoData.followers.length)} */}
+                            <div className="followersContainer">
+                                <button
+                                    className={userInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
+                                    onClick={handleShowFollowing}
+                                    disabled={userInfoData.following.length === 0 ? true : false}>
+                                    <span className="value">{userInfoData.following.length}</span>
+                                    <span className="name">Following</span>
+                                </button>
+                                <button
+                                    className={userInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
+                                    onClick={handleShowFollowers}
+                                    disabled={userInfoData.followers.length === 0 ? true : false}>
+                                    <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
+                                    <span className="name">Followers</span>
+                                </button>
+                            </div>
+                            <Modal className="followModal" show={show} onHide={handleClose}>
+                                <FollowModal handleClose={handleClose} data={sendFollowers} chooseBtn={chooseBtn} />
+                            </Modal>
+
+                        </div>
+
+
                     </div>
-                }
-            </div>
+
+                    <div className="tabsContainer">
+                        <Link to={{
+                            pathname: `/profile/${userInfoData.userName}`,
+                            state: userInfoData
+                        }}
+                            className={`tab ${activePost ? "active" : ""}`}
+                            onClick={handleActivePost}
+                        >Posts</Link>
+                        <Link to={{
+                            pathname: `/profile/${userInfoData.userName}/replies`,
+                            state: userInfoData
+                        }}
+                            className={`tab ${activeReplies ? "active" : ""}`}
+                            onClick={handleActiveReplies}
+                        >Replies</Link>
+                    </div>
+
+                    <div className="postsContainer">
+                        <Route path={`/profile/:userId/replies`} component={ProfileReplies} />
+                        <Route path={`/profile/:userId`} component={ProfilePosts} exact />
+                    </div>
+                </div>
+            }
         </>
     )
 }

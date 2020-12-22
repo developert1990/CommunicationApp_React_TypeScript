@@ -4,14 +4,20 @@ import { BrowserRouter, Link, Route, useLocation, useParams } from 'react-router
 import { initialAppStateType } from '../store';
 import { signin, userInfo, userDetail } from '../actions/userActions';
 import { API_BASE } from '../config';
-
-import EmailIcon from '@material-ui/icons/Email';
-
+import { FollowModal } from '../components/FollowModal';
 import { ProfileReplies } from '../components/ProfileReplies';
 import { ProfilePosts } from '../components/ProfilePosts';
 import { SigninType } from '../reducers/userReducer';
 import Axios from 'axios';
 import { USER_INFO_RESET } from '../constants/userConstants';
+import { ImgUploadModal } from '../components/ImgUploadModal';
+
+
+
+import EmailIcon from '@material-ui/icons/Email';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import { Modal } from 'react-bootstrap';
+
 
 
 
@@ -22,6 +28,7 @@ export const OtherUserProfileScreen = () => {
     const postedUser = location.state;
     const typedUser = postedUser as SigninType;
     const userId = typedUser._id
+
 
 
 
@@ -36,6 +43,11 @@ export const OtherUserProfileScreen = () => {
     // 유저 업데이트된 디테일
     const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
     const { userDetail: userDetailInfo, loading: loadingUserDetail } = userDetailStore;
+
+
+
+    // 이 setUserProfilePic 을 ImgUploadModal 로 넘겨서 프로필사진을 수정하면 db에서 이미지 이름을 받아와서 변경이 될 경우에 useEffect에 dependency로 인해 리랜더가 되게끔 해주었다.
+    const [userProfilePic, setUserProfilePic] = useState<string>(userDetailInfo?.profilePic as string);
 
     const filter = (result: SigninType) => {
         // console.log('signinInfo?._id: ', signinInfo?._id)
@@ -88,7 +100,48 @@ export const OtherUserProfileScreen = () => {
             dispatch({ type: USER_INFO_RESET });
         }
 
-    }, [dispatch, userId,])
+    }, [dispatch, userId, userProfilePic])
+
+
+
+
+
+
+
+    // Follow modal control ----------------------------------------
+    const [show, setShow] = useState(false);
+    const [sendFollowers, setSendFollowers] = useState<string>(userInfoData?._id as string);
+    const [chooseBtn, setChooseBtn] = useState<string>('');
+    const handleClose = () => setShow(false);
+
+    // Following 하는거 보기
+    const handleShowFollowing = () => {
+        setSendFollowers(userInfoData?._id as string);
+        setChooseBtn("following");
+        setShow(true);
+    }
+
+    // Followers 보기
+    const handleShowFollowers = () => {
+        setSendFollowers(userInfoData?._id as string);
+        setChooseBtn("followers");
+        setShow(true);
+    }
+    // -------------------------------------------------------------
+
+    // Image Upload Modal control --------------------------
+    const [showImgUploadModal, setShowImgUploadModal] = useState<boolean>(false);
+
+
+    const handleShowImageUpload = () => {
+        setShowImgUploadModal(true);
+    }
+    const handleCloseImageUpload = () => {
+        setShowImgUploadModal(false);
+    }
+
+    // -----------------------------------------------------
+
 
 
     return (
@@ -101,8 +154,18 @@ export const OtherUserProfileScreen = () => {
                     <div className="profileHeaderContainer">
                         <div className="coverPhotoContainer">
                             <div className="userImageContainer">
-                                <img src={`${API_BASE}/images/${userInfoData.profilePic}`} alt="" />
+                                <img src={`${API_BASE}/uploads/images/${userInfoData.profilePic}`} alt="" />
+                                {
+                                    userInfoData._id === signinInfo._id && (
+                                        <button
+                                            onClick={handleShowImageUpload}
+                                            className="profilePictureButton"><AddAPhotoIcon /></button>
+                                    )
+                                }
                             </div>
+                            <Modal className="followModal" show={showImgUploadModal} onHide={handleCloseImageUpload}>
+                                <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userProfilePic} />
+                            </Modal>
                         </div>
                         <div className="profileButtonContainer">
                             {
@@ -122,23 +185,36 @@ export const OtherUserProfileScreen = () => {
                                 )
                             }
                         </div>
+                        {/* Modal */}
                         <div className="userDetailsContainer">
                             <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
                             <span className="username">@{userInfoData.userName}</span>
                             {/* <span className="description">{userInfoData.description}</span> */}
-                            {console.log('numOfFollowers: ', numOfFollowers)}
-                            {console.log('userInfoData.followers.length: ', userInfoData.followers.length)}
+                            {/* {console.log('numOfFollowers: ', numOfFollowers)}
+                            {console.log('userInfoData.followers.length: ', userInfoData.followers.length)} */}
                             <div className="followersContainer">
-                                <Link to={`/profile/${userInfoData.userName}/following`}>
+                                <button
+                                    className={userInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
+                                    onClick={handleShowFollowing}
+                                    disabled={userInfoData.following.length === 0 ? true : false}>
                                     <span className="value">{userInfoData.following.length}</span>
-                                    <span>Following</span>
-                                </Link>
-                                <Link to={`/profile/${userInfoData.userName}/followers`}>
+                                    <span className="name">Following</span>
+                                </button>
+                                <button
+                                    className={userInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
+                                    onClick={handleShowFollowers}
+                                    disabled={userInfoData.followers.length === 0 ? true : false}>
                                     <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
-                                    <span>Followers</span>
-                                </Link>
+                                    <span className="name">Followers</span>
+                                </button>
                             </div>
+                            <Modal className="followModal" show={show} onHide={handleClose}>
+                                <FollowModal handleClose={handleClose} data={sendFollowers} chooseBtn={chooseBtn} />
+                            </Modal>
+
                         </div>
+
+
                     </div>
 
                     <div className="tabsContainer">

@@ -4,13 +4,16 @@ import { SigninType } from '../reducers/userReducer';
 
 interface UserImageProps {
     userInfo: SigninType;
+    userDetailInfo: SigninType | undefined;
 }
 
-export const UserImage: React.FC<UserImageProps> = ({ userInfo }) => {
-
+export const UserImage: React.FC<UserImageProps> = ({ userInfo, userDetailInfo }) => {
+    console.log('userInfo: ', userInfo.profilePic)
     return (
         <div className="userImageContainer">
-            <img src={`${API_BASE}/images/${userInfo.profilePic}`} alt="User's profile" />
+            <img
+                src={`${API_BASE}/uploads/images/${userDetailInfo === undefined ? userInfo.profilePic : userDetailInfo.profilePic}`}
+                alt="User's profile" />
         </div>
     )
 }

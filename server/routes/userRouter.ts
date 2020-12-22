@@ -132,7 +132,36 @@ userRouter.put('/follow/:toFollowId/:signedInId', isAuth, expressAsyncHandler(as
     } else {
         res.status(400).send({ message: "No user found" });
     }
-}))
+}));
+
+userRouter.get('/:selectedUserId/followers', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+    console.log("followers 파퓰레이트d")
+    const selectedUserId = req.params.selectedUserId;
+    const user = await User.findById({ _id: selectedUserId }).populate("followers");
+    const typedUser = user as UserSchemaType;
+    const populatedUser = typedUser.populate("followers");
+    try {
+        res.status(200).send(populatedUser);
+    } catch (error) {
+        res.status(404).send(error)
+    }
+
+}));
+
+
+userRouter.get('/:selectedUserId/following', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+    console.log("following 파퓰레이트d")
+    const selectedUserId = req.params.selectedUserId;
+    const user = await User.findById({ _id: selectedUserId }).populate("following");
+    const typedUser = user as UserSchemaType;
+    const populatedUser = typedUser.populate("following");
+    try {
+        res.status(200).send(populatedUser);
+    } catch (error) {
+        res.status(404).send(error)
+    }
+
+}));
 
 
 export default userRouter;

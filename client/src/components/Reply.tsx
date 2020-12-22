@@ -81,7 +81,7 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
                                 <div className="each__reply">
                                     <div className="top__reply">
                                         <div className="userImageContainer__reply">
-                                            <img src={`${API_BASE}/images/${reply.repliedBy.profilePic}`} alt="profile" />
+                                            <img src={`${API_BASE}/uploads/images/${reply.repliedBy.profilePic}`} alt="profile" />
                                         </div>
                                         <div className="comment__reply">
                                             <span>{reply.repliedBy.firstName + " " + reply.repliedBy.lastName}</span>

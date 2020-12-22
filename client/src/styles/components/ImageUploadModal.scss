@@ -1,0 +1,9 @@
+// https://www.npmjs.com/package/cropperjs 여기 보면 반드시 이렇게 css를 하라고 규정해놓았음
+#imagePreview {
+
+    width: 100%;
+    display: block;
+
+    /* This rule is very important, please don't ignore this */
+    max-width: 100%;
+}

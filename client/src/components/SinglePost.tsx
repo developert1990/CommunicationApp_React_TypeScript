@@ -52,7 +52,7 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
 
                 <div className="mainContentContainer" >
                     <div className="userImageContainer">
-                        <img src={`${API_BASE}/images/${postedBy?.profilePic}`} alt="Profile" />
+                        <img src={`${API_BASE}/uploads/images/${postedBy?.profilePic}`} alt="Profile" />
                     </div>
                     <div className="postContentContainer">
                         <div className="header">

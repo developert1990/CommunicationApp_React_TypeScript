@@ -95,7 +95,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
                 <Modal.Body>
                     <div className="postFooter">
                         <div className="postFormContainer">
-                            <UserImage userInfo={signinInfo} />
+                            <UserImage userInfo={signinInfo} userDetailInfo={userInfoDetail} />
                             <div className="textareaContainer">
                                 <textarea className="postTextarea" placeholder="What's happening?" value={text} onChange={textAreaChange}></textarea>
                             </div>

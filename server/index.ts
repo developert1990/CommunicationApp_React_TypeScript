@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import session from 'express-session';
 import replyRouter from './routes/replyRouter';
+import uploadRouter from './routes/uploadRouter';
 
 dotenv.config();
 
@@ -52,8 +53,10 @@ app.use('/users', userRouter);
 app.use('/postText', postTextRouter);
 
 // reply
+app.use('/reply', replyRouter);
 
-app.use('/reply', replyRouter)
+// upload
+app.use('/upload', uploadRouter);
 
 
 app.get('/', (req: Request, res: Response) => {

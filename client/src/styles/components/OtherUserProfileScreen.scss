@@ -13,6 +13,9 @@
     margin-left: $spacing;
     position: absolute;
     bottom: -66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profileHeaderContainer .userImageContainer img{
@@ -55,17 +58,21 @@
     margin-right: 5px;
 }
 
+.followersContainer .value{
+    color: blue;
+}
+
 .followersContainer span:not(.value){
     color: $greyText;
 }
 
-.followersContainer a{
+.followersContainer button{
     margin-right: $spacing;
+    border: 1px solid transparent;
 }
 
-.followersContainer a:hover{
+.followersContainer .btnActive:hover{
     border-bottom: 1px solid #000;
-    text-decoration: none;
 }
 
 .tabsContainer{
@@ -93,3 +100,20 @@
     color: $redLight;
     background-color: $redLightBackground;
 }
+
+.profilePictureButton{
+    position: absolute;
+    font-size: 50px;
+    color: rgba(0,0,0,0.6);
+    display: none;
+
+    .MuiSvgIcon-root{
+        font-size: 100%;
+    }
+}
+
+.userImageContainer:hover .profilePictureButton{
+    display: block;
+}
+
+
