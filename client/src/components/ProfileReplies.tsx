@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { getPostsByOneUser } from '../actions/postActions';
-import { postDataType } from '../reducers/postReducer';
 import { SigninType } from '../reducers/userReducer';
 import { initialAppStateType } from '../store';
 import { Reply } from './Reply';
 
 import ReplyAllIcon from '@material-ui/icons/ReplyAll';
+import Alert from '@material-ui/lab/Alert';
 
 export const ProfileReplies = () => {
 
@@ -41,11 +41,21 @@ export const ProfileReplies = () => {
                 list &&
                 list.map((post) => {
                     return (
-                        <div className="profileReplies">
+                        <div className="profileReplies" key={post.createdAt}>
                             <h3>Content</h3>
                             <span>{post.content}</span>
-                            <ReplyAllIcon />
-                            <Reply post={post} signinInfo={signinInfo} updatedPostData={post} />
+                            {
+                                post.replies.length !== 0 ? (
+                                    <>
+                                        <ReplyAllIcon />
+                                        <Reply post={post} signinInfo={signinInfo} updatedPostData={post} />
+                                    </>
+                                ) : (
+                                        <div className="reply__alert">
+                                            <Alert severity="warning">No Replies..</Alert>
+                                        </div>
+                                    )
+                            }
                         </div>
                     )
                 })

@@ -1,3 +1,4 @@
+import { searchPostInitialStateType, searchPostInitialState, searchPostReducer, searchUsersInitialStateType, searchUsersInitialState, searchUsersReducer } from './reducers/searchReducer';
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
 import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer, allPostListInitialStateType, allPostListInitialState, allPostListReducer } from './reducers/postReducer';
 import { UserRegisterInitialStateType, userRegisterReducer, userRegisterInitialState, UserSigninInitialStateType, userSigninInitialState, userSinginReducer, userDetailInitialStateType, userDetailInitialState, userDetailReducer, userInfoReducer, userInfoInitialStateType, userInfoInitialState } from './reducers/userReducer';
@@ -18,6 +19,8 @@ export interface initialAppStateType {
     replyDeleteStore: ReplyDeleteInitialStatetype,
     postListByOneUserStore: postListByOneUserInitialStateType,
     allPostListReducer: allPostListInitialStateType,
+    searchPostsStore: searchPostInitialStateType,
+    searchUsersStore: searchUsersInitialStateType,
 
 }
 
@@ -32,6 +35,8 @@ export const initialAppState: initialAppStateType = {
     replyDeleteStore: replyDeleteInitialState,
     postListByOneUserStore: postListByOneUserInitialState,
     allPostListReducer: allPostListInitialState,
+    searchPostsStore: searchPostInitialState,
+    searchUsersStore: searchUsersInitialState,
 }
 
 export const reducer = combineReducers({
@@ -45,6 +50,8 @@ export const reducer = combineReducers({
     replyDeleteStore: replyDeleteReducer,
     postListByOneUserStore: postListByOneUserReducer,
     allPostListReducer: allPostListReducer,
+    searchPostsStore: searchPostReducer,
+    searchUsersStore: searchUsersReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

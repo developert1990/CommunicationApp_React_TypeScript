@@ -15,7 +15,7 @@ searchRouter.get(`/posts/:searchText`, isAuth, expressAsyncHandler(async (req: R
     const searchedPost = await Post.find({ content: { $regex: searchText, $options: "i" } }).populate([{ path: "postedBy" }, { path: "replies.repliedBy" }, { path: "likes" }]); // options 에서 i는 대소문자를 구분하지 않겟다는 의미
     try {
         if (searchedPost.length === 0) {
-            res.status(200).send("No posts found");
+            res.status(403).send({ message: "No posts found" });
         } else {
             res.status(200).send(searchedPost);
         }
@@ -38,7 +38,7 @@ searchRouter.get(`/users/:searchText`, isAuth, expressAsyncHandler(async (req: R
     ).populate([{ path: "following" }, { path: "followers" }, { path: "likes" }]); // options 에서 i는 대소문자를 구분하지 않겟다는 의미
     try {
         if (searchedUsers.length === 0) {
-            res.status(200).send("No users found");
+            res.status(403).send({ message: "No users found" });
         } else {
             res.status(200).send(searchedUsers);
         }

@@ -12,3 +12,8 @@ export interface replyActionType {
     type: string;
     payload: any;
 }
+
+export interface searchActionType {
+    type: string;
+    payload: any;
+}

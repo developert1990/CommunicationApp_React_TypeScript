@@ -63,7 +63,7 @@ export const FollowModal: React.FC<ModalPropsType> = ({ handleClose, data, choos
                             return (
 
                                 <Modal.Body>
-                                    <div className="user">
+                                    <div className="user" key={follower._id}>
                                         <div className="userImageContainer">
                                             <img src={`${API_BASE}/uploads/images/${follower.profilePic}`} alt="profile" />
                                         </div>

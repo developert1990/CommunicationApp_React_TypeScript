@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Link, Route, useLocation, useParams } from 'react-router-dom';
+import { Link, Route, useLocation } from 'react-router-dom';
 import { initialAppStateType } from '../store';
-import { signin, userInfo, userDetail } from '../actions/userActions';
+import { userInfo, userDetail } from '../actions/userActions';
 import { API_BASE } from '../config';
 import { FollowModal } from '../components/FollowModal';
 import { ProfileReplies } from '../components/ProfileReplies';
@@ -97,7 +97,6 @@ export const ProfileScreen = () => {
         dispatch(userDetail());
 
         return () => { // 언마운트 될때 실행한다. 즉 이 페이지의 랜더가 끝날때 비워준다
-            console.log("언마운트")
             dispatch({ type: USER_INFO_RESET });
         }
 
@@ -161,14 +160,14 @@ export const ProfileScreen = () => {
             {error && "error message..."}
             {loading && "loading... "}
             {
-                userInfoData && userDetailInfo && (
+                userInfoData && (
 
                     <div className="mainSectionContainer col-10 col-md-8">
                         <div className="profileHeaderContainer">
                             <div className="coverPhotoSection">
                                 <div className="coverPhotoContainer">
-                                    {console.log("userInfoData: ", userInfoData)}
-                                    {console.log("userCoverPic: ", userCoverPic)}
+                                    {console.log(userInfoData)}
+                                    {console.log(userCoverPic)}
                                     {
                                         userInfoData.coverPic !== undefined && (
                                             <img src={`${API_BASE}/uploads/coverImg/${userInfoData.coverPic}`} alt="cover" />
@@ -184,7 +183,7 @@ export const ProfileScreen = () => {
                                         )
                                     }
                                     <Modal className="followModal" show={showCoverImgUploadModal} onHide={handleCloseImageUpload}>
-                                        <CoverImgUploadModal handleClose={handleCloseCoverImagUpload} setUserCoverPic={setUserCoverPic} userCoverPic={userInfoData?.coverPic} />
+                                        <CoverImgUploadModal handleClose={handleCloseCoverImagUpload} setUserCoverPic={setUserCoverPic} userCoverPic={userCoverPic} />
                                     </Modal>
                                 </div>
                                 <div className="userImageContainer">
@@ -199,7 +198,7 @@ export const ProfileScreen = () => {
                                     }
                                 </div>
                                 <Modal className="followModal" show={showImgUploadModal} onHide={handleCloseImageUpload}>
-                                    <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userInfoData?.profilePic} />
+                                    <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userProfilePic} />
                                 </Modal>
                             </div>
 

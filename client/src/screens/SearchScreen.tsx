@@ -1,15 +1,10 @@
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { postDataType } from '../reducers/postReducer';
-import { SigninType } from '../reducers/userReducer';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Link, Route, useLocation, useParams } from 'react-router-dom';
+import { Link, Route, useHistory, useLocation } from 'react-router-dom';
 import { initialAppStateType } from '../store';
-import { signin, userInfo, userDetail } from '../actions/userActions';
-import { API_BASE } from '../config';
-import Axios from 'axios';
 import { SearchPosts } from '../components/SearchPosts';
 import { SearchUsers } from '../components/SearchUsers';
-
+import { searchPosts, searchUsers } from '../actions/searchAction';
 
 import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
@@ -18,25 +13,20 @@ import SearchIcon from '@material-ui/icons/Search';
 export const SearchScreen = () => {
 
     const [search, setSearch] = useState<string>("");
-    const [searchedPosts, setSearchedPosts] = useState<postDataType[]>([]);
-    const [searchedUsers, setSearchedUsers] = useState<SigninType[]>([]);
+    // const [searchedPosts, setSearchedPosts] = useState<postDataType[]>([]);
+    // const [searchedUsers, setSearchedUsers] = useState<SigninType[]>([]);
 
-
-    // 내가 클릭한 유저의 정보
-    const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
-    const { userInfo: userInfoData, error, loading } = userInfoStore;
-
-    // 내가 로그인한 정보
-    const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
-    const { signinInfo, error: errorSignin, loading: loadingSignin } = signinInfoStore;
-
-    // 유저 업데이트된 디테일
-    const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
-    const { userDetail: userDetailInfo, loading: loadingUserDetail } = userDetailStore;
-
+    const dispatch = useDispatch();
     const location = useLocation();
+    const history = useHistory();
     const slicedUrl = location.pathname.slice(14);
 
+
+    const searchPostsStore = useSelector((state: initialAppStateType) => state.searchPostsStore);
+    const { error: errorPosts, loading: loadingPosts, posts } = searchPostsStore;
+
+    const searchUsersStore = useSelector((state: initialAppStateType) => state.searchUsersStore);
+    const { error: errorUsers, loading: loadingUsers, users } = searchUsersStore;
 
 
     // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
@@ -61,30 +51,17 @@ export const SearchScreen = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (slicedUrl === "") {
-            const { data } = await Axios.get(`${API_BASE}/search/posts/${search}`, {
-                headers: { Authorization: `Hong ${signinInfo.token}` }
-            });
-            console.log('search 된 posts data: ', data);
-            setSearchedPosts(data);
+            dispatch(searchPosts(search))
         } else {
-            const { data } = await Axios.get(`${API_BASE}/search/users/${search}`, {
-                headers: { Authorization: `Hong ${signinInfo.token}` }
-            });
-            console.log('search 된 users data', data)
-            setSearchedUsers(data);
+            dispatch(searchUsers(search))
         }
-
-
         setSearch("");
     }
 
+
+
     return (
         <>
-
-            {error && "error message..."}
-            {loading && "loading... "}
-
-
             <div className="mainSectionContainer col-10 col-md-8">
                 <div className="SearchHeaderContainer">
                     <h1>Search</h1>
@@ -95,25 +72,19 @@ export const SearchScreen = () => {
                 </div>
 
                 <div className="tabsContainer">
-                    <Link to={{
-                        pathname: `/search/posts`,
-                        state: userInfoData
-                    }}
+                    <Link to={`/search/posts`}
                         className={`tab ${activePost ? "active" : ""}`}
                         onClick={handleActivePost}
                     >Posts</Link>
-                    <Link to={{
-                        pathname: `/search/posts/users`,
-                        state: userInfoData
-                    }}
+                    <Link to={`/search/posts/users`}
                         className={`tab ${activeReplies ? "active" : ""}`}
                         onClick={handleActiveReplies}
                     >Users</Link>
                 </div>
 
                 <div className="postsContainer">
-                    <Route path={`/search/posts`} component={SearchPosts} exact />
-                    <Route path={`/search/posts/users`} component={SearchUsers} />
+                    <Route path={`/search/posts`} render={() => <SearchPosts posts={posts} loadingPosts={loadingPosts} errorPosts={errorPosts} />} exact />
+                    <Route path={`/search/posts/users`} render={() => <SearchUsers users={users} loadingUsers={loadingUsers} errorUsers={errorUsers} />} />
                 </div>
             </div>
 

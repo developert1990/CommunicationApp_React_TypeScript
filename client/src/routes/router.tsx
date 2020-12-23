@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, BrowserRouter } from 'react-router-dom';
-import { SigninScreen, HomeScreen, RegisterScreen, ProfileScreen, OtherUserProfileScreen } from '../screens/index';
+import { SigninScreen, HomeScreen, RegisterScreen, ProfileScreen } from '../screens/index';
 import { PrivateRoute } from '../components/PrivateRoute';
 import { Navbar } from '../components/Navbar';
 import { Row } from 'react-bootstrap';
@@ -14,8 +14,7 @@ export const Router = () => {
                 <Row className="row">
                     <PrivateRoute component={Navbar} />
                     <PrivateRoute path="/" component={HomeScreen} exact />
-                    <PrivateRoute path="/profile" component={ProfileScreen} exact />
-                    <PrivateRoute path="/profile/:userId" component={OtherUserProfileScreen} />
+                    <PrivateRoute path="/profile/:userId" component={ProfileScreen} />
                     <PrivateRoute path="/search/posts" component={SearchScreen} />
                     <PrivateRoute component={ThirdColumn} exact />
 

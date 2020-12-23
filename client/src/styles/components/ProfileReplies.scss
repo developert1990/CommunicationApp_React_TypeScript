@@ -1,10 +1,36 @@
-.profileReplies{
-    span{
+.profileReplies {
+    margin-bottom: 5px;
+    span {
         margin-right: 10px;
     }
-    .MuiSvgIcon-root{
+
+    .MuiSvgIcon-root {
         margin-top: 15px;
         font-size: 35px;
         margin-bottom: 5px;
     }
+
+    .reply__alert {
+        display: inline-block;
+        margin: 0;
+        font-size: 10px;
+
+        .MuiPaper-root {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 30px;
+            .MuiAlert-icon {
+                padding: 0;
+                padding-bottom: 5px;
+            }
+
+            .MuiSvgIcon-root {
+                font-size: 15px;
+            }
+        }
+    }
+
+
 }
