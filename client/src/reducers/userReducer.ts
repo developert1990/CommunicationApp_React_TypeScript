@@ -41,6 +41,7 @@ export interface SigninType {
     userName: string;
     email: string;
     profilePic: string;
+    coverPic: string;
     token: string;
     likes: string[];
     followers: string[];

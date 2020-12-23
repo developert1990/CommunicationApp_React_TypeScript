@@ -81,6 +81,7 @@ userRouter.post('/signin', expressAsyncHandler(async (req: CustomRequest, res: R
                 userName: typedUser.userName,
                 email: typedUser.email,
                 profilePic: typedUser.profilePic,
+                coverPic: typedUser.coverPic,
                 likes: typedUser.likes,
                 followers: typedUser.followers,
                 following: typedUser.following,

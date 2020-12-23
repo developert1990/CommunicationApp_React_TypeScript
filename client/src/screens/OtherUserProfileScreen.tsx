@@ -11,6 +11,7 @@ import { SigninType } from '../reducers/userReducer';
 import Axios from 'axios';
 import { USER_INFO_RESET } from '../constants/userConstants';
 import { ImgUploadModal } from '../components/ImgUploadModal';
+import { CoverImgUploadModal } from '../components/CoverImgUploadModal';
 
 
 
@@ -22,7 +23,6 @@ import { Modal } from 'react-bootstrap';
 
 
 export const OtherUserProfileScreen = () => {
-
     const location = useLocation();
     const dispatch = useDispatch();
     const postedUser = location.state;
@@ -44,10 +44,10 @@ export const OtherUserProfileScreen = () => {
     const userDetailStore = useSelector((state: initialAppStateType) => state.userDetailStore);
     const { userDetail: userDetailInfo, loading: loadingUserDetail } = userDetailStore;
 
-
-
     // 이 setUserProfilePic 을 ImgUploadModal 로 넘겨서 프로필사진을 수정하면 db에서 이미지 이름을 받아와서 변경이 될 경우에 useEffect에 dependency로 인해 리랜더가 되게끔 해주었다.
     const [userProfilePic, setUserProfilePic] = useState<string>(userDetailInfo?.profilePic as string);
+
+    const [userCoverPic, setUserCoverPic] = useState<string>(userDetailInfo?.coverPic as string);
 
     const filter = (result: SigninType) => {
         // console.log('signinInfo?._id: ', signinInfo?._id)
@@ -100,7 +100,7 @@ export const OtherUserProfileScreen = () => {
             dispatch({ type: USER_INFO_RESET });
         }
 
-    }, [dispatch, userId, userProfilePic])
+    }, [dispatch, userId, userProfilePic, userCoverPic])
 
 
 
@@ -142,103 +142,139 @@ export const OtherUserProfileScreen = () => {
 
     // -----------------------------------------------------
 
+    //Cover Image Upload Modal control ---------------------
+    const [showCoverImgUploadModal, setShowCoverImgUploadModal] = useState<boolean>(false);
+    const handleShowCoverImageUpload = () => {
+        setShowCoverImgUploadModal(true);
+    }
+
+    const handleCloseCoverImagUpload = () => {
+        setShowCoverImgUploadModal(false);
+    }
+
+    // ------------------------------------------------------
 
 
     return (
         <>
             {error && "error message..."}
             {loading && "loading... "}
-            {userInfoData &&
+            {
+                userInfoData && (
 
-                <div className="mainSectionContainer col-10 col-md-8">
-                    <div className="profileHeaderContainer">
-                        <div className="coverPhotoContainer">
-                            <div className="userImageContainer">
-                                <img src={`${API_BASE}/uploads/images/${userInfoData.profilePic}`} alt="" />
+                    <div className="mainSectionContainer col-10 col-md-8">
+                        <div className="profileHeaderContainer">
+                            <div className="coverPhotoSection">
+                                <div className="coverPhotoContainer">
+                                    {console.log(userInfoData)}
+                                    {console.log(userCoverPic)}
+                                    {
+                                        userInfoData.coverPic !== undefined && (
+                                            <img src={`${API_BASE}/uploads/coverImg/${userInfoData.coverPic}`} alt="cover" />
+                                        )
+                                    }
+                                    {
+                                        userInfoData._id === signinInfo._id && (
+                                            <button
+                                                onClick={handleShowCoverImageUpload}
+                                                className="coverPhotoButton">
+                                                <AddAPhotoIcon />
+                                            </button>
+                                        )
+                                    }
+                                    <Modal className="followModal" show={showCoverImgUploadModal} onHide={handleCloseImageUpload}>
+                                        <CoverImgUploadModal handleClose={handleCloseCoverImagUpload} setUserCoverPic={setUserCoverPic} userCoverPic={userCoverPic} />
+                                    </Modal>
+                                </div>
+                                <div className="userImageContainer">
+                                    <img src={`${API_BASE}/uploads/images/${userInfoData.profilePic}`} alt="profile" />
+                                    {
+                                        userInfoData._id === signinInfo._id && (
+                                            <button
+                                                onClick={handleShowImageUpload}
+                                                className="profilePictureButton"><AddAPhotoIcon />
+                                            </button>
+                                        )
+                                    }
+                                </div>
+                                <Modal className="followModal" show={showImgUploadModal} onHide={handleCloseImageUpload}>
+                                    <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userProfilePic} />
+                                </Modal>
+                            </div>
+
+                            <div className="profileButtonContainer">
                                 {
-                                    userInfoData._id === signinInfo._id && (
-                                        <button
-                                            onClick={handleShowImageUpload}
-                                            className="profilePictureButton"><AddAPhotoIcon /></button>
+                                    // 여기 !== 이렇게 바꿔야함
+                                    userInfoData._id !== signinInfo._id && (
+                                        <div>
+                                            <Link to={`/messages/${userInfoData._id}`} className="profileButton">
+                                                <EmailIcon />
+                                            </Link>
+                                            <button onClick={handleFollow} className="profileButton">{
+                                                followBtnCheck === undefined ? filter(userInfoData) ? "Following" : "Follow" :
+                                                    followBtnCheck ? "Following" : "Follow"
+                                            }
+                                            </button>
+                                        </div>
+
                                     )
                                 }
                             </div>
-                            <Modal className="followModal" show={showImgUploadModal} onHide={handleCloseImageUpload}>
-                                <ImgUploadModal handleClose={handleCloseImageUpload} setUserProfilePic={setUserProfilePic} userProfilePic={userProfilePic} />
-                            </Modal>
-                        </div>
-                        <div className="profileButtonContainer">
-                            {
-                                // 여기 !== 이렇게 바꿔야함
-                                userInfoData._id !== signinInfo._id && (
-                                    <div>
-                                        <Link to={`/messages/${userInfoData._id}`} className="profileButton">
-                                            <EmailIcon />
-                                        </Link>
-                                        <button onClick={handleFollow} className="profileButton">{
-                                            followBtnCheck === undefined ? filter(userInfoData) ? "Following" : "Follow" :
-                                                followBtnCheck ? "Following" : "Follow"
-                                        }
-                                        </button>
-                                    </div>
-
-                                )
-                            }
-                        </div>
-                        {/* Modal */}
-                        <div className="userDetailsContainer">
-                            <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
-                            <span className="username">@{userInfoData.userName}</span>
-                            {/* <span className="description">{userInfoData.description}</span> */}
-                            {/* {console.log('numOfFollowers: ', numOfFollowers)}
+                            {/* Modal */}
+                            <div className="userDetailsContainer">
+                                <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
+                                <span className="username">@{userInfoData.userName}</span>
+                                {/* <span className="description">{userInfoData.description}</span> */}
+                                {/* {console.log('numOfFollowers: ', numOfFollowers)}
                             {console.log('userInfoData.followers.length: ', userInfoData.followers.length)} */}
-                            <div className="followersContainer">
-                                <button
-                                    className={userInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
-                                    onClick={handleShowFollowing}
-                                    disabled={userInfoData.following.length === 0 ? true : false}>
-                                    <span className="value">{userInfoData.following.length}</span>
-                                    <span className="name">Following</span>
-                                </button>
-                                <button
-                                    className={userInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
-                                    onClick={handleShowFollowers}
-                                    disabled={userInfoData.followers.length === 0 ? true : false}>
-                                    <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
-                                    <span className="name">Followers</span>
-                                </button>
+                                <div className="followersContainer">
+                                    <button
+                                        className={userInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
+                                        onClick={handleShowFollowing}
+                                        disabled={userInfoData.following.length === 0 ? true : false}>
+                                        <span className="value">{userInfoData.following.length}</span>
+                                        <span className="name">Following</span>
+                                    </button>
+                                    <button
+                                        className={userInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
+                                        onClick={handleShowFollowers}
+                                        disabled={userInfoData.followers.length === 0 ? true : false}>
+                                        <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
+                                        <span className="name">Followers</span>
+                                    </button>
+                                </div>
+                                <Modal className="followModal" show={show} onHide={handleClose}>
+                                    <FollowModal handleClose={handleClose} data={sendFollowers} chooseBtn={chooseBtn} />
+                                </Modal>
+
                             </div>
-                            <Modal className="followModal" show={show} onHide={handleClose}>
-                                <FollowModal handleClose={handleClose} data={sendFollowers} chooseBtn={chooseBtn} />
-                            </Modal>
+
 
                         </div>
 
+                        <div className="tabsContainer">
+                            <Link to={{
+                                pathname: `/profile/${userInfoData.userName}`,
+                                state: userInfoData
+                            }}
+                                className={`tab ${activePost ? "active" : ""}`}
+                                onClick={handleActivePost}
+                            >Posts</Link>
+                            <Link to={{
+                                pathname: `/profile/${userInfoData.userName}/replies`,
+                                state: userInfoData
+                            }}
+                                className={`tab ${activeReplies ? "active" : ""}`}
+                                onClick={handleActiveReplies}
+                            >Replies</Link>
+                        </div>
 
+                        <div className="postsContainer">
+                            <Route path={`/profile/:userId/replies`} component={ProfileReplies} />
+                            <Route path={`/profile/:userId`} component={ProfilePosts} exact />
+                        </div>
                     </div>
-
-                    <div className="tabsContainer">
-                        <Link to={{
-                            pathname: `/profile/${userInfoData.userName}`,
-                            state: userInfoData
-                        }}
-                            className={`tab ${activePost ? "active" : ""}`}
-                            onClick={handleActivePost}
-                        >Posts</Link>
-                        <Link to={{
-                            pathname: `/profile/${userInfoData.userName}/replies`,
-                            state: userInfoData
-                        }}
-                            className={`tab ${activeReplies ? "active" : ""}`}
-                            onClick={handleActiveReplies}
-                        >Replies</Link>
-                    </div>
-
-                    <div className="postsContainer">
-                        <Route path={`/profile/:userId/replies`} component={ProfileReplies} />
-                        <Route path={`/profile/:userId`} component={ProfilePosts} exact />
-                    </div>
-                </div>
+                )
             }
         </>
     )

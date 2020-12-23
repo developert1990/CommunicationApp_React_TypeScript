@@ -25,7 +25,7 @@ export const Navbar = () => {
         <div className="nav col-2"> {/* 이 태그의 크기를 항상 10중에 2로 해준다. */}
             <Link to="/" className="redColor"><i className="fas fa-cat"></i></Link>
             <Link to="/"><i className="fas fa-home"></i></Link>
-            <Link to="/"><i className="fas fa-search"></i></Link>
+            <Link to="/search/posts"><i className="fas fa-search"></i></Link>
             <Link to="/"><i className="fas fa-bell"></i></Link>
             <Link to="/"><i className="fas fa-envelope"></i></Link>
             <Link to={{

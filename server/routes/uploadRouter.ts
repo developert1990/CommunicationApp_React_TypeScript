@@ -53,4 +53,61 @@ uploadRouter.post('/profilePicture/:userId/:existingPic', isAuth, expressAsyncHa
 }));
 
 
+
+
+
+
+
+
+
+uploadRouter.post('/coverPic/:userId/:existingCoverPic', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+
+    // define storage
+    const CoverPicStorage = multer.diskStorage({
+        destination: `./public/uploads/coverImg`,
+        filename(req, file, callback) {
+            callback(null, `${Date.now()}.jpg`);
+        }
+    });
+
+    const coverPicUpload = multer({ storage: CoverPicStorage }).single('croppedImage'); // productEditScreen 에서 bodyFormdata 의 file 이름을 image라고 해줘서
+
+    console.log("프로필 이미지 등록");
+    const userId = req.params.userId;
+    const existingCoverPic = req.params.existingCoverPic;
+    console.log('existingCoverPic', existingCoverPic)
+
+    // 기존의 이미지를 삭제하기 위한것 ------------------
+    if (existingCoverPic !== undefined) { // default user이미지는 지우면 안되기 때문에 이렇게 조건을 걸어줌.
+        const path = `./public/uploads/coverImg/${existingCoverPic}`;
+        fs.unlink(path, (err) => {
+            if (err) {
+                console.log("err: ", err)
+                return;
+            }
+        });
+    }
+    // -------------------------------------------------
+
+    coverPicUpload(req, res, async (err: any) => {
+        if (err) { return res.status(404).send({ message: 'Can not upload image' }) };
+        // console.log('req.file:___', req.file)
+
+        const fileName = req.file.filename;
+
+        // mongoose에서 findByIdAndUpdate 가 mongoDB의 useFindAndModify` option set to false are deprecated 퇴보된 것이라서 아래 44번 줄 처럼 정의를 해줘야한다.
+        mongoose.set('useFindAndModify', false);
+        await User.findByIdAndUpdate(userId, { coverPic: fileName }, { new: true });
+
+        return res.send(`${req.file.filename}`)
+    })
+}));
+
+
+
+
+
+
+
+
 export default uploadRouter;

@@ -9,15 +9,15 @@ import { useSelector } from 'react-redux';
 
 export interface ImgUploadModalPropsType {
     handleClose: () => void;
-    setUserProfilePic: Dispatch<SetStateAction<string>>;
-    userProfilePic: string;
+    setUserCoverPic: Dispatch<SetStateAction<string>>;
+    userCoverPic: string;
 }
 
-export const ImgUploadModal: React.FC<ImgUploadModalPropsType> = ({ handleClose, setUserProfilePic, userProfilePic }) => {
+export const CoverImgUploadModal: React.FC<ImgUploadModalPropsType> = ({ handleClose, setUserCoverPic, userCoverPic }) => {
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinInfoStore;
 
-    console.log('userProfilePic', userProfilePic)
+    console.log('userCoverPic', userCoverPic)
 
     const [image, setImage] = useState("");
     const [cropper, setCropper] = useState<any>();
@@ -54,16 +54,15 @@ export const ImgUploadModal: React.FC<ImgUploadModalPropsType> = ({ handleClose,
             if (canvas == null) {
                 console.log("Upload fail.. Try again.")
             }
-
             canvas.toBlob(async (blob: string | Blob) => {
                 const formData = new FormData();
                 formData.append("croppedImage", blob);
-
-                const { data } = await Axios.post(`${API_BASE}/upload/profilePicture/${signinInfo._id}/${userProfilePic}`, formData, {
+                console.log('userCoverPic: =>>>>> ', userCoverPic)
+                const { data } = await Axios.post(`${API_BASE}/upload/coverPic/${signinInfo._id}/${userCoverPic}`, formData, {
                     headers: { Authorization: `Hong ${signinInfo.token}` }
                 });
                 // console.log('data: ', data)
-                setUserProfilePic(data);
+                setUserCoverPic(data);
             });
             handleClose();
         }
@@ -73,7 +72,7 @@ export const ImgUploadModal: React.FC<ImgUploadModalPropsType> = ({ handleClose,
     return (
         <div>
             <Modal.Header closeButton>
-                <Modal.Title>Upload a new Profile Photo</Modal.Title>
+                <Modal.Title>Upload a new Cover Photo</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <input type="file" name="filePhoto" onChange={onChange} />

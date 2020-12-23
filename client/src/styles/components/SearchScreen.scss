@@ -1,0 +1,19 @@
+.search__form{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    .MuiSvgIcon-root{
+        width: 50px;
+        display: inline-block;
+        position:absolute;
+        font-size: 30px;
+    }
+    .MuiFormLabel-root{
+        margin-left: 45px;
+    }
+    .MuiInputBase-root{
+        margin-left: 45px;
+    }
+}

@@ -8,7 +8,6 @@ interface UserImageProps {
 }
 
 export const UserImage: React.FC<UserImageProps> = ({ userInfo, userDetailInfo }) => {
-    console.log('userInfo: ', userInfo.profilePic)
     return (
         <div className="userImageContainer">
             <img

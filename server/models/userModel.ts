@@ -7,6 +7,7 @@ export interface UserSchemaType extends Document {
     email: string;
     password: string;
     profilePic: string;
+    coverPic: string;
     likes: string[];
     following: string[];
     followers: string[];
@@ -19,6 +20,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, trim: true, unique: true },
     password: { type: String, required: true },
     profilePic: { type: String, default: "profilePic.png" },
+    coverPic: { type: String },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

@@ -50,5 +50,6 @@ export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) =>
 
 export const getUpdatedPost = async (post: postSchemaType) => {
     const result = await User.populate(post, [{ path: "postedBy" }, { path: "replies.repliedBy" }]);
+    // const result = await User.populate(post, [{ path: "postedBy" }, { path: "replies.repliedBy" }, { path: "likes" }]);
     return result;
 }

@@ -8,6 +8,7 @@ export interface userDataType {
     userName: string;
     email: string;
     profilePic: string;
+    coverPic: string;
     password: string;
     following: string[];
     followers: string[];
@@ -20,6 +21,7 @@ export interface userFromDBType extends Document {
     userName: string;
     email: string;
     profilePic: string;
+    coverPic: string;
     password: string;
     likes: string[];
     following: string[];

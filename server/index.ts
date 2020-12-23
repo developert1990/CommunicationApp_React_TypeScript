@@ -8,6 +8,7 @@ import * as dotenv from 'dotenv';
 import session from 'express-session';
 import replyRouter from './routes/replyRouter';
 import uploadRouter from './routes/uploadRouter';
+import searchRouter from './routes/searchRouter';
 
 dotenv.config();
 
@@ -57,6 +58,9 @@ app.use('/reply', replyRouter);
 
 // upload
 app.use('/upload', uploadRouter);
+
+// search
+app.use('/search', searchRouter);
 
 
 app.get('/', (req: Request, res: Response) => {
