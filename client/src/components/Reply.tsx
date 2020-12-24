@@ -6,10 +6,12 @@ import { timeDifference, useStyles } from '../utils/utils';
 import { deleteReply } from '../actions/replyActions';
 import { SigninType } from '../reducers/userReducer';
 import { REPLY_DELETE_RESET } from '../constants/replyConstants';
+import { ToggleAlert } from './ToggleAlert';
 
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Pagination, { UsePaginationProps } from '@material-ui/lab/Pagination';
 import { initialAppStateType } from '../store';
+
 
 export interface ReplyPropsType {
     post: postDataType;
@@ -19,6 +21,9 @@ export interface ReplyPropsType {
 }
 
 export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostData, setUpdatedPostData }) => {
+
+    const [open, setOpen] = useState<boolean>(false);
+    const [alertMsg, setAlertMsg] = useState<string>("");
 
     const getRepliedTime = (reply: replyType) => {
         const repliedTime = timeDifference(new Date().valueOf(), new Date(reply.createdAt).valueOf());
@@ -34,7 +39,10 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
 
     const handleDelete = (replyId: string, postId: string) => {
         dispatch(deleteReply(replyId, postId));
+        setAlertMsg("Deleted")
+        setOpen(true);
     }
+
 
     if (resultDelete && setUpdatedPostData !== undefined) {
         setUpdatedPostData(resultDelete); // delete 하고 난 후에 해당 post데이터를 setUpdatePostData 로 state에 넣어준다. 
@@ -110,6 +118,7 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
                             <Pagination count={Math.ceil(sortedReplies.length / dataLimit)} color="primary" size="small" page={page} onChange={handlePageChange} />
                         </div>
                     }
+                    <ToggleAlert open={open} handleAlertClose={() => setOpen(false)} alertMsg={alertMsg} />
                 </div>
             }
         </div>

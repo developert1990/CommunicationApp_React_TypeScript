@@ -64,7 +64,9 @@ export const SearchScreen = () => {
         <>
             <div className="mainSectionContainer col-10 col-md-8">
                 <div className="SearchHeaderContainer">
-                    <h1>Search</h1>
+                    <div className="titleContainer">
+                        <h1>Search</h1>
+                    </div>
                     <form className="search__form" noValidate autoComplete="off" onSubmit={handleSubmit} >
                         <TextField id="standard-basic" label="Search for users or posts" autoFocus={true} onChange={handleSearch} value={search} />
                         <SearchIcon />

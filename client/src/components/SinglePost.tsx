@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { postDataType } from '../reducers/postReducer';
 import { API_BASE } from '../config';
 import { timeDifference } from '../utils/utils';
@@ -20,6 +20,8 @@ export interface SinglePostPropsType {
     updatedPostData?: postDataType;
 }
 export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handleLikeBtn, updatedPostData }) => {
+
+
     const signinStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinStore;
 
@@ -34,6 +36,7 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
 
     const handleDelete = async (postId: string) => {
         dispatch(postDelete(postId));
+
     }
 
     const commentsHandle = (postId: string) => {
@@ -96,6 +99,7 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
                             </div>
                         </div>
                     </div>
+
                 </div>
             }
         </div>

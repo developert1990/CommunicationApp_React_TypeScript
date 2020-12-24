@@ -27,7 +27,7 @@ export const Navbar = () => {
             <Link to="/"><i className="fas fa-home"></i></Link>
             <Link to="/search/posts"><i className="fas fa-search"></i></Link>
             <Link to="/"><i className="fas fa-bell"></i></Link>
-            <Link to="/"><i className="fas fa-envelope"></i></Link>
+            <Link to="/message"><i className="fas fa-envelope"></i></Link>
             <Link to={{
                 pathname: `/profile/${signinInfo.userName}`,
                 state: signinInfo,

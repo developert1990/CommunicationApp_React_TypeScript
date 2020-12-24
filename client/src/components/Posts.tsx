@@ -1,15 +1,18 @@
 import Axios from 'axios';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userDetail } from '../actions/userActions';
 import { API_BASE } from '../config';
 import { postDataType } from '../reducers/postReducer';
 import { initialAppStateType } from '../store';
 import { SinglePost } from './SinglePost';
+import { ToggleAlert } from './ToggleAlert';
+
 
 import { Button, Modal } from 'react-bootstrap';
 import { UserImage } from './UserImage';
 import { Reply } from './Reply';
+
 
 export interface PostsPropsType {
     post: postDataType;
@@ -22,9 +25,10 @@ export interface UpdatedPostDataType {
 
 export const Posts: React.FC<PostsPropsType> = ({ post }) => {
     const [updatedPostData, setUpdatedPostData] = useState<postDataType>(post);
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState<boolean>(false);
     const [text, setText] = useState<string>('');
-
+    const [open, setOpen] = useState<boolean>(false);
+    const [alertMsg, setAlertMsg] = useState<string>("");
 
     const signinStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinStore;
@@ -34,6 +38,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
 
     const dispatch = useDispatch();
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
 
     const handleLikeBtn = async (postId: string) => {
@@ -61,15 +66,25 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
         const { data } = await Axios.put(`${API_BASE}/reply/add/${postId}/${signinInfo._id}`, { reply: text }, {
             headers: { Authorization: `Hong ${signinInfo.token}` }
         });
+        if (data) {
+            setOpen(true);
+            setAlertMsg("Replied")
+            const updatedData: UpdatedPostDataType = data;
+            const updatedPostedData: postDataType = updatedData.updatePost;
+            setUpdatedPostData(updatedPostedData);
+        }
 
-        const updatedData: UpdatedPostDataType = data;
-        const updatedPostedData: postDataType = updatedData.updatePost;
-        setUpdatedPostData(updatedPostedData);
 
         setText('');
     }
 
 
+    useEffect(() => {
+        if (textAreaRef && textAreaRef.current) {
+            console.log(textAreaRef.current)
+            textAreaRef.current.focus();
+        }
+    }, [])
 
 
 
@@ -97,7 +112,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
                         <div className="postFormContainer">
                             <UserImage userInfo={signinInfo} userDetailInfo={userInfoDetail} />
                             <div className="textareaContainer">
-                                <textarea className="postTextarea" placeholder="What's happening?" value={text} onChange={textAreaChange}></textarea>
+                                <textarea className="postTextarea" placeholder="What's happening?" value={text} onChange={textAreaChange} ref={textAreaRef}></textarea>
                             </div>
                         </div>
                     </div>
@@ -112,6 +127,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <ToggleAlert open={open} handleAlertClose={() => setOpen(false)} alertMsg={alertMsg} />
         </>
     )
 }

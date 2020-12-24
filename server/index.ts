@@ -9,6 +9,7 @@ import session from 'express-session';
 import replyRouter from './routes/replyRouter';
 import uploadRouter from './routes/uploadRouter';
 import searchRouter from './routes/searchRouter';
+import chatRouter from './routes/chatRouter';
 
 dotenv.config();
 
@@ -62,6 +63,8 @@ app.use('/upload', uploadRouter);
 // search
 app.use('/search', searchRouter);
 
+// chat
+app.use('/chats', chatRouter);
 
 app.get('/', (req: Request, res: Response) => {
     res.send(`server is running on ${PORT}`)
