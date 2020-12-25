@@ -5,7 +5,14 @@ import { isAuth } from './../utils/utils';
 import express, { Request, Response } from 'express';
 import Chat from '../models/chatModel';
 
+
 const chatRouter = express.Router();
+
+
+chatRouter.get('/chatList', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+    // const chatList = Chat.find({users:${elemMatch: {$eq:}}})
+}))
+
 
 chatRouter.post('/', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
     if (!req.body.userList) {
@@ -31,7 +38,8 @@ chatRouter.post('/', isAuth, expressAsyncHandler(async (req: Request, res: Respo
         return res.status(200).send(chat);
     }
 
-
 }));
+
+
 
 export default chatRouter;

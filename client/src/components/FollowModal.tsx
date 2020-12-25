@@ -38,10 +38,12 @@ export const FollowModal: React.FC<ModalPropsType> = ({ handleClose, data, choos
     const selectedUserId = data;
 
     useEffect(() => {
+
         (
             async () => {
                 const { data } = await Axios.get(`${API_BASE}/users/${selectedUserId}/${chooseBtn}`, {
-                    headers: { Authorization: `Hong ${signinInfo.token}` }
+                    // headers: { Authorization: `Hong ${signinInfo.token}` },
+                    withCredentials: true
                 });
                 setPopulatedData(data);
             }

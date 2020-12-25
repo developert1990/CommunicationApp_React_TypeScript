@@ -8,7 +8,8 @@ export const deleteReply = (replyId: string, postId: string) => async (dispatch:
     const { signinStore: { signinInfo } } = getState();
     try {
         const { data } = await Axios.delete(`${API_BASE}/reply/delete/${replyId}/${postId}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            // headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true,
         });
         console.log('댓글 딜리트 후에 데이터data', data);
         dispatch({ type: REPLY_DELETE_SUCCESS, payload: data });

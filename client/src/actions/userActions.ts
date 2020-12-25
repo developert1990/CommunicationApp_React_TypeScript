@@ -6,7 +6,7 @@ import { API_BASE } from '../config/index';
 export const register = (firstName: string, lastName: string, userName: string, email: string, password: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
     dispatch({ type: USER_REGISTER_REQUEST });
     try {
-        const { data } = await Axios.post(`${API_BASE}/users/register`, { firstName, lastName, userName, email, password });
+        const { data } = await Axios.post(`${API_BASE}/users/register`, { firstName, lastName, userName, email, password }, { withCredentials: true });
         dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
         // dispatch signin success 
         localStorage.setItem('userInfo', JSON.stringify(data));
@@ -22,9 +22,10 @@ export const register = (firstName: string, lastName: string, userName: string, 
 }
 
 export const signin = (userName: string, password: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
+
     dispatch({ type: USER_SINGIN_REQUEST });
     try {
-        const { data } = await Axios.post(`${API_BASE}/users/signin`, { userName, password });
+        const { data } = await Axios.post(`${API_BASE}/users/signin`, { userName, password }, { withCredentials: true });
         dispatch({ type: USER_SINGIN_SUCCESS, payload: data });
         dispatch({ type: USER_DETAIL_SUCCESS, payload: data });
         localStorage.setItem('userInfo', JSON.stringify(data));
@@ -49,7 +50,8 @@ export const userDetail = () => async (dispatch: ThunkDispatch<any, any, any>, g
     // console.log('signinInfo', signinInfo)
     try {
         const { data } = await Axios.get(`${API_BASE}/users/detail/${signinInfo._id}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            // headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
 
         // console.log("유저 디테일 뽑음", data)
@@ -72,7 +74,8 @@ export const userInfo = (userId: string) => async (dispatch: ThunkDispatch<any, 
     // console.log('signinInfo', signinInfo)
     try {
         const { data } = await Axios.get(`${API_BASE}/users/info/${userId}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
 
         dispatch({ type: USER_INFO_SUCCESS, payload: data });

@@ -2,6 +2,8 @@ import { Document } from 'mongoose';
 import { Request } from 'express';
 import { Session } from 'inspector';
 
+
+
 export interface userDataType {
     firstName: string;
     lastName: string;
@@ -29,6 +31,15 @@ export interface userFromDBType extends Document {
     token: () => string;
 }
 
+
+declare global {
+    namespace Express {
+        interface Request {
+            user: userFromDBType
+        }
+    }
+}
+
 export interface CustomSessionType extends Session {
     user: userFromDBType;
 }
@@ -39,3 +50,10 @@ export interface CustomRequest extends Request {
     name?: string;
 }
 
+
+
+// declare module 'express-session' {
+//     interface SessionData extends Session {
+//         user: userFromDBType;
+//     }
+// }

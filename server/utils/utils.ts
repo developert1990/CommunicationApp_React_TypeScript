@@ -15,7 +15,7 @@ export const generateToken = (user: userFromDBType) => {
         email: user.email,
 
     }, process.env.JWT_SECRET as string, {
-        expiresIn: '24h'
+        expiresIn: '24h',
     });
 }
 
@@ -27,9 +27,13 @@ export interface decodeType {
 // 계정으로 접속 햇을 때 API를 사용하기 위해 verify 하는 middleware.
 export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
-    // console.log('어또라이제이션: ', authorization);
-    if (authorization) {
-        const token = authorization.slice(5, authorization.length); // Hong XXXXXXX  : Hong하고 띄워쓰기 까지 포함한 5개 글자 이후가 token이라서 이렇게 해줌
+    console.log('쿠키확인', req.headers.cookie)
+    console.log('토큰확인', req.headers.cookie?.split("=")[1])
+    console.log('어또라이제이션: ', authorization);
+
+    const token = req.headers.cookie?.split("=")[1];
+    if (token) {
+        // const token = authorization.slice(5, authorization.length); // Hong XXXXXXX  : Hong하고 띄워쓰기 까지 포함한 5개 글자 이후가 token이라서 이렇게 해줌
         jwt.verify(token, process.env.JWT_SECRET as string, (err, decode) => {
             if (err) {
                 res.status(401).send({ message: 'Invalid Token' });

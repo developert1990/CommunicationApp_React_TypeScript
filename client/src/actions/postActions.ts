@@ -8,7 +8,8 @@ export const postTextArea = (text: string) => async (dispatch: ThunkDispatch<any
     const { signinStore: { signinInfo } } = getState();
     try {
         const { data } = await Axios.post(`${API_BASE}/postText/upload`, { text }, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
         dispatch({ type: POST_SUCCESS })
     } catch (error) {
@@ -27,7 +28,8 @@ export const postLists = () => async (dispatch: ThunkDispatch<any, any, any>, ge
     const { signinStore: { signinInfo } } = getState();
     try {
         const { data } = await Axios.get(`${API_BASE}/postText/list`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            // headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
         dispatch({ type: POST_LIST_SUCCESS, payload: data });
     } catch (error) {
@@ -46,7 +48,8 @@ export const allPostLists = () => async (dispatch: ThunkDispatch<any, any, any>,
     const { signinStore: { signinInfo } } = getState();
     try {
         const { data } = await Axios.get(`${API_BASE}/postText/allList`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
         dispatch({ type: POST_ALL_LIST_SUCCESS, payload: data });
     } catch (error) {
@@ -67,6 +70,7 @@ export const postDelete = (postId: string) => async (dispatch: ThunkDispatch<any
         const { data } = await Axios.delete(`${API_BASE}/postText/delete/${postId}`, {
             headers: { Authorization: `Hong ${signinInfo.token}` },
             data: { signinInfo: signinInfo },
+            withCredentials: true
         });
         console.log('delete data: ', data);
         dispatch({ type: POST_DELETE_SUCCESS })
@@ -87,7 +91,8 @@ export const getPostsByOneUser = (userId: string) => async (dispatch: ThunkDispa
     // console.log('signinInfo  postLists에서: ', signinInfo)
     try {
         const { data } = await Axios.get(`${API_BASE}/postText/list/${userId}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
         dispatch({ type: POST_LIST_ONEUSER_SUCCESS, payload: data });
     } catch (error) {

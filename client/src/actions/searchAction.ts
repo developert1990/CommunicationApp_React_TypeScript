@@ -8,7 +8,8 @@ export const searchPosts = (searchText: string) => async (dispatch: ThunkDispatc
     try {
         const { signinStore: { signinInfo } } = getState();
         const { data } = await Axios.get(`${API_BASE}/search/posts/${searchText}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true,
         });
         dispatch({ type: SEARCH_POSTS_SUCCESS, payload: data });
     } catch (error) {
@@ -27,7 +28,8 @@ export const searchUsers = (searchText: string) => async (dispatch: ThunkDispatc
     try {
         const { signinStore: { signinInfo } } = getState();
         const { data } = await Axios.get(`${API_BASE}/search/users/${searchText}`, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true,
         });
         dispatch({ type: SEARCH_USERS_SUCCESS, payload: data });
     } catch (error) {

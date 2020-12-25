@@ -59,7 +59,8 @@ export const CoverImgUploadModal: React.FC<ImgUploadModalPropsType> = ({ handleC
                 formData.append("croppedImage", blob);
                 console.log('userCoverPic: =>>>>> ', userCoverPic)
                 const { data } = await Axios.post(`${API_BASE}/upload/coverPic/${signinInfo._id}/${userCoverPic}`, formData, {
-                    headers: { Authorization: `Hong ${signinInfo.token}` }
+                    // headers: { Authorization: `Hong ${signinInfo.token}` },
+                    withCredentials: true,
                 });
                 // console.log('data: ', data)
                 setUserCoverPic(data);

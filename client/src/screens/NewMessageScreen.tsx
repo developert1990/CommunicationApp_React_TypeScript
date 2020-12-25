@@ -63,7 +63,9 @@ export const NewMessageScreen = () => {
         const userList = JSON.stringify(selectedUserList); // 이 전체 유저의 리스트를 Axios로 서버로 전송해야하는데 string값으로 전송만 가능하기때문에 이렇게 변환해 준다.
         const signinUserDetail = JSON.stringify(userDetailInfo);
         const { data } = await Axios.post(`${API_BASE}/chats`, { userList, signinUserDetail }, {
-            headers: { Authorization: `Hong ${signinInfo.token}` },
+            // headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true,
+
         });
         const chat = data;
         if (!chat || !chat._id) { return alert("Invalid response from the server") };

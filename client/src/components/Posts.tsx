@@ -43,8 +43,10 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
     const handleLikeBtn = async (postId: string) => {
         console.log('userInfoDetail: ', userInfoDetail)
+
         const { data } = await Axios.put(`${API_BASE}/postText/like/${postId}`, userInfoDetail, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            // headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true
         });
         const updatedData: UpdatedPostDataType = data;
         const updatedPostedData: postDataType = updatedData.updatePost;
@@ -64,7 +66,8 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
     const submitReply = async (postId: string) => {
         const { data } = await Axios.put(`${API_BASE}/reply/add/${postId}/${signinInfo._id}`, { reply: text }, {
-            headers: { Authorization: `Hong ${signinInfo.token}` }
+            headers: { Authorization: `Hong ${signinInfo.token}` },
+            withCredentials: true,
         });
         if (data) {
             setOpen(true);

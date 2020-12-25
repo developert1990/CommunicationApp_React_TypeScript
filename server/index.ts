@@ -1,5 +1,5 @@
 import { CustomRequest } from './types.d';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import userRouter from './routes/userRouter';
 import postTextRouter from './routes/postTextRouter';
@@ -10,6 +10,9 @@ import replyRouter from './routes/replyRouter';
 import uploadRouter from './routes/uploadRouter';
 import searchRouter from './routes/searchRouter';
 import chatRouter from './routes/chatRouter';
+import redis from 'redis';
+import connectRedis from 'connect-redis';
+
 
 dotenv.config();
 
@@ -28,25 +31,51 @@ mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost/Chat-app', {
 });
 
 
+const corsOption = {
+    origin: true,
+    credentials: true,
+    preFlightContinue: true,
+}
 
-
-app.use(cors<cors.CorsRequest>());
+app.use(cors<cors.CorsRequest>(corsOption));
 app.use(express.json());
 app.use(express.static("public"));
 
 
+//redis 스토어를 세션과 연결시킴
+const RedisStore = connectRedis(session);
+
+// configure redis client - connect redis server 
+const redisClient = redis.createClient(6379, 'localhost');
+
+
+redisClient.on('error', (err) => {
+    console.log('Could not establish a connection with redis ' + err)
+});
+redisClient.on('connect', (err) => {
+    console.log('Connected to redis successfully');
+})
+
+
+// 여기서 프론트에 connect.sid (쿠키값) 를 자동으로 생성해준다. 이렇게 session미들웨어를 설정해놓으면 라우터 요청이 끝나고 자동으로 스토어에 저장을 한다. store를 지정하지 않으면 자동으로 메모리에 저장이 된다.
 app.use(session({
     secret: process.env.SESSION_SECRET_KEY as string,
     resave: false,
     saveUninitialized: true,
-    // cookie: { secure: true },
+    store: new RedisStore({
+        client: redisClient,
+        // ttl: 260                  // ttl: 언제 Redis DB에서 세션을 사라지게할지에 대한 만료 시간.
+    }),
+    cookie: { maxAge: 1000 * 60 * 60, httpOnly: true, sameSite: 'none', secure: true }
 }));
 
-// app.use((req: CustomRequest, res, next) => {
-//     console.log('req.session.id', req.session.id)
-//     console.log(req.session)
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//     console.log('req.session.id 아이디 있는지 검사: ', req.headers.cookie)
 //     next();
 // })
+
+
+
 
 // register, signin
 app.use('/users', userRouter);

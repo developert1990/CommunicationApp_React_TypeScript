@@ -1,7 +1,9 @@
 import { UserSchemaType } from './../models/userModel';
 import { isAuth } from './../utils/utils';
 import { CustomRequest, userDataType, userFromDBType } from './../types.d';
-import express, { Request, Response } from 'express';
+// import express, { Request, Response } from 'express';
+import * as Express from 'express';
+import { Request, Response } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import User from '../models/userModel';
 import bcrypt from 'bcrypt';
@@ -10,7 +12,7 @@ import { create } from 'ts-node';
 
 
 
-const userRouter = express.Router();
+const userRouter = Express.Router();
 
 userRouter.post('/register', expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     console.log('req.body', req.body)
@@ -71,9 +73,15 @@ userRouter.post('/register', expressAsyncHandler(async (req: CustomRequest, res:
 userRouter.post('/signin', expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const user = await User.findOne({ userName: req.body.userName });
     const typedUser = user as userFromDBType;
+    // console.log('로그인 할때 req.headers', req.headers.cookie)
+
     if (user) { // user found
         if (bcrypt.compareSync(req.body.password, typedUser.password)) {
+            // console.log("로그인 할경우 signin: ", req.session.user)
             req.session.user = typedUser;
+            const token = generateToken(typedUser);
+            console.log('token', token)
+            res.cookie('my-token', token, { httpOnly: true });
             res.send({
                 _id: typedUser._id,
                 firstName: typedUser.firstName,
@@ -85,14 +93,19 @@ userRouter.post('/signin', expressAsyncHandler(async (req: CustomRequest, res: R
                 likes: typedUser.likes,
                 followers: typedUser.followers,
                 following: typedUser.following,
-                token: generateToken(typedUser),
-            });
+            })
+
             return;
         }
     }
     res.status(401).send({ message: "Invalid email or password" });
 
 }));
+
+userRouter.get('/test', expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    console.log("테스트하러들어옴")
+    // console.log('req.session.user: ', req.session.user)
+}))
 
 
 userRouter.get('/signout', expressAsyncHandler(async (req: Request, res: Response) => {

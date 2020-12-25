@@ -13,7 +13,7 @@ const postTextRouter = express.Router();
 postTextRouter.post('/upload', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const contents = req.body.text;
     // 해결... 여기서 req.session에 user가 없음...
-    console.log('포스트 할때 req.session: ', req.session)
+    console.log('포스트 할때 req.session: ', req.session.user)
     if (contents) {
         const postData = {
             content: req.body.text,
@@ -38,9 +38,9 @@ postTextRouter.post('/upload', isAuth, expressAsyncHandler(async (req: CustomReq
 }));
 
 
-// 해당유가가 post한거 List 뽑은 API
+// 해당유저가 post한거 List 뽑은 API
 postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-    console.log("list 뽑으러 들어옴");
+    // console.log("list 뽑으러 들어옴");
     const postLists = await Post.find({ "postedBy": req.userId }).sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
@@ -55,11 +55,12 @@ postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomReques
 
 // 가입된 유저의 모든 post의 List 뽑은 API
 postTextRouter.get('/allList', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-    console.log("list 뽑으러 들어옴");
+    console.log("list cookies: ", req.cookies);
+    // console.log('모든포스트리스트 session.user: ', req.session.user)
     const postLists = await Post.find().sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
-        console.log('populatedPostLists: ', populatedPostLists);
+        // console.log('populatedPostLists: ', populatedPostLists);
         res.status(200).send(populatedPostLists); // 201번은 무언가가 성공적으로 create 되었다는 뜻이다.
     } else {
         res.status(401).send({ message: "Posted data not found" });
@@ -71,12 +72,14 @@ postTextRouter.get('/allList', isAuth, expressAsyncHandler(async (req: CustomReq
 
 
 // Post에 like button 클릭 API
-postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
+postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const postId = req.params.postId;
     const user = req.body;
     // const userId = req.params.userId;
     const userId = user._id;
     const isLiked = user.likes && user.likes.includes(postId);
+
+    console.log('라이크 버튼 req.session.user', req.session.user);
 
     const option = isLiked ? "$pull" : "$addToSet"; // pull은 어레이 remove역할, addToSet 은 push 역할을 한다.
     // insert user likes
@@ -92,7 +95,7 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Requ
 // post delete API
 postTextRouter.delete('/delete/:postId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
     const post = await Post.findById(req.params.postId);
-    console.log('post', post)
+    // console.log('post', post)
     if (post) {
         await post.remove();
         res.status(200).send({ message: "Post deleted" });
