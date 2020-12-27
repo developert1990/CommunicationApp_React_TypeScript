@@ -81,7 +81,12 @@ userRouter.post('/signin', expressAsyncHandler(async (req: CustomRequest, res: R
             req.session.user = typedUser;
             const token = generateToken(typedUser);
             console.log('token', token)
-            res.cookie('my-token', token, { httpOnly: true });
+            if (token) {
+                //  secure: true, sameSite: 'none' 추가하면 쿠키 프론트에 전송이 안됨..
+                res.cookie('my-token', token, { httpOnly: true, });
+            } else {
+                res.status(404).send("No token..")
+            }
             res.send({
                 _id: typedUser._id,
                 firstName: typedUser.firstName,

@@ -1,4 +1,5 @@
-import { UserSchemaType } from './../models/userModel';
+import { CustomRequest } from './../types.d';
+import User, { UserSchemaType } from './../models/userModel';
 import { ChatSchema } from './../models/chatModel';
 import expressAsyncHandler from 'express-async-handler';
 import { isAuth } from './../utils/utils';
@@ -8,12 +9,23 @@ import Chat from '../models/chatModel';
 
 const chatRouter = express.Router();
 
+// 로그인한 유저의 모든 채팅 리스트 가져온다
+chatRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    const user = req.session.user;
 
-chatRouter.get('/chatList', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
-    // const chatList = Chat.find({users:${elemMatch: {$eq:}}})
+    const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }) // chats collections 에서 users 에 해당 로그인한 유저의 id와 일치하는게 있으면 리턴한다. users 가 오브젝트로 된 값을들 어레이로 가지고 있기 때문에 key:value로 찾을수 없다 그래서 &eq : value 로 사용해준다.
+    const populatedChatlist = await User.populate(chatList, { path: "users" });
+
+    console.log('populatedChatlist: ', populatedChatlist)
+    if (chatList) {
+        res.status(200).send(populatedChatlist)
+    } else {
+        res.status(400).send({ message: "you got an error to call chat list .." });
+    }
 }))
 
 
+// 채팅하기위해 사람들 초대
 chatRouter.post('/', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
     if (!req.body.userList) {
         res.status(400).send({ message: "Error occured" })

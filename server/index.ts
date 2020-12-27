@@ -1,5 +1,5 @@
 import { CustomRequest } from './types.d';
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import userRouter from './routes/userRouter';
 import postTextRouter from './routes/postTextRouter';
@@ -66,13 +66,13 @@ app.use(session({
         client: redisClient,
         // ttl: 260                  // ttl: 언제 Redis DB에서 세션을 사라지게할지에 대한 만료 시간.
     }),
-    cookie: { maxAge: 1000 * 60 * 60, httpOnly: true, sameSite: 'none', secure: true }
+    cookie: { maxAge: 1000 * 60 * 60, httpOnly: true, }
 }));
 
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//     console.log('req.session.id 아이디 있는지 검사: ', req.headers.cookie)
-//     next();
-// })
+app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log('req.session.id 아이디 있는지 검사: ', req.session.id)
+    next();
+})
 
 
 

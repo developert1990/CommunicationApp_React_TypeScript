@@ -1,3 +1,4 @@
+import { chatListInitialStateType, chatListinitialState, chatListReducer } from './reducers/chatReducer';
 import { searchPostInitialStateType, searchPostInitialState, searchPostReducer, searchUsersInitialStateType, searchUsersInitialState, searchUsersReducer } from './reducers/searchReducer';
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
 import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer, allPostListInitialStateType, allPostListInitialState, allPostListReducer } from './reducers/postReducer';
@@ -21,6 +22,7 @@ export interface initialAppStateType {
     allPostListReducer: allPostListInitialStateType,
     searchPostsStore: searchPostInitialStateType,
     searchUsersStore: searchUsersInitialStateType,
+    chatListStore: chatListInitialStateType,
 
 }
 
@@ -37,6 +39,7 @@ export const initialAppState: initialAppStateType = {
     allPostListReducer: allPostListInitialState,
     searchPostsStore: searchPostInitialState,
     searchUsersStore: searchUsersInitialState,
+    chatListStore: chatListinitialState,
 }
 
 export const reducer = combineReducers({
@@ -52,6 +55,7 @@ export const reducer = combineReducers({
     allPostListReducer: allPostListReducer,
     searchPostsStore: searchPostReducer,
     searchUsersStore: searchUsersReducer,
+    chatListStore: chatListReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

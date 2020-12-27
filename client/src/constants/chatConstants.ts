@@ -1,0 +1,5 @@
+export const CHAT_LIST_REQUEST = "CHAT_LIST_REQUEST";
+export const CHAT_LIST_SUCCESS = "CHAT_LIST_SUCCESS";
+export const CHAT_LIST_FAIL = "CHAT_LIST_FAIL";
+export const CHAT_LIST_RESET = "CHAT_LIST_RESET";
+

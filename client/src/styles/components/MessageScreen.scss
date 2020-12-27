@@ -1,0 +1,39 @@
+.resultlistitem{
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid $borderColor;
+}
+
+.resultlistitem:hover{
+    background-color: #F2F2F2F2;
+}
+
+.resultsDetailscontainer{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+}
+
+.resultsDetailscontainer .heading{
+    font-weight: 500;
+
+}
+
+.resultsDetailscontainer .subText{
+    color: $greyText;
+    font-size: 14px;
+}
+
+.chatUser_Avatar{
+    margin-right: 15px;
+}
+
+// 최대 width를 넘길경우 나머지는 ... 으로 변환한다.
+.ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

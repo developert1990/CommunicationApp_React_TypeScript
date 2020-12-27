@@ -55,8 +55,8 @@ postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomReques
 
 // 가입된 유저의 모든 post의 List 뽑은 API
 postTextRouter.get('/allList', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-    console.log("list cookies: ", req.cookies);
-    // console.log('모든포스트리스트 session.user: ', req.session.user)
+    // console.log("list cookies: ", req.cookies);
+    console.log('모든포스트리스트 session.user: ', req.session.user)
     const postLists = await Post.find().sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!

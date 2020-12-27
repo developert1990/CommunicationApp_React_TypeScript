@@ -17,3 +17,8 @@ export interface searchActionType {
     type: string;
     payload: any;
 }
+
+export interface chatListActionType {
+    type: string;
+    payload: any;
+}

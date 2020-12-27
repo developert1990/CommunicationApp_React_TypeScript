@@ -28,10 +28,10 @@ export interface decodeType {
 export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
     console.log('쿠키확인', req.headers.cookie)
-    console.log('토큰확인', req.headers.cookie?.split("=")[1])
+    console.log('토큰확인', req.headers.cookie?.split("=")[2]);
     console.log('어또라이제이션: ', authorization);
 
-    const token = req.headers.cookie?.split("=")[1];
+    const token = req.headers.cookie?.split("=")[2];
     if (token) {
         // const token = authorization.slice(5, authorization.length); // Hong XXXXXXX  : Hong하고 띄워쓰기 까지 포함한 5개 글자 이후가 token이라서 이렇게 해줌
         jwt.verify(token, process.env.JWT_SECRET as string, (err, decode) => {
