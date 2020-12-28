@@ -13,8 +13,8 @@ const chatRouter = express.Router();
 // 로그인한 유저의 모든 채팅 리스트 가져온다
 chatRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const user = req.session.user;
-
-    const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).sort({ updatedAt: -1 }) // chats collections 에서 users 에 해당 로그인한 유저의 id와 일치하는게 있으면 리턴한다. users 가 오브젝트로 된 값을들 어레이로 가지고 있기 때문에 key:value로 찾을수 없다 그래서 &eq : value 로 사용해준다.
+    // chats collections 에서 users 에 해당 로그인한 유저의 id와 일치하는게 있으면 리턴한다. users 가 오브젝트로 된 값을들 어레이로 가지고 있기 때문에 key:value로 찾을수 없다 그래서 &eq : value 로 사용해준다.
+    const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).sort({ updatedAt: -1 })
 
     console.log('populatedChatlist: ', chatList)
     if (chatList) {
@@ -65,6 +65,7 @@ chatRouter.get('/chatRoom/:chatRoomId', isAuth, expressAsyncHandler(async (req: 
     }
 }));
 
+// 프로필에서 메세지 버튼 누르고 1:1 채팅한다.
 chatRouter.get('/chatRoom/byUserId/:otherUserId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     console.log("1:1 뽕아보러 들어옴")
     const otherUserId = req.params.otherUserId;

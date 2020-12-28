@@ -4,6 +4,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { API_BASE } from '../config';
 import { ChatType } from '../reducers/chatReducer';
 import { SigninType } from '../reducers/userReducer';
+import { getChatImage } from './MessageScreen';
+
 
 interface locationType extends Location {
     state: {
@@ -22,7 +24,7 @@ export const ChatScreen = () => {
     const otherUserId = typedLocation.state.userInfoData?._id;
     console.log("userInfoId: ", otherUserId);
     // console.log(locationState.state.chatListInfo);
-    // const chat = location.state.chat;
+    const chat = typedLocation.state.chat;
     // const chatList = location.state.chatList;
 
 
@@ -52,7 +54,27 @@ export const ChatScreen = () => {
                 location.state ? (
                     <div className="mainSectionContainer col-10 col-md-8">
                         <div className="titleContainer">
-                            <h1>채팅 screen</h1>
+                            <h1>Chat</h1>
+                        </div>
+                        <div className="chatPageContainer">
+                            <div className="chatTitleBarContainer">
+                                {
+                                    chat &&
+                                    getChatImage(chat)
+                                }
+                                <span id="chatName">This is the chat</span>
+                            </div>
+                            <div className="mainContentContainer">
+                                <div className="chatContainer">
+                                    <div className="chatMessages">
+
+                                    </div>
+                                    <div className="footer">
+                                        <textarea name="messageInput" placeholder="Type a message..." />
+                                        <button className="sendMessageButton"><i className="fas fa-paper-plane"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : (

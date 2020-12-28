@@ -10,6 +10,25 @@ import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import { API_BASE } from '../config';
 
 
+export const getChatImage = (chat: ChatType) => {
+    if (chat) {
+        return (
+            <AvatarGroup max={3} className="chatUser_Avatar">
+                {
+                    chat.users.map((user) => {
+                        return (
+                            <Avatar alt={user.firstName + " " + user.lastName} src={`${API_BASE}/uploads/images/${user.profilePic}`} key={user._id} />
+                        )
+                    })
+                }
+            </AvatarGroup>
+        )
+    } else {
+        return "";
+    }
+}
+
+
 export const MessageScreen = () => {
 
     const chatListStore = useSelector((state: initialAppStateType) => state.chatListStore);
@@ -33,23 +52,7 @@ export const MessageScreen = () => {
         return userNames
     }
 
-    const getChatImage = (chat: ChatType) => {
-        if (chat) {
-            return (
-                <AvatarGroup max={3} className="chatUser_Avatar">
-                    {
-                        chat.users.map((user) => {
-                            return (
-                                <Avatar alt={user.firstName + " " + user.lastName} src={`${API_BASE}/uploads/images/${user.profilePic}`} key={user._id} />
-                            )
-                        })
-                    }
-                </AvatarGroup>
-            )
-        } else {
-            return "";
-        }
-    }
+
 
     useEffect(() => {
         dispatch(chatList())

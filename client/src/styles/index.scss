@@ -11,7 +11,17 @@
 @import './components/SearchScreen.scss';
 @import './components/NewMessageScreen.scss';
 @import './components/MessageScreen.scss';
+@import './components/ChatScreen.scss';
 
+
+
+
+html,body{
+    height: 100%;
+    min-height: 100%;
+    background-color: #fff;
+    font-weight: 300;
+}
 
 *{
     outline: none !important;
@@ -29,5 +39,9 @@ code {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding: 25px;
+    height: 100%;
 }
 
+.App, .row, .mainScreen{
+    height: 100%;
+}
