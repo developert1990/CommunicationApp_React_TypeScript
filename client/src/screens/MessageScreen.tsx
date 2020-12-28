@@ -73,7 +73,10 @@ export const MessageScreen = () => {
                                 chatListInfo.map((chat) => {
                                     const latestMessage = "This is the latest message";
                                     return (
-                                        <Link to={`/messages/${chat._id}`} className="resultlistitem" key={chat._id}>
+                                        <Link to={{
+                                            pathname: `/message/chatRoom/${chat._id}`,
+                                            state: { chat, chatListInfo }
+                                        }} className="resultlistitem" key={chat._id}>
                                             {getChatImage(chat)}
                                             <div className="resultsDetailscontainer ellipsis">
                                                 <span className="heading ellipsis">{getChatName(chat)}</span>

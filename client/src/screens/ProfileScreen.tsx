@@ -208,7 +208,10 @@ export const ProfileScreen = () => {
                                     // 여기 !== 이렇게 바꿔야함
                                     userInfoData._id !== signinInfo._id && (
                                         <div>
-                                            <Link to={`/messages/${userInfoData._id}`} className="profileButton">
+                                            <Link to={{
+                                                pathname: `/message/chatRoom/${userInfoData._id}`,
+                                                state: { userInfoData }
+                                            }} className="profileButton">
                                                 <EmailIcon />
                                             </Link>
                                             <button onClick={handleFollow} className="profileButton">{

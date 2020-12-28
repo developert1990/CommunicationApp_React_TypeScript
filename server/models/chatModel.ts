@@ -7,6 +7,8 @@ export interface ChatSchema extends Document {
     isGroupChat: boolean;
     users: UserSchemaType[];
     latestMessage: MessageSchemaType[];
+    updatedAt: string;
+    createdAt: string;
 }
 
 const chatSchema = new mongoose.Schema({
