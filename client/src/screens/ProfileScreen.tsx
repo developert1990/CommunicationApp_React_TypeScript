@@ -93,7 +93,7 @@ export const ProfileScreen = () => {
 
 
     useEffect(() => {
-        console.log("유즈이펙")
+        // console.log("유즈이펙")
         dispatch(userInfo(userId as string))
         dispatch(userDetail());
 
@@ -167,8 +167,6 @@ export const ProfileScreen = () => {
                         <div className="profileHeaderContainer">
                             <div className="coverPhotoSection">
                                 <div className="coverPhotoContainer">
-                                    {console.log(userInfoData)}
-                                    {console.log(userCoverPic)}
                                     {
                                         userInfoData.coverPic !== undefined && (
                                             <img src={`${API_BASE}/uploads/coverImg/${userInfoData.coverPic}`} alt="cover" />

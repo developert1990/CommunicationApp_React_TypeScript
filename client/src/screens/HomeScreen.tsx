@@ -35,7 +35,7 @@ export const HomeScreen = () => {
         dispatch(postTextArea(text));
         setText('');
     }
-    console.log('userDetailInfo: 홈스크린에서 ', userDetailInfo?.profilePic);
+    // console.log('userDetailInfo: 홈스크린에서 ', userDetailInfo?.profilePic);
 
     useEffect(() => {
         if (textAreaRef && textAreaRef.current) {

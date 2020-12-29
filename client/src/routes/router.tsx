@@ -1,7 +1,9 @@
 import React from 'react';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 import { SigninScreen, HomeScreen, RegisterScreen, ProfileScreen, MessageScreen, NewMessageScreen } from '../screens/index';
 import { PrivateRoute } from '../components/PrivateRoute';
+import { CheckValidChatRoute } from '../components/CheckValidChatRoute';
+import { InvalidPage } from '../components/InvalidPage';
 import { Navbar } from '../components/Navbar';
 import { Row } from 'react-bootstrap';
 import { ThirdColumn } from '../components/ThirdColumn';
@@ -17,15 +19,15 @@ export const Router = () => {
                     <PrivateRoute path="/" component={HomeScreen} exact />
                     <PrivateRoute path="/profile/:userId" component={ProfileScreen} />
                     <PrivateRoute path="/search/posts" component={SearchScreen} />
-                    <PrivateRoute path="/message/chatRoom/:roomNum" component={ChatScreen} />
+                    <CheckValidChatRoute path="/message/chatRoom/:roomNum" component={ChatScreen} />
                     <PrivateRoute path="/message" component={MessageScreen} exact />
                     <PrivateRoute path="/message/new" component={NewMessageScreen} />
+                    <Route path="/invalidPage" component={InvalidPage} />
                     <PrivateRoute component={ThirdColumn} exact />
-
+                    <Route path="/signin" component={SigninScreen} />
+                    <Route path="/register" component={RegisterScreen} />
                 </Row>
             </div>
-            <Route path="/signin" component={SigninScreen} />
-            <Route path="/register" component={RegisterScreen} />
         </BrowserRouter>
     )
 }

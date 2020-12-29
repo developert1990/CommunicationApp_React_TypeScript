@@ -33,7 +33,7 @@ export const MessageScreen = () => {
 
     const chatListStore = useSelector((state: initialAppStateType) => state.chatListStore);
     const { chatList: chatListInfo, error, loading } = chatListStore;
-    console.log('chatListInfo: ', chatListInfo);
+    // console.log('chatListInfo: ', chatListInfo);
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinInfoStore;
     const dispatch = useDispatch();

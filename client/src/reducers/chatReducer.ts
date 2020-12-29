@@ -1,9 +1,9 @@
 import { SigninType } from './userReducer';
-import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET } from './../constants/chatConstants';
+import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET, SELECTED_CHAT_REQUEST, SELECTED_CHAT_SUCCESS, SELECTED_CHAT_RESET, SELECTED_CHAT_FAIL } from './../constants/chatConstants';
 import { chatListActionType } from './../actions/types.d';
 
 export interface ChatType {
-    chatname: string;
+    chatName: string;
     createdAt: string;
     isGroupChat: boolean;
     lastestMessage: string[];
@@ -34,6 +34,32 @@ export const chatListReducer = (state = chatListinitialState, action: chatListAc
         case CHAT_LIST_RESET:
             return {};
 
+        default:
+            return state;
+    }
+}
+
+export interface selectedChatInitialStateType {
+    error: string;
+    loading: boolean;
+    chatData: ChatType | undefined;
+}
+export const selectedChatInitialState: selectedChatInitialStateType = {
+    error: '',
+    loading: false,
+    chatData: undefined,
+}
+
+export const selectedChatReducer = (state = selectedChatInitialState, action: chatListActionType) => {
+    switch (action.type) {
+        case SELECTED_CHAT_REQUEST:
+            return { loading: true };
+        case SELECTED_CHAT_SUCCESS:
+            return { loading: false, chatData: action.payload };
+        case SELECTED_CHAT_FAIL:
+            return { loading: false, error: action.payload };
+        case SELECTED_CHAT_RESET:
+            return {};
         default:
             return state;
     }

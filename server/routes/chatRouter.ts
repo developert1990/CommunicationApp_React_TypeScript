@@ -16,7 +16,7 @@ chatRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, r
     // chats collections 에서 users 에 해당 로그인한 유저의 id와 일치하는게 있으면 리턴한다. users 가 오브젝트로 된 값을들 어레이로 가지고 있기 때문에 key:value로 찾을수 없다 그래서 &eq : value 로 사용해준다.
     const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).sort({ updatedAt: -1 })
 
-    console.log('populatedChatlist: ', chatList)
+    // console.log('populatedChatlist: ', chatList)
     if (chatList) {
         res.status(200).send(chatList)
     } else {
@@ -52,12 +52,14 @@ chatRouter.post('/', isAuth, expressAsyncHandler(async (req: Request, res: Respo
 
 }));
 
-
+// 체팅방 아이디로 해당 채팅 정보 가져온다.
 chatRouter.get('/chatRoom/:chatRoomId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-    const userId = req.session.user._Id;
+    const userId = req.session.user._id;
     const chatRoomId = req.params.chatRoomId;
-
+    console.log('userId: ', userId)
+    console.log("채팅정보 가지러 들어옴: ", chatRoomId)
     const chat = await Chat.findOne({ _id: chatRoomId, users: { $elemMatch: { $eq: userId } } }).populate("users");
+    console.log('chat: ', chat)
     if (chat) {
         res.status(200).send(chat);
     } else {
@@ -70,8 +72,8 @@ chatRouter.get('/chatRoom/byUserId/:otherUserId', isAuth, expressAsyncHandler(as
     console.log("1:1 뽕아보러 들어옴")
     const otherUserId = req.params.otherUserId;
     const signinId = req.session.user._id;
-    console.log('otherUserId: ', otherUserId)
-    console.log('signinId: ', signinId)
+    // console.log('otherUserId: ', otherUserId)
+    // console.log('signinId: ', signinId)
 
     const chat = await Chat.findOneAndUpdate(
         // filter
@@ -102,7 +104,25 @@ chatRouter.get('/chatRoom/byUserId/:otherUserId', isAuth, expressAsyncHandler(as
     }
 
 
-}))
+}));
+
+
+// 채팅 제목 chatName 바꿈
+chatRouter.put('/changeChatName/:chatRoomId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    const chatRoomId = req.params.chatRoomId;
+    const chatName = req.body;
+
+    const chat = await Chat.findByIdAndUpdate(chatRoomId, chatName);
+    const updatedChat = await Chat.findOne({ _id: chatRoomId });
+    if (chat) {
+        // console.log('chat: ', chat)
+        // console.log('updatedChat', updatedChat)
+        res.status(200).send(updatedChat);
+    } else {
+        console.log("Can not update chat room name .. ")
+        //Check if chat id is really user id
+    }
+}));
 
 
 export default chatRouter;

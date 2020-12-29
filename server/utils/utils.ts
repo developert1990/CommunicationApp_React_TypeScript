@@ -27,11 +27,22 @@ export interface decodeType {
 // 계정으로 접속 햇을 때 API를 사용하기 위해 verify 하는 middleware.
 export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) => {
     const authorization = req.headers.authorization;
-    console.log('쿠키확인', req.headers.cookie)
-    console.log('토큰확인', req.headers.cookie?.split("=")[2]);
-    console.log('어또라이제이션: ', authorization);
+    // console.log('쿠키확인', req.headers.cookie)
+    // const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
 
-    const token = req.headers.cookie?.split("=")[2];
+    const extractToken = req.headers.cookie?.split(";").reduce((a, c) => {
+        let stringToken = "";
+        if (c.includes("my-token")) {
+            stringToken = c;
+        }
+        return stringToken;
+    }, "");
+
+    const token = extractToken?.slice(10)
+    // console.log('tokentKeyVal?.slice(8):  ', tokentKeyVal?.slice(8))
+    // console.log('토큰확인', req.headers.cookie?.split("=")[2]);
+    // console.log('어또라이제이션: ', authorization);
+
     if (token) {
         // const token = authorization.slice(5, authorization.length); // Hong XXXXXXX  : Hong하고 띄워쓰기 까지 포함한 5개 글자 이후가 token이라서 이렇게 해줌
         jwt.verify(token, process.env.JWT_SECRET as string, (err, decode) => {
