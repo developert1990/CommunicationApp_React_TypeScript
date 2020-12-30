@@ -12,7 +12,7 @@ export const CheckValidChatRoute: React.FC<PrivateCustomRoutePropsType> = ({ com
     const { signinInfo } = signinInfoStore;
 
     const location = useLocation();
-    console.log('location.state: ', location.state)
+    // console.log('location.state: ', location.state)
 
     return (
         <Route

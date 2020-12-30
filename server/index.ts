@@ -66,7 +66,7 @@ app.use(session({
         client: redisClient,
         // ttl: 260                  // ttl: 언제 Redis DB에서 세션을 사라지게할지에 대한 만료 시간.
     }),
-    cookie: { maxAge: 1000 * 60 * 60, httpOnly: true, }
+    cookie: { maxAge: 6000 * 60 * 60, httpOnly: true, }
 }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {

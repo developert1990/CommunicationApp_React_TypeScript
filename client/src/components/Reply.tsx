@@ -86,7 +86,7 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
                         pageData &&
                         pageData.map((reply) => {
                             return (
-                                <div className="each__reply">
+                                <div className="each__reply" key={reply._id}>
                                     <div className="top__reply">
                                         <div className="userImageContainer__reply">
                                             <img src={`${API_BASE}/uploads/images/${reply.repliedBy.profilePic}`} alt="profile" />

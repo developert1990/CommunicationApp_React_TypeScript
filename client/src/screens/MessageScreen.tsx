@@ -74,7 +74,16 @@ export const MessageScreen = () => {
                         <div>
                             {
                                 chatListInfo.map((chat) => {
-                                    const latestMessage = "This is the latest message";
+                                    const getLatestMessage = () => {
+                                        if (chat.latestMessage && chat.latestMessage !== null) {
+                                            const sender = chat.latestMessage.sender;
+                                            const latestMessageSection = `${sender.firstName} ${sender.lastName}: ${chat.latestMessage.content}`
+                                            return latestMessageSection;
+                                        } else {
+                                            return "No message"
+                                        }
+                                    }
+
                                     return (
                                         <Link to={{
                                             pathname: `/message/chatRoom/${chat._id}`,
@@ -82,8 +91,8 @@ export const MessageScreen = () => {
                                         }} className="resultlistitem" key={chat._id}>
                                             {getChatImage(chat)}
                                             <div className="resultsDetailscontainer ellipsis">
-                                                <span className="heading ellipsis">{getChatName(chat)}</span>
-                                                <span className="subText ellipsis">{latestMessage}</span>
+                                                <span className="heading ellipsis">{chat.chatName ? chat.chatName : getChatName(chat)}</span>
+                                                <span className="subText ellipsis">{getLatestMessage()}</span>
                                             </div>
                                         </Link>
                                     )

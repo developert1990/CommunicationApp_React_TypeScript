@@ -1,16 +1,32 @@
 import { SigninType } from './userReducer';
-import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET, SELECTED_CHAT_REQUEST, SELECTED_CHAT_SUCCESS, SELECTED_CHAT_RESET, SELECTED_CHAT_FAIL } from './../constants/chatConstants';
+import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET, SELECTED_CHAT_REQUEST, SELECTED_CHAT_SUCCESS, SELECTED_CHAT_RESET, SELECTED_CHAT_FAIL, SEND_MESSAGE_REQUEST, SEND_MESSAGE_SUCCESS, SEND_MESSAGE_FAIL, GET_MESSAGES_REQUEST, GET_MESSAGES_SUCCESS, GET_MESSAGES_FAIL, GET_MESSAGES_RESET } from './../constants/chatConstants';
 import { chatListActionType } from './../actions/types.d';
+
+
+
+export interface ChatMessageType extends Document {
+    _id: string;
+    sender: SigninType;
+    content: string;
+    chat: ChatType;
+    readBy: SigninType[];
+    createdAt: string;
+
+}
 
 export interface ChatType {
     chatName: string;
     createdAt: string;
     isGroupChat: boolean;
-    lastestMessage: string[];
+    latestMessage: ChatMessageType;
     updatedAt: string;
     users: SigninType[];
     _id: string;
 }
+
+
+
+
 
 export interface chatListInitialStateType {
     error: string;
@@ -59,6 +75,69 @@ export const selectedChatReducer = (state = selectedChatInitialState, action: ch
         case SELECTED_CHAT_FAIL:
             return { loading: false, error: action.payload };
         case SELECTED_CHAT_RESET:
+            return {};
+        default:
+            return state;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+export interface sendChatMessageInitialStateType {
+    error: string;
+    loading: boolean;
+    messages: ChatMessageType | undefined;
+}
+
+export const sendChatMessageInitialState: sendChatMessageInitialStateType = {
+    error: '',
+    loading: false,
+    messages: undefined
+}
+
+export const sendChatMessageReducer = (state = sendChatMessageInitialState, action: chatListActionType) => {
+    switch (action.type) {
+        case SEND_MESSAGE_REQUEST:
+            return { loading: true }
+        case SEND_MESSAGE_SUCCESS:
+            return { loading: false, messages: action.payload };
+        case SEND_MESSAGE_FAIL:
+            return { loading: false, error: action.payload };
+        default:
+            return state;
+    }
+}
+
+
+
+export interface getChatMessagesInitialStateType {
+    error: string;
+    loading: boolean;
+    messages: ChatMessageType[];
+}
+
+export const getChatMessagesInitialState: getChatMessagesInitialStateType = {
+    error: '',
+    loading: false,
+    messages: [],
+}
+
+export const getChatMessagesReducer = (state = getChatMessagesInitialState, action: chatListActionType) => {
+    switch (action.type) {
+        case GET_MESSAGES_REQUEST:
+            return { loading: true };
+        case GET_MESSAGES_SUCCESS:
+            return { loading: false, messages: action.payload };
+        case GET_MESSAGES_FAIL:
+            return { loading: false, error: action.payload };
+        case GET_MESSAGES_RESET:
             return {};
         default:
             return state;

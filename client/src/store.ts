@@ -1,4 +1,4 @@
-import { chatListInitialStateType, chatListinitialState, chatListReducer, selectedChatInitialStateType, selectedChatInitialState, selectedChatReducer } from './reducers/chatReducer';
+import { chatListInitialStateType, chatListinitialState, chatListReducer, selectedChatInitialStateType, selectedChatInitialState, selectedChatReducer, sendChatMessageInitialStateType, sendChatMessageInitialState, sendChatMessageReducer, getChatMessagesInitialStateType, getChatMessagesInitialState, getChatMessagesReducer } from './reducers/chatReducer';
 import { searchPostInitialStateType, searchPostInitialState, searchPostReducer, searchUsersInitialStateType, searchUsersInitialState, searchUsersReducer } from './reducers/searchReducer';
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
 import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer, allPostListInitialStateType, allPostListInitialState, allPostListReducer } from './reducers/postReducer';
@@ -24,6 +24,8 @@ export interface initialAppStateType {
     searchUsersStore: searchUsersInitialStateType,
     chatListStore: chatListInitialStateType,
     selectedChatStore: selectedChatInitialStateType,
+    sendChatMessageStore: sendChatMessageInitialStateType,
+    getChatMessagesStore: getChatMessagesInitialStateType,
 }
 
 export const initialAppState: initialAppStateType = {
@@ -41,6 +43,8 @@ export const initialAppState: initialAppStateType = {
     searchUsersStore: searchUsersInitialState,
     chatListStore: chatListinitialState,
     selectedChatStore: selectedChatInitialState,
+    sendChatMessageStore: sendChatMessageInitialState,
+    getChatMessagesStore: getChatMessagesInitialState,
 }
 
 export const reducer = combineReducers({
@@ -58,6 +62,8 @@ export const reducer = combineReducers({
     searchUsersStore: searchUsersReducer,
     chatListStore: chatListReducer,
     selectedChatStore: selectedChatReducer,
+    sendChatMessageStore: sendChatMessageReducer,
+    getChatMessagesStore: getChatMessagesReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));
