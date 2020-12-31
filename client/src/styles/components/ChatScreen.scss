@@ -1,4 +1,4 @@
-.chatPageContainer{
+.chatPageContainer {
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -6,14 +6,14 @@
     flex-basis: 0; //  이렇게 설정하고 posts.scss 에 mainContentContainer 여기에 overflow를 hidden으로 주면 내부만 스크롤됨
 }
 
-.chatTitleBarContainer{
+.chatTitleBarContainer {
     border-bottom: 1px solid $borderColor;
     display: flex;
     align-items: center;
     padding: $spacing;
 }
 
-#chatName{
+#chatName {
     width: 100%;
     border: 1px solid transparent;
     padding: 0 5px;
@@ -22,18 +22,18 @@
 
 
 
-.editChatName:hover .chatNameBtn{
+.editChatName:hover .chatNameBtn {
     color: red;
     font-size: 20px;
 }
 
-.chatContainer{
+.chatContainer {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: hidden;
 
-    .chatMessages{
+    .chatMessages {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -41,27 +41,46 @@
         overflow-y: auto;
     }
 
-    .footer{
+    .typingDots img {
+        background-color: #f1f0f0;
+        padding: 6px 12px;
+        border-radius: 18px;
+        font-size: 14px;
+        height: 35px;
+    }
+
+    .typingDots{
+        padding: 0 $spacing;
+        display: none;
+    }
+    .show{
+        display: block;
+    }
+ 
+
+    .footer {
         display: flex;
         padding: $spacing;
         flex-shrink: 0px;
 
-        textarea{
+        textarea {
             flex: 1;
             resize: none;
-            background-color: rgba(0,0,0,0.05);
+            background-color: rgba(0, 0, 0, 0.05);
             border-radius: 18px;
             border: none;
             padding: 8px 12px;
             height: 80px;
             line-height: 20px;
         }
-        .inActive{
+
+        .inActive {
             background-color: transparent;
             color: $redLight;
             font-size: 24px;
         }
-        .active{
+
+        .active {
             background-color: transparent;
             color: red;
             font-size: 24px;
@@ -69,7 +88,7 @@
     }
 }
 
-#chatNameTextbox{
+#chatNameTextbox {
     width: 100%;
     border: 0;
     border-bottom: 1px solid $borderColor;

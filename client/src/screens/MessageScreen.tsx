@@ -8,6 +8,16 @@ import { ChatType } from '../reducers/chatReducer';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import { API_BASE } from '../config';
+import { io, Socket } from 'socket.io-client';
+
+// navbar에서 message 버튼 클릭하고 들어오면 소켓이 연결된다 이 socket을 chatScreen에서 import를 해서 사용한다.
+export const socket: Socket = io("http://localhost:9003");
+
+
+socket.on("connected", () => {
+
+})
+
 
 
 export const getChatImage = (chat: ChatType) => {
@@ -30,7 +40,6 @@ export const getChatImage = (chat: ChatType) => {
 
 
 export const MessageScreen = () => {
-
     const chatListStore = useSelector((state: initialAppStateType) => state.chatListStore);
     const { chatList: chatListInfo, error, loading } = chatListStore;
     // console.log('chatListInfo: ', chatListInfo);

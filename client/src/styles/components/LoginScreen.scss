@@ -1,3 +1,5 @@
+@import "variables.scss";
+
 .wrapper{
         display: flex;
         justify-content: center;
@@ -5,7 +7,7 @@
         align-items: center;
         padding-top: 20px;
         height: 100vh;
-    background-color: #0099ff;
+    background-color: $redLight;
     width: 100%;
 }
 
@@ -44,9 +46,9 @@ button[type="submit"]{
 }
 
 .disable{
-    background-color: #3baaf5;
+    background-color: $redLight;
 }
 
 .able{
-    background-color: #0099ff;
+    background-color: #ff0000;
 }

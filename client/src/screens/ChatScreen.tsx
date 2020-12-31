@@ -1,7 +1,7 @@
 import Axios from "axios";
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { Button, Modal } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from "react-router-dom";
 import { getChatMessages, selectedChat, sendChatMessage } from '../actions/chatAction';
 import { API_BASE } from "../config";
@@ -10,6 +10,9 @@ import { SigninType } from "../reducers/userReducer";
 import { initialAppStateType } from '../store';
 import { getChatImage } from "./MessageScreen";
 import { MessageContents } from '../components/MessageContents';
+import { io, Socket } from 'socket.io-client';
+import { socket } from './MessageScreen';
+
 
 
 interface locationType extends Location {
@@ -30,14 +33,7 @@ export const ChatScreen = () => {
     const [msgcontents, setMsgContents] = useState<string>("");
     const chatRoomId = location.pathname.split("/")[3];
     const typedLocation = location as locationType;
-    // console.log("chatRoomId", chatRoomId);
-    // console.log("location.state", location.state);
 
-    // console.log(locationState.state.chatListInfo);
-
-
-
-    // const chatList = location.state.chatList;
 
     // 내가 로그인한 정보
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
@@ -52,21 +48,7 @@ export const ChatScreen = () => {
     const getChatMessagesStore = useSelector((state: initialAppStateType) => state.getChatMessagesStore);
     const { messages: getChatMessagesData } = getChatMessagesStore;
 
-    console.log('getChatMessagesData: ', getChatMessagesData)
 
-    // const chatArr: ChatMessageType[] = [];
-
-    // if (getChatMessagesData) {
-    //     getChatMessagesData.map((data) => chatArr.push(data));
-    // }
-
-    // console.log('messages: ', messages)
-
-    // if (messages) {
-    //     chatArr.push(messages);
-    // }
-
-    // console.log('chatArr: ', chatArr)
 
 
     // Bootstrap modal -------------------------------------------
@@ -104,12 +86,13 @@ export const ChatScreen = () => {
         }
         console.log("서밋: ", msgcontents)
         dispatch(sendChatMessage(msgcontents, chatRoomId));
-        dispatch(getChatMessages(chatRoomId))
+        // dispatch(getChatMessages(chatRoomId))
         setMsgContents("");
     }
 
     const handleSendMsgPress = (event: KeyboardEvent) => {
         event.preventDefault();
+
         if (msgcontents.trim() === "") {
             console.log("서밋안됨: ", msgcontents)
             setMsgContents("");
@@ -117,9 +100,45 @@ export const ChatScreen = () => {
         }
         console.log("서밋: ", msgcontents)
         dispatch(sendChatMessage(msgcontents, chatRoomId));
+        updateSent();
         setMsgContents("");
     }
 
+    const handleTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        updateTyping();
+        setMsgContents(e.target.value)
+    }
+    const typingDotsRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        console.log("소켓 유즈이펙트")
+        socket.emit("join room", chatRoomId);
+        socket.on("typing", () => typingDotsRef.current?.classList.add("show"))
+        socket.on("send message", () => typingDotsRef.current?.classList.remove("show"))
+
+        // return () => {
+        //     socket.emit("disconnect");
+        //     socket.off();
+        // }
+
+    }, [chatRoomId])
+
+
+    socket.emit("setup", signinInfo)
+
+
+    // 만약 채팅 type 하는곳을 다 지우면 dots 가 사라진다.
+    if (msgcontents === "") {
+        socket.emit("send message", chatRoomId);
+    }
+
+    const updateTyping = () => {
+
+        socket.emit("typing", chatRoomId)
+    }
+    const updateSent = () => {
+        socket.emit("send message", chatRoomId);
+    }
 
 
     useEffect(() => {
@@ -161,7 +180,7 @@ export const ChatScreen = () => {
     const chatMessagesRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
-        console.log("한번실행됨: ", chatMessagesRef)
+        // console.log("한번실행됨: ", chatMessagesRef)
         if (chatMessagesRef && chatMessagesRef.current) {
             const pick = chatMessagesRef.current;
             console.log('pick', pick);
@@ -169,6 +188,17 @@ export const ChatScreen = () => {
             chatMessagesRef.current!.scrollTop = chatMessagesRef.current!.scrollHeight;
         }
     }, [messages, getChatMessagesData])
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -218,12 +248,17 @@ export const ChatScreen = () => {
                                 <ul className="chatMessages" ref={chatMessagesRef}>
                                     <MessageContents messages={messages} signinInfo={signinInfo} getChatMessagesData={getChatMessagesData} />
                                 </ul>
+
+                                <div className="typingDots" ref={typingDotsRef} >
+                                    <img src="/images/dots.gif" alt="typing dots" />
+                                </div>
+
                                 <div className="footer">
                                     <textarea
                                         name="messageInput"
                                         placeholder="Type a message..."
                                         value={msgcontents}
-                                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setMsgContents(e.target.value)}
+                                        onChange={handleTextAreaChange}
                                         onKeyPress={(event) =>
                                             event.key === "Enter" && !event.shiftKey ? handleSendMsgPress(event) : null
                                         }

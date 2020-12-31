@@ -1,4 +1,5 @@
-import { CustomRequest } from './types.d';
+import { UserSchemaType } from './models/userModel';
+import http from 'http';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import userRouter from './routes/userRouter';
@@ -12,12 +13,24 @@ import searchRouter from './routes/searchRouter';
 import chatRouter from './routes/chatRouter';
 import redis from 'redis';
 import connectRedis from 'connect-redis';
-
+import { Server, Socket } from "socket.io";
+import chatSocketRouter from './routes/chatSocketRouter';
 
 dotenv.config();
 
 const app = express();
-const PORT = 9003;
+export const PORT = 9003;
+export const server = http.createServer(app);
+
+
+// server connect
+server.listen(PORT, () => {
+    console.log("App is listening on port 9003")
+});
+
+
+
+
 
 // mongoDB connect
 mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost/Chat-app', {
@@ -40,6 +53,8 @@ const corsOption = {
 app.use(cors<cors.CorsRequest>(corsOption));
 app.use(express.json());
 app.use(express.static("public"));
+
+
 
 
 //redis 스토어를 세션과 연결시킴
@@ -69,12 +84,12 @@ app.use(session({
     cookie: { maxAge: 6000 * 60 * 60, httpOnly: true, }
 }));
 
+
+
 app.use((req: Request, res: Response, next: NextFunction) => {
     console.log('req.session.id 아이디 있는지 검사: ', req.session.id)
     next();
 })
-
-
 
 
 // register, signin
@@ -99,6 +114,34 @@ app.get('/', (req: Request, res: Response) => {
     res.send(`server is running on ${PORT}`)
 });
 
-app.listen(PORT, () => {
-    console.log("App is listening on port 9003")
-});
+
+// 이렇게 해주면 cors 에러 안생김
+const io = new Server(server, {
+    cors: {
+        origin: '*'
+    }
+})
+
+
+io.on("connection", (socket: Socket) => {
+    console.log('We have a new connection!!!');
+
+    socket.on("setup", (userData: UserSchemaType) => {
+        console.log('소켓 체크: ', userData.firstName)
+        socket.join(userData._id);
+        socket.emit("connected")
+    });
+
+
+    socket.on("join room", (room) => socket.join(room));
+    socket.on("typing", (room) => socket.in(room).emit("typing"));
+    socket.on("send message", (room) => socket.in(room).emit("send message"))
+
+})
+
+
+
+
+// // chatting socket io
+// app.use(chatSocketRouter);
+
