@@ -11,9 +11,8 @@ import { initialAppStateType } from '../store';
 import { getChatImage } from "./MessageScreen";
 import { MessageContents } from '../components/MessageContents';
 import { io, Socket } from 'socket.io-client';
-import { socket } from './MessageScreen';
 
-
+let socket: Socket;
 
 interface locationType extends Location {
     state: {
@@ -48,7 +47,7 @@ export const ChatScreen = () => {
     const getChatMessagesStore = useSelector((state: initialAppStateType) => state.getChatMessagesStore);
     const { messages: getChatMessagesData } = getChatMessagesStore;
 
-
+    const [chatArr, setChatArr] = useState<ChatMessageType[]>([]);
 
 
     // Bootstrap modal -------------------------------------------
@@ -100,8 +99,8 @@ export const ChatScreen = () => {
         }
         console.log("서밋: ", msgcontents)
         dispatch(sendChatMessage(msgcontents, chatRoomId));
-        updateSent();
-        setMsgContents("");
+        // updateSent();
+        // setMsgContents("");
     }
 
     const handleTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -114,7 +113,10 @@ export const ChatScreen = () => {
         console.log("소켓 유즈이펙트")
         socket.emit("join room", chatRoomId);
         socket.on("typing", () => typingDotsRef.current?.classList.add("show"))
-        socket.on("send message", () => typingDotsRef.current?.classList.remove("show"))
+        // socket.on("receive message", (newMessage: ChatMessageType) => {
+        //     typingDotsRef.current?.classList.remove("show")
+        //     console.log('newMessage: ', newMessage)
+        // })
 
         // return () => {
         //     socket.emit("disconnect");
@@ -133,13 +135,22 @@ export const ChatScreen = () => {
     }
 
     const updateTyping = () => {
-
         socket.emit("typing", chatRoomId)
     }
-    const updateSent = () => {
-        socket.emit("send message", chatRoomId);
-    }
 
+
+
+    useEffect(() => {
+        console.log('messages 보내졋음: ', messages)
+        socket.emit("send message", chatRoomId, messages);
+        socket.on("receive message", (newMessage: ChatMessageType) => {
+            console.log('newMessage: ', newMessage);
+            typingDotsRef.current?.classList.remove("show");
+            if (newMessage) {
+                setChatArr((chatArr) => [...chatArr, newMessage]);
+            }
+        })
+    }, [messages])
 
     useEffect(() => {
         if (focusRef && focusRef.current) {
@@ -187,6 +198,11 @@ export const ChatScreen = () => {
             // chatMessagesRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
             chatMessagesRef.current!.scrollTop = chatMessagesRef.current!.scrollHeight;
         }
+
+        if (getChatMessagesData) {
+            setChatArr(getChatMessagesData);
+        }
+
     }, [messages, getChatMessagesData])
 
 
@@ -195,6 +211,15 @@ export const ChatScreen = () => {
 
 
 
+    useEffect(() => {
+        // navbar에서 message 버튼 클릭하고 들어오면 소켓이 연결된다 이 socket을 chatScreen에서 import를 해서 사용한다.
+        socket = io("http://localhost:9003");
+
+
+        // socket.on("connected", () => {
+        //     console.log("소켓 커넥티드")
+        // });
+    }, [])
 
 
 
@@ -246,7 +271,7 @@ export const ChatScreen = () => {
                         <div className="mainContentContainer">
                             <div className="chatContainer">
                                 <ul className="chatMessages" ref={chatMessagesRef}>
-                                    <MessageContents messages={messages} signinInfo={signinInfo} getChatMessagesData={getChatMessagesData} />
+                                    <MessageContents messages={messages} signinInfo={signinInfo} chatArr={chatArr} />
                                 </ul>
 
                                 <div className="typingDots" ref={typingDotsRef} >

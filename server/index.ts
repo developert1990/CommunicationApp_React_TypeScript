@@ -1,3 +1,4 @@
+import { ChatMessageSchemaType } from './models/chatMessageModel';
 import { UserSchemaType } from './models/userModel';
 import http from 'http';
 import express, { Request, Response, NextFunction } from 'express';
@@ -126,16 +127,30 @@ const io = new Server(server, {
 io.on("connection", (socket: Socket) => {
     console.log('We have a new connection!!!');
 
-    socket.on("setup", (userData: UserSchemaType) => {
-        console.log('소켓 체크: ', userData.firstName)
-        socket.join(userData._id);
-        socket.emit("connected")
-    });
+    // socket.on("setup", (userData: UserSchemaType) => {
+    //     console.log('소켓 체크: ', userData.firstName)
+    //     socket.join(userData._id);
+    //     socket.emit("connected")
+    // });
 
 
     socket.on("join room", (room) => socket.join(room));
     socket.on("typing", (room) => socket.in(room).emit("typing"));
-    socket.on("send message", (room) => socket.in(room).emit("send message"))
+    socket.on("send message", (room, newMessage) => {
+        console.log('newMessage: ', newMessage)
+        socket.in(room).emit("receive message", newMessage)
+    });
+
+
+    // socket.on("new message", (newMessage: ChatMessageSchemaType) => {
+    //     const chat = newMessage.chat;
+    //     if (!chat.users) return console.log('Chat.users not defined!!!');
+
+    //     chat.users.map((user) => {
+    //         if (user._id === newMessage.sender._id) return;
+    //         socket.in(user._id).emit("message received", newMessage);
+    //     })
+    // })
 
 })
 

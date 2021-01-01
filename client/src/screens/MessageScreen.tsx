@@ -4,19 +4,13 @@ import { chatList } from '../actions/chatAction';
 import RateReviewOutlinedIcon from '@material-ui/icons/RateReviewOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { initialAppStateType } from '../store';
-import { ChatType } from '../reducers/chatReducer';
+import { ChatMessageType, ChatType } from '../reducers/chatReducer';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import { API_BASE } from '../config';
 import { io, Socket } from 'socket.io-client';
 
-// navbar에서 message 버튼 클릭하고 들어오면 소켓이 연결된다 이 socket을 chatScreen에서 import를 해서 사용한다.
-export const socket: Socket = io("http://localhost:9003");
 
-
-socket.on("connected", () => {
-
-})
 
 
 

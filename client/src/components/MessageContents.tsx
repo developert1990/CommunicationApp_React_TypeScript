@@ -8,12 +8,13 @@ import { initialAppStateType } from '../store';
 export interface MessagecontentsPropsType {
     messages: ChatMessageType | undefined;
     signinInfo: SigninType;
-    getChatMessagesData: ChatMessageType[];
+    chatArr: ChatMessageType[];
 }
 
-export const MessageContents: React.FC<MessagecontentsPropsType> = ({ messages, signinInfo, getChatMessagesData }) => {
+export const MessageContents: React.FC<MessagecontentsPropsType> = ({ messages, signinInfo, chatArr }) => {
 
 
+    console.log('chatArr: =>>>>> ', chatArr)
 
 
     const dispatch = useDispatch();
@@ -31,8 +32,8 @@ export const MessageContents: React.FC<MessagecontentsPropsType> = ({ messages, 
     return (
         <>
             {// <div>채팅</div>
-                getChatMessagesData &&
-                getChatMessagesData.map((message) => {
+                chatArr &&
+                chatArr.map((message) => {
 
 
                     return (
