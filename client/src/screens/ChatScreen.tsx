@@ -166,20 +166,14 @@ export const ChatScreen = () => {
     const chatMessagesRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
-        // console.log("한번실행됨: ", chatMessagesRef)
-        if (chatMessagesRef && chatMessagesRef.current) {
-            const pick = chatMessagesRef.current;
-            console.log('pick', pick);
-            chatMessagesRef.current!.scrollTop = chatMessagesRef.current!.scrollHeight;
-        }
-
+        console.log("한번실행됨: ", chatMessagesRef)
         if (getChatMessagesData) {
             setChatArr(getChatMessagesData);
         }
 
-    }, [message, getChatMessagesData])
+    }, [getChatMessagesData])
 
-
+    console.log('getChatMessagesData: ', getChatMessagesData)
 
 
 
