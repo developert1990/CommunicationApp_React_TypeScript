@@ -42,7 +42,7 @@ export const ChatScreen = () => {
     const { chatData, error, loading } = selectedChatStore;
 
     const sendChatMessageStore = useSelector((state: initialAppStateType) => state.sendChatMessageStore);
-    const { messages } = sendChatMessageStore;
+    const { message } = sendChatMessageStore;
 
     const getChatMessagesStore = useSelector((state: initialAppStateType) => state.getChatMessagesStore);
     const { messages: getChatMessagesData } = getChatMessagesStore;
@@ -78,20 +78,16 @@ export const ChatScreen = () => {
 
     const handleSendMsg = () => {
         console.log("submit");
-        if (msgcontents.trim() === "") {
-            console.log("서밋안됨: ", msgcontents)
-            setMsgContents("");
-            return;
-        }
-        console.log("서밋: ", msgcontents)
-        dispatch(sendChatMessage(msgcontents, chatRoomId));
-        // dispatch(getChatMessages(chatRoomId))
-        setMsgContents("");
+        submitFunc();
     }
 
     const handleSendMsgPress = (event: KeyboardEvent) => {
         event.preventDefault();
+        submitFunc();
+    }
 
+
+    const submitFunc = () => {
         if (msgcontents.trim() === "") {
             console.log("서밋안됨: ", msgcontents)
             setMsgContents("");
@@ -99,58 +95,40 @@ export const ChatScreen = () => {
         }
         console.log("서밋: ", msgcontents)
         dispatch(sendChatMessage(msgcontents, chatRoomId));
-        // updateSent();
-        // setMsgContents("");
+        setMsgContents("");
     }
+
+
 
     const handleTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        updateTyping();
+
         setMsgContents(e.target.value)
     }
-    const typingDotsRef = useRef<HTMLImageElement>(null);
-
-    useEffect(() => {
-        console.log("소켓 유즈이펙트")
-        socket.emit("join room", chatRoomId);
-        socket.on("typing", () => typingDotsRef.current?.classList.add("show"))
-        // socket.on("receive message", (newMessage: ChatMessageType) => {
-        //     typingDotsRef.current?.classList.remove("show")
-        //     console.log('newMessage: ', newMessage)
-        // })
-
-        // return () => {
-        //     socket.emit("disconnect");
-        //     socket.off();
-        // }
-
-    }, [chatRoomId])
 
 
-    socket.emit("setup", signinInfo)
 
+    const typingDotsRef = useRef<HTMLDivElement>(null);
 
-    // 만약 채팅 type 하는곳을 다 지우면 dots 가 사라진다.
-    if (msgcontents === "") {
-        socket.emit("send message", chatRoomId);
-    }
-
-    const updateTyping = () => {
-        socket.emit("typing", chatRoomId)
-    }
 
 
 
     useEffect(() => {
-        console.log('messages 보내졋음: ', messages)
-        socket.emit("send message", chatRoomId, messages);
-        socket.on("receive message", (newMessage: ChatMessageType) => {
-            console.log('newMessage: ', newMessage);
-            typingDotsRef.current?.classList.remove("show");
-            if (newMessage) {
-                setChatArr((chatArr) => [...chatArr, newMessage]);
+        if (message) {
+            console.log('message 보내졋음: ', message)
+            socket.emit("sendMessage", chatRoomId, message);
+
+            if (chatMessagesRef && chatMessagesRef.current) {
+                const pick = chatMessagesRef.current;
+                console.log('pick', pick);
+                chatMessagesRef.current!.scrollTop = chatMessagesRef.current!.scrollHeight;
             }
-        })
-    }, [messages])
+
+        }
+
+    }, [chatRoomId, message])
+
+
+
 
     useEffect(() => {
         if (focusRef && focusRef.current) {
@@ -165,9 +143,6 @@ export const ChatScreen = () => {
                     console.log("처음원래 있는 채팅창")
                     dispatch(selectedChat(chatRoomId))
                     dispatch(getChatMessages(chatRoomId))
-
-
-
                 } else {
                     const otherUserId = typedLocation.state?.userInfoData?._id;
                     console.log("1:1채팅 열기위해 들어옴")
@@ -195,7 +170,6 @@ export const ChatScreen = () => {
         if (chatMessagesRef && chatMessagesRef.current) {
             const pick = chatMessagesRef.current;
             console.log('pick', pick);
-            // chatMessagesRef.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
             chatMessagesRef.current!.scrollTop = chatMessagesRef.current!.scrollHeight;
         }
 
@@ -203,7 +177,7 @@ export const ChatScreen = () => {
             setChatArr(getChatMessagesData);
         }
 
-    }, [messages, getChatMessagesData])
+    }, [message, getChatMessagesData])
 
 
 
@@ -214,14 +188,40 @@ export const ChatScreen = () => {
     useEffect(() => {
         // navbar에서 message 버튼 클릭하고 들어오면 소켓이 연결된다 이 socket을 chatScreen에서 import를 해서 사용한다.
         socket = io("http://localhost:9003");
+        socket.emit("join", chatRoomId, (error: Error) => {
+            if (error) {
+                alert(error);
+            }
+        })
+
+        socket.on("typing", () => typingDotsRef.current?.classList.add("show"))
+
+        socket.on("noContents", () => typingDotsRef.current?.classList.remove("show"))
+
+        socket.on("receive message", (newMessage: ChatMessageType) => {
+            console.log('newMessage: ', newMessage);
+            typingDotsRef.current?.classList.remove("show");
+            if (newMessage) {
+                setChatArr((chatArr) => [...chatArr, newMessage]);
+            }
+        })
 
 
-        // socket.on("connected", () => {
-        //     console.log("소켓 커넥티드")
-        // });
-    }, [])
+        return () => {
+            socket.emit('disconnected');
+            socket.off();
+        }
+    }, [chatRoomId])
 
 
+    // Typing Dots...
+    useEffect(() => {
+        if (msgcontents.length > 0) {
+            socket.emit("typing", chatRoomId);
+        } else {
+            socket.emit("noContents", chatRoomId);
+        }
+    }, [chatRoomId, msgcontents])
 
 
 
@@ -271,7 +271,7 @@ export const ChatScreen = () => {
                         <div className="mainContentContainer">
                             <div className="chatContainer">
                                 <ul className="chatMessages" ref={chatMessagesRef}>
-                                    <MessageContents messages={messages} signinInfo={signinInfo} chatArr={chatArr} />
+                                    <MessageContents signinInfo={signinInfo} chatArr={chatArr} />
                                 </ul>
 
                                 <div className="typingDots" ref={typingDotsRef} >

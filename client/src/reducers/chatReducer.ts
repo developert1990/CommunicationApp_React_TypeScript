@@ -93,13 +93,13 @@ export const selectedChatReducer = (state = selectedChatInitialState, action: ch
 export interface sendChatMessageInitialStateType {
     error: string;
     loading: boolean;
-    messages: ChatMessageType | undefined;
+    message: ChatMessageType | undefined;
 }
 
 export const sendChatMessageInitialState: sendChatMessageInitialStateType = {
     error: '',
     loading: false,
-    messages: undefined
+    message: undefined
 }
 
 export const sendChatMessageReducer = (state = sendChatMessageInitialState, action: chatListActionType) => {
@@ -107,7 +107,7 @@ export const sendChatMessageReducer = (state = sendChatMessageInitialState, acti
         case SEND_MESSAGE_REQUEST:
             return { loading: true }
         case SEND_MESSAGE_SUCCESS:
-            return { loading: false, messages: action.payload };
+            return { loading: false, message: action.payload };
         case SEND_MESSAGE_FAIL:
             return { loading: false, error: action.payload };
         default:

@@ -6,18 +6,16 @@ import { SigninType } from '../reducers/userReducer';
 import { initialAppStateType } from '../store';
 
 export interface MessagecontentsPropsType {
-    messages: ChatMessageType | undefined;
     signinInfo: SigninType;
     chatArr: ChatMessageType[];
 }
 
-export const MessageContents: React.FC<MessagecontentsPropsType> = ({ messages, signinInfo, chatArr }) => {
+export const MessageContents: React.FC<MessagecontentsPropsType> = ({ signinInfo, chatArr }) => {
 
 
     console.log('chatArr: =>>>>> ', chatArr)
 
 
-    const dispatch = useDispatch();
 
 
 

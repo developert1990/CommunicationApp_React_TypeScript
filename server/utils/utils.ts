@@ -40,8 +40,8 @@ export const isAuth = (req: CustomRequest, res: Response, next: NextFunction) =>
 
     const token = extractToken?.slice(10)
     // console.log('tokentKeyVal?.slice(8):  ', tokentKeyVal?.slice(8))
-    console.log('extractToken: ', extractToken)
-    console.log(' 토큰확인', req.headers.cookie?.split(";"));
+    // console.log('extractToken: ', extractToken)
+    // console.log(' 토큰확인', req.headers.cookie?.split(";"));
     // console.log('어또라이제이션: ', authorization);
 
     if (token) {
