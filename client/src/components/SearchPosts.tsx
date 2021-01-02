@@ -5,6 +5,7 @@ import { postDataType } from '../reducers/postReducer';
 import { Posts } from './Posts';
 
 import Alert from '@material-ui/lab/Alert';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface SearchPostsPropsType {
     posts: postDataType[];
@@ -23,7 +24,7 @@ export const SearchPosts: React.FC<SearchPostsPropsType> = ({ posts, errorPosts,
     return (
         <div>
             {
-                loadingPosts ? "Loading..." :
+                loadingPosts ? <LoadingSpinner /> :
                     errorPosts ? <Alert severity="warning">There is no posts.. Search again!!</Alert> :
                         posts ?
                             posts.map((post) => {

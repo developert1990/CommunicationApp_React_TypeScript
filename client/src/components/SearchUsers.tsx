@@ -6,6 +6,7 @@ import { SigninType } from '../reducers/userReducer';
 import Alert from '@material-ui/lab/Alert';
 import { useDispatch } from 'react-redux';
 import { SEARCH_USERS_RESET } from '../constants/searchConstants';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface SearchUsersPropsType {
     users: SigninType[];
@@ -25,7 +26,7 @@ export const SearchUsers: React.FC<SearchUsersPropsType> = ({ users, errorUsers,
     return (
         <div>
             {
-                loadingUsers ? "Loading..." :
+                loadingUsers ? <LoadingSpinner /> :
                     errorUsers ? <Alert severity="warning">There is no posts.. Search again!!</Alert> :
                         users ?
                             users.map((user) => {

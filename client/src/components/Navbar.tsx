@@ -3,6 +3,7 @@ import Axios from 'axios'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
+import { getUnreadMessages } from '../actions/chatAction'
 import { getUnReadNotification } from '../actions/notificationAction'
 import { signout } from '../actions/userActions'
 import { API_BASE } from '../config'
@@ -16,7 +17,12 @@ export const Navbar = () => {
     const unReadNotificationsStore = useSelector((state: initialAppStateType) => state.unReadNotificationStore);
     const { notifications: unReadNotifications } = unReadNotificationsStore;
 
-    console.log('unReadNotifications: ', unReadNotifications)
+    const unReadMessagesStore = useSelector((state: initialAppStateType) => state.unReadMessagesStore);
+    const { messages: unReadMessages } = unReadMessagesStore;
+
+    // console.log('unReadNotifications: ', unReadNotifications)
+
+    console.log('unReadMessages: ', unReadMessages)
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -30,6 +36,7 @@ export const Navbar = () => {
 
     useEffect(() => {
         dispatch(getUnReadNotification());
+        dispatch(getUnreadMessages());
     }, [dispatch])
 
     return (

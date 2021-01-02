@@ -1,5 +1,5 @@
 import { notificationInitialState, notificationInitialStateType, notificationReducer, unReadNotificationInitialState, unReadNotificationReducer } from './reducers/notificationReducer';
-import { chatListInitialStateType, chatListinitialState, chatListReducer, selectedChatInitialStateType, selectedChatInitialState, selectedChatReducer, sendChatMessageInitialStateType, sendChatMessageInitialState, sendChatMessageReducer, getChatMessagesInitialStateType, getChatMessagesInitialState, getChatMessagesReducer } from './reducers/chatReducer';
+import { chatListInitialStateType, chatListinitialState, chatListReducer, selectedChatInitialStateType, selectedChatInitialState, selectedChatReducer, sendChatMessageInitialStateType, sendChatMessageInitialState, sendChatMessageReducer, getChatMessagesInitialStateType, getChatMessagesInitialState, getChatMessagesReducer, unRedMessagesInitialState, unReadMessagesReducer } from './reducers/chatReducer';
 import { searchPostInitialStateType, searchPostInitialState, searchPostReducer, searchUsersInitialStateType, searchUsersInitialState, searchUsersReducer } from './reducers/searchReducer';
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
 import { postTextInitalStateType, postTextInitialState, postTextReducer, postListInitialStateType, postListReducer, postListInitialState, postDeleteInitialStateType, postDeleteInitialState, postDeleteReducer, postListByOneUserInitialStateType, postListByOneUserInitialState, postListByOneUserReducer, allPostListInitialStateType, allPostListInitialState, allPostListReducer } from './reducers/postReducer';
@@ -29,6 +29,7 @@ export interface initialAppStateType {
     getChatMessagesStore: getChatMessagesInitialStateType,
     notificationStore: notificationInitialStateType,
     unReadNotificationStore: notificationInitialStateType,
+    unReadMessagesStore: getChatMessagesInitialStateType,
 }
 
 export const initialAppState: initialAppStateType = {
@@ -50,6 +51,7 @@ export const initialAppState: initialAppStateType = {
     getChatMessagesStore: getChatMessagesInitialState,
     notificationStore: notificationInitialState,
     unReadNotificationStore: unReadNotificationInitialState,
+    unReadMessagesStore: unRedMessagesInitialState,
 }
 
 export const reducer = combineReducers({
@@ -71,6 +73,7 @@ export const reducer = combineReducers({
     getChatMessagesStore: getChatMessagesReducer,
     notificationStore: notificationReducer,
     unReadNotificationStore: unReadNotificationReducer,
+    unReadMessagesStore: unReadMessagesReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

@@ -5,6 +5,7 @@ import { userDetail } from '../actions/userActions';
 import { Posts } from '../components/Posts';
 import { UserImage } from '../components/UserImage';
 import { initialAppStateType } from '../store';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 
 export const HomeScreen = () => {
@@ -64,7 +65,7 @@ export const HomeScreen = () => {
                 {
                     <div className="posts">
                         {error && "error 떳음"}
-                        {loading && "로딩중"}
+                        {loading && <LoadingSpinner />}
                         {
                             allList &&
                             allList.map((post) => {

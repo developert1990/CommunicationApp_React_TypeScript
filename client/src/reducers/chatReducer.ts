@@ -1,5 +1,5 @@
 import { SigninType } from './userReducer';
-import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET, SELECTED_CHAT_REQUEST, SELECTED_CHAT_SUCCESS, SELECTED_CHAT_RESET, SELECTED_CHAT_FAIL, SEND_MESSAGE_REQUEST, SEND_MESSAGE_SUCCESS, SEND_MESSAGE_FAIL, GET_MESSAGES_REQUEST, GET_MESSAGES_SUCCESS, GET_MESSAGES_FAIL, GET_MESSAGES_RESET } from './../constants/chatConstants';
+import { CHAT_LIST_REQUEST, CHAT_LIST_SUCCESS, CHAT_LIST_FAIL, CHAT_LIST_RESET, SELECTED_CHAT_REQUEST, SELECTED_CHAT_SUCCESS, SELECTED_CHAT_RESET, SELECTED_CHAT_FAIL, SEND_MESSAGE_REQUEST, SEND_MESSAGE_SUCCESS, SEND_MESSAGE_FAIL, GET_MESSAGES_REQUEST, GET_MESSAGES_SUCCESS, GET_MESSAGES_FAIL, GET_MESSAGES_RESET, GET_UNREAD_MESSAGES_REQUEST, GET_UNREAD_MESSAGES_SUCCESS, GET_UNREAD_MESSAGES_FAIL, GET_UNREAD_MESSAGES_RESET } from './../constants/chatConstants';
 import { chatListActionType } from './../actions/types.d';
 
 
@@ -88,8 +88,6 @@ export const selectedChatReducer = (state = selectedChatInitialState, action: ch
 
 
 
-
-
 export interface sendChatMessageInitialStateType {
     error: string;
     loading: boolean;
@@ -138,6 +136,30 @@ export const getChatMessagesReducer = (state = getChatMessagesInitialState, acti
         case GET_MESSAGES_FAIL:
             return { loading: false, error: action.payload };
         case GET_MESSAGES_RESET:
+            return {};
+        default:
+            return state;
+    }
+}
+
+
+
+
+export const unRedMessagesInitialState: getChatMessagesInitialStateType = {
+    error: '',
+    loading: false,
+    messages: [],
+}
+
+export const unReadMessagesReducer = (state = unRedMessagesInitialState, action: chatListActionType) => {
+    switch (action.type) {
+        case GET_UNREAD_MESSAGES_REQUEST:
+            return { loading: true };
+        case GET_UNREAD_MESSAGES_SUCCESS:
+            return { loading: false, chatList: action.payload };
+        case GET_UNREAD_MESSAGES_FAIL:
+            return { loading: false, error: action.payload };
+        case GET_UNREAD_MESSAGES_RESET:
             return {};
         default:
             return state;

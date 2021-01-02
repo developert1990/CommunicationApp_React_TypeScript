@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { getPostsByOneUser } from '../actions/postActions';
 import { SigninType } from '../reducers/userReducer';
 import { initialAppStateType } from '../store';
+import { LoadingSpinner } from './LoadingSpinner';
 import { Posts } from './Posts';
 
 export const ProfilePosts = () => {
@@ -24,7 +25,7 @@ export const ProfilePosts = () => {
     return (
         <div className="posts">
             {error && "error 떳음"}
-            {loading && "로딩중"}
+            {loading && <LoadingSpinner />}
             {
                 list &&
                 list.map((post) => {

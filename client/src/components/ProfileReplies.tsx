@@ -8,6 +8,7 @@ import { Reply } from './Reply';
 
 import ReplyAllIcon from '@material-ui/icons/ReplyAll';
 import Alert from '@material-ui/lab/Alert';
+import { LoadingSpinner } from './LoadingSpinner';
 
 export const ProfileReplies = () => {
 
@@ -35,30 +36,30 @@ export const ProfileReplies = () => {
 
     return (
         <div>
-            {error && "error"}
-            {loading && "loading"}
             {
-                list &&
-                list.map((post) => {
-                    return (
-                        <div className="profileReplies" key={post.createdAt}>
-                            <h3>Content</h3>
-                            <span>{post.content}</span>
-                            {
-                                post.replies.length !== 0 ? (
-                                    <>
-                                        <ReplyAllIcon />
-                                        <Reply post={post} signinInfo={signinInfo} updatedPostData={post} />
-                                    </>
-                                ) : (
-                                        <div className="reply__alert">
-                                            <Alert severity="warning">No Replies..</Alert>
-                                        </div>
-                                    )
-                            }
-                        </div>
-                    )
-                })
+                loading ? <LoadingSpinner /> :
+                    error ? <Alert severity="warning">There is no replies..</Alert> :
+                        list &&
+                        list.map((post) => {
+                            return (
+                                <div className="profileReplies" key={post.createdAt}>
+                                    <h3>Content</h3>
+                                    <span>{post.content}</span>
+                                    {
+                                        post.replies.length !== 0 ? (
+                                            <>
+                                                <ReplyAllIcon />
+                                                <Reply post={post} signinInfo={signinInfo} updatedPostData={post} />
+                                            </>
+                                        ) : (
+                                                <div className="reply__alert">
+                                                    <Alert severity="warning">No Replies..</Alert>
+                                                </div>
+                                            )
+                                    }
+                                </div>
+                            )
+                        })
             }
         </div>
     )

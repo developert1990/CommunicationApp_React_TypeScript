@@ -11,6 +11,8 @@ import { initialAppStateType } from '../store';
 import { getChatImage } from "./MessageScreen";
 import { MessageContents } from '../components/MessageContents';
 import { io, Socket } from 'socket.io-client';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import Alert from '@material-ui/lab/Alert';
 
 let socket: Socket;
 
@@ -224,78 +226,79 @@ export const ChatScreen = () => {
 
     return (
         <>
-            {loading && "loading"}
-            {error && error}
-            {chatData && (
-                <div className="mainSectionContainer col-10 col-md-8">
-                    <div className="titleContainer">
-                        <h1>Chat</h1>
-                    </div>
-                    <div className="chatPageContainer">
-                        <div className="chatTitleBarContainer">
-                            {getChatImage(chatData)}
-                            <span id="chatName">{chatData.chatName ? chatData.chatName : "This is chat room"}</span>
-                            <span className="editChatName">
-                                <button className="chatNameBtn" onClick={handleShow}>
-                                    <i className="far fa-edit"></i>
-                                </button>
-                            </span>
-                        </div>
-
-                        <Modal show={show} onHide={handleClose} centered>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Change Chat name</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <input id="chatNameTextbox" type="text" onChange={handleChatName} ref={focusRef} />
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleClose}>
-                                    Close
-                                </Button>
-                                <Button variant="primary" onClick={handleSaveClose}>
-                                    Save Changes
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-
-
-
-
-                        <div className="mainContentContainer">
-                            <div className="chatContainer">
-                                <ul className="chatMessages" ref={chatMessagesRef}>
-                                    <MessageContents signinInfo={signinInfo} chatArr={chatArr} />
-                                </ul>
-
-                                <div className="typingDots" ref={typingDotsRef} >
-                                    <img src="/images/dots.gif" alt="typing dots" />
+            {
+                loading ? <LoadingSpinner /> :
+                    error ? <Alert severity="warning">There is an error to load page..</Alert> :
+                        chatData && (
+                            <div className="mainSectionContainer col-10 col-md-8">
+                                <div className="titleContainer">
+                                    <h1>Chat</h1>
                                 </div>
+                                <div className="chatPageContainer">
+                                    <div className="chatTitleBarContainer">
+                                        {getChatImage(chatData)}
+                                        <span id="chatName">{chatData.chatName ? chatData.chatName : "This is chat room"}</span>
+                                        <span className="editChatName">
+                                            <button className="chatNameBtn" onClick={handleShow}>
+                                                <i className="far fa-edit"></i>
+                                            </button>
+                                        </span>
+                                    </div>
 
-                                <div className="footer">
-                                    <textarea
-                                        name="messageInput"
-                                        placeholder="Type a message..."
-                                        value={msgcontents}
-                                        onChange={handleTextAreaChange}
-                                        onKeyPress={(event) =>
-                                            event.key === "Enter" && !event.shiftKey ? handleSendMsgPress(event) : null
-                                        }
-                                        ref={focusRef}
-                                    />
-                                    <button
-                                        className={`sendMessageButton ${msgcontents === "" ? "inActive" : "active"}`}
-                                        onClick={handleSendMsg}
+                                    <Modal show={show} onHide={handleClose} centered>
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Change Chat name</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <input id="chatNameTextbox" type="text" onChange={handleChatName} ref={focusRef} />
+                                        </Modal.Body>
+                                        <Modal.Footer>
+                                            <Button variant="secondary" onClick={handleClose}>
+                                                Close
+                                </Button>
+                                            <Button variant="primary" onClick={handleSaveClose}>
+                                                Save Changes
+                                </Button>
+                                        </Modal.Footer>
+                                    </Modal>
 
-                                    >
-                                        <i className="fas fa-paper-plane"></i>
-                                    </button>
+
+
+
+                                    <div className="mainContentContainer">
+                                        <div className="chatContainer">
+                                            <ul className="chatMessages" ref={chatMessagesRef}>
+                                                <MessageContents signinInfo={signinInfo} chatArr={chatArr} />
+                                            </ul>
+
+                                            <div className="typingDots" ref={typingDotsRef} >
+                                                <img src="/images/dots.gif" alt="typing dots" />
+                                            </div>
+
+                                            <div className="footer">
+                                                <textarea
+                                                    name="messageInput"
+                                                    placeholder="Type a message..."
+                                                    value={msgcontents}
+                                                    onChange={handleTextAreaChange}
+                                                    onKeyPress={(event) =>
+                                                        event.key === "Enter" && !event.shiftKey ? handleSendMsgPress(event) : null
+                                                    }
+                                                    ref={focusRef}
+                                                />
+                                                <button
+                                                    className={`sendMessageButton ${msgcontents === "" ? "inActive" : "active"}`}
+                                                    onClick={handleSendMsg}
+
+                                                >
+                                                    <i className="fas fa-paper-plane"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        )}
         </>
     );
 };

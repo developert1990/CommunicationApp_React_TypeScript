@@ -9,6 +9,8 @@ import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import { API_BASE } from '../config';
 import { io, Socket } from 'socket.io-client';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import Alert from '@material-ui/lab/Alert';
 
 
 
@@ -70,40 +72,41 @@ export const MessageScreen = () => {
                         <Link to="/message/new"><RateReviewOutlinedIcon /></Link>
                     </div>
                 </div>
-                {error && error}
-                {loading && loading}
                 {
-                    chatListInfo && chatListInfo.length > 0 ? (
-                        <div>
-                            {
-                                chatListInfo.map((chat) => {
-                                    const getLatestMessage = () => {
-                                        if (chat.latestMessage && chat.latestMessage !== null) {
-                                            const sender = chat.latestMessage.sender;
-                                            const latestMessageSection = `${sender.firstName} ${sender.lastName}: ${chat.latestMessage.content}`
-                                            return latestMessageSection;
-                                        } else {
-                                            return "No message"
-                                        }
-                                    }
 
-                                    return (
-                                        <Link to={{
-                                            pathname: `/message/chatRoom/${chat._id}`,
-                                            state: { chat, chatListInfo }
-                                        }} className="resultlistitem" key={chat._id}>
-                                            {getChatImage(chat)}
-                                            <div className="resultsDetailscontainer ellipsis">
-                                                <span className="heading ellipsis">{chat.chatName ? chat.chatName : getChatName(chat)}</span>
-                                                <span className="subText ellipsis">{getLatestMessage()}</span>
-                                            </div>
-                                        </Link>
-                                    )
-                                })
-                            }
-                        </div>) : (
-                            <div>데이터 없음</div>
-                        )
+                    loading ? <LoadingSpinner /> :
+                        error ? <Alert severity="warning">There is an error to load page..</Alert> :
+                            chatListInfo && chatListInfo.length === 0 ? (
+                                <Alert severity="warning">You have no chats..</Alert>
+                            ) : (
+                                    <div>
+                                        {
+                                            chatListInfo.map((chat) => {
+                                                const getLatestMessage = () => {
+                                                    if (chat.latestMessage && chat.latestMessage !== null) {
+                                                        const sender = chat.latestMessage.sender;
+                                                        const latestMessageSection = `${sender.firstName} ${sender.lastName}: ${chat.latestMessage.content}`
+                                                        return latestMessageSection;
+                                                    } else {
+                                                        return "No message"
+                                                    }
+                                                }
+
+                                                return (
+                                                    <Link to={{
+                                                        pathname: `/message/chatRoom/${chat._id}`,
+                                                        state: { chat, chatListInfo }
+                                                    }} className="resultlistitem" key={chat._id}>
+                                                        {getChatImage(chat)}
+                                                        <div className="resultsDetailscontainer ellipsis">
+                                                            <span className="heading ellipsis">{chat.chatName ? chat.chatName : getChatName(chat)}</span>
+                                                            <span className="subText ellipsis">{getLatestMessage()}</span>
+                                                        </div>
+                                                    </Link>
+                                                )
+                                            })
+                                        }
+                                    </div>)
                 }
             </div>
         </>

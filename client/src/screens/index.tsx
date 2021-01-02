@@ -4,3 +4,6 @@ export * from './HomeScreen';
 export * from './ProfileScreen';
 export * from './MessageScreen';
 export * from './NewMessageScreen';
+export * from './NotificationScreen';
+export * from './ChatScreen';
+export * from './SearchScreen';
