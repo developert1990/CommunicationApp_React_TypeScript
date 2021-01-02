@@ -31,7 +31,6 @@ export const ProfileScreen = () => {
 
 
 
-
     // 내가 클릭한 유저의 정보
     const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
     const { userInfo: userInfoData, error, loading } = userInfoStore;
@@ -80,7 +79,7 @@ export const ProfileScreen = () => {
     // *************************************************************
 
     const handleFollow = async () => {
-        const { data } = await Axios.put(`${API_BASE}/users/follow/${userInfoData?._id}/${signinInfo._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
+        const { data } = await Axios.put(`${API_BASE}/users/follow/${userInfoData?._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
             // headers: { Authorization: `Hong ${signinInfo.token}` },
             withCredentials: true,
         });

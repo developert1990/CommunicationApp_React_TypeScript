@@ -1,3 +1,4 @@
+import { notificationType } from './../reducers/notificationReducer';
 
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
@@ -50,3 +51,34 @@ export const useStyles = makeStyles((theme: Theme) =>
         },
     }),
 );
+
+
+export const getNotificationTextFilter = (notification: notificationType) => {
+
+    switch (notification.notificationType) {
+        case "postLike":
+            return "likes your post.";
+        case "reply":
+            return "replied on your post.";
+        case "newMessage":
+            return "Sent new message.";
+        case "follow":
+            return "followed you."
+        default:
+            return "";
+    }
+
+}
+
+export const getNotificationURL = (notification: notificationType) => {
+    switch (notification.notificationType) {
+        case "postLike":
+            return `/profile/${notification.userTo.firstName}`;
+        case "reply":
+            return `/profile/${notification.userTo.firstName}`;
+        case "follow":
+            return `/profile/${notification.userFrom.firstName}`;
+        default:
+            return "#";
+    }
+}

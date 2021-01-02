@@ -1,3 +1,4 @@
+import { notificationInitialState, notificationInitialStateType, notificationReducer, unReadNotificationInitialState, unReadNotificationReducer } from './reducers/notificationReducer';
 import { chatListInitialStateType, chatListinitialState, chatListReducer, selectedChatInitialStateType, selectedChatInitialState, selectedChatReducer, sendChatMessageInitialStateType, sendChatMessageInitialState, sendChatMessageReducer, getChatMessagesInitialStateType, getChatMessagesInitialState, getChatMessagesReducer } from './reducers/chatReducer';
 import { searchPostInitialStateType, searchPostInitialState, searchPostReducer, searchUsersInitialStateType, searchUsersInitialState, searchUsersReducer } from './reducers/searchReducer';
 import { ReplyDeleteInitialStatetype, replyDeleteInitialState, replyDeleteReducer } from './reducers/replyReducer';
@@ -26,6 +27,8 @@ export interface initialAppStateType {
     selectedChatStore: selectedChatInitialStateType,
     sendChatMessageStore: sendChatMessageInitialStateType,
     getChatMessagesStore: getChatMessagesInitialStateType,
+    notificationStore: notificationInitialStateType,
+    unReadNotificationStore: notificationInitialStateType,
 }
 
 export const initialAppState: initialAppStateType = {
@@ -45,6 +48,8 @@ export const initialAppState: initialAppStateType = {
     selectedChatStore: selectedChatInitialState,
     sendChatMessageStore: sendChatMessageInitialState,
     getChatMessagesStore: getChatMessagesInitialState,
+    notificationStore: notificationInitialState,
+    unReadNotificationStore: unReadNotificationInitialState,
 }
 
 export const reducer = combineReducers({
@@ -64,6 +69,8 @@ export const reducer = combineReducers({
     selectedChatStore: selectedChatReducer,
     sendChatMessageStore: sendChatMessageReducer,
     getChatMessagesStore: getChatMessagesReducer,
+    notificationStore: notificationReducer,
+    unReadNotificationStore: unReadNotificationReducer,
 })
 const initialState = {}
 const store = createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunk)));

@@ -4,7 +4,7 @@ import User, { UserSchemaType } from './../models/userModel';
 import { ChatSchemaType } from './../models/chatModel';
 import expressAsyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
-import { isAuth } from './../utils/utils';
+import { isAuth, insertNotification } from './../utils/utils';
 import express, { Request, Response } from 'express';
 import Chat from '../models/chatModel';
 import Message from '../models/chatMessageModel';
@@ -135,10 +135,13 @@ chatRouter.post('/sendMessage', isAuth, expressAsyncHandler(async (req: CustomRe
         chat: req.body.chatId
     }
     const result = await Message.create(newMessage as ChatMessageSchemaType);
-    const populatedResult = await result.populate("sender").populate("chat").execPopulate();
+    const populatedResult = await result.populate("sender").populate("chat").execPopulate(); //  messages collections 에서 방금 send된 하나의 message
+    const message = populatedResult as ChatMessageSchemaType
 
     // 메세지를 보내고 나면 채팅 목록이 최근 보낸것부터 정렬이되도록 하기 위해서 업데이트 해줌 데이터를 업데이트 해주면 updatedAt 부분이 update가 되기 때문이다.
-    await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: populatedResult })
+    const chat = await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: populatedResult })
+    const typedChat = chat as ChatSchemaType
+    insertNotification(typedChat, message);
 
     try {
         if (populatedResult) {
@@ -167,6 +170,10 @@ chatRouter.get('/:chatId/messages', isAuth, expressAsyncHandler(async (req: Cust
     }
 
 }))
+
+
+
+
 
 
 export default chatRouter;

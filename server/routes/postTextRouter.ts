@@ -5,6 +5,7 @@ import expressAsyncHandler from 'express-async-handler';
 import express, { Response, Request } from 'express';
 import Post, { postSchemaType } from '../models/postTextModel';
 import User from '../models/userModel';
+import Notification from '../models/notificationModel';
 
 const postTextRouter = express.Router();
 
@@ -23,7 +24,8 @@ postTextRouter.post('/upload', isAuth, expressAsyncHandler(async (req: CustomReq
         const post = await Post.create(typedPostData);
         if (post) {
             // 방금 post 한것만 받기
-            const newPost = await User.populate(post, { path: "postedBy" }); // postedBy 부분을 populate해서 그 참조하고 있는 값의 객체를 가져온다.
+            const newPost: postSchemaType = await User.populate(post, { path: "postedBy" }); // postedBy 부분을 populate해서 그 참조하고 있는 값의 객체를 가져온다.
+
             // post 된 모든거 찾기
             const postLists = await Post.find({ "postedBy": req.userId });
             const populatedPostLists = await User.populate(postLists, { path: "postedBy" });
@@ -76,10 +78,11 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Cust
     const postId = req.params.postId;
     const user = req.body;
     // const userId = req.params.userId;
-    const userId = user._id;
+    const userId = req.body._id;
+    console.log('userId: ', userId)
     const isLiked = user.likes && user.likes.includes(postId);
 
-    console.log('라이크 버튼 req.session.user', req.session.user);
+    // console.log('라이크 버튼 req.session.user', req.session.user);
 
     const option = isLiked ? "$pull" : "$addToSet"; // pull은 어레이 remove역할, addToSet 은 push 역할을 한다.
     // insert user likes
@@ -88,9 +91,20 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Cust
     // insert post likes
     const updatePost = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true });
     const typedUpdatePost = updatePost as postSchemaType;
+    console.log('typedUpdatePost: ', typedUpdatePost.postedBy)
     const populatedPostLists = await getUpdatedPost(typedUpdatePost);
+
+    // follow 에 관한 notification 해주기 위함
+    if (!isLiked) {
+        // 순서대로 해당포스트를 올린 유저, 해당포스트에 like를 누른 유저(즉 로그인한 유저), notify type, 해당 포스트의 id
+        await Notification.insertNotification(typedUpdatePost.postedBy, userId, "postLike", typedUpdatePost._id)
+    }
+
+
     res.status(200).send({ message: "updated", updatePost: populatedPostLists });
 }));
+
+
 
 // post delete API
 postTextRouter.delete('/delete/:postId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {

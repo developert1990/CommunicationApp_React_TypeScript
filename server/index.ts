@@ -16,6 +16,7 @@ import redis from 'redis';
 import connectRedis from 'connect-redis';
 import { Server, Socket } from "socket.io";
 import chatSocketRouter from './routes/chatSocketRouter';
+import notificationRouter from './routes/notificationRouter';
 
 dotenv.config();
 
@@ -111,6 +112,9 @@ app.use('/search', searchRouter);
 // chat
 app.use('/chats', chatRouter);
 
+// notification
+app.use('/notifications', notificationRouter)
+
 app.get('/', (req: Request, res: Response) => {
     res.send(`server is running on ${PORT}`)
 });
@@ -140,7 +144,7 @@ io.on("connect", (socket: Socket) => {
     })
 
     socket.on("sendMessage", (room, newMessage) => {
-        console.log('newMessage: ', newMessage)
+        // console.log('newMessage: ', newMessage)
         // 자신을 포함해서 모든 유저한테 보여줌
         io.to(room).emit("receive message", newMessage)
     });

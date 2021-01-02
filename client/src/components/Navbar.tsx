@@ -1,7 +1,9 @@
+import { Badge } from '@material-ui/core'
 import Axios from 'axios'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
+import { getUnReadNotification } from '../actions/notificationAction'
 import { signout } from '../actions/userActions'
 import { API_BASE } from '../config'
 import { initialAppStateType } from '../store'
@@ -10,6 +12,11 @@ export const Navbar = () => {
 
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
     const { signinInfo } = signinInfoStore;
+
+    const unReadNotificationsStore = useSelector((state: initialAppStateType) => state.unReadNotificationStore);
+    const { notifications: unReadNotifications } = unReadNotificationsStore;
+
+    console.log('unReadNotifications: ', unReadNotifications)
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -21,13 +28,22 @@ export const Navbar = () => {
         history.push('/signin');
     }
 
+    useEffect(() => {
+        dispatch(getUnReadNotification());
+    }, [dispatch])
+
     return (
         <div className="nav col-2"> {/* 이 태그의 크기를 항상 10중에 2로 해준다. */}
             <Link to="/" className="redColor"><i className="fas fa-cat"></i></Link>
             <Link to="/"><i className="fas fa-home"></i></Link>
             <Link to="/search/posts"><i className="fas fa-search"></i></Link>
-            <Link to="/"><i className="fas fa-bell"></i></Link>
-            <Link to="/message"><i className="fas fa-envelope"></i></Link>
+
+            <Link to="/notification">
+                <Badge badgeContent={unReadNotifications && unReadNotifications.length} color="secondary">
+                    <i className="fas fa-bell"></i>
+                </Badge>
+            </Link>
+            <Link to="/message"><i className="fas fa-comment"></i></Link>
             <Link to={{
                 pathname: `/profile/${signinInfo.userName}`,
                 state: signinInfo,

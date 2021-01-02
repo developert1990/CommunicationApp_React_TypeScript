@@ -1,0 +1,29 @@
+
+
+
+.resultlistitem.notifyActive{
+    background-color: rgb(255, 169, 169);
+    color: #333;
+}
+
+.resultlistitem.notifyInActive{
+    pointer-events: none;
+}
+
+.notification{
+
+.userImageContainer{
+    margin-right: 18px;
+}
+
+}
+
+.MuiButtonBase-root{
+    width: 26px;
+    height: 26px;
+
+    .fa-trash-alt{
+        width: 14px;
+        height: 16px;
+    }
+}

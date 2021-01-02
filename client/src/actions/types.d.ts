@@ -22,3 +22,8 @@ export interface chatListActionType {
     type: string;
     payload: any;
 }
+
+export interface notificationActionType {
+    type: string;
+    payload: any;
+}

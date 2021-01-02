@@ -70,6 +70,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
             withCredentials: true,
         });
         if (data) {
+            console.log('reply 한데이터 :  ', data)
             setOpen(true);
             setAlertMsg("Replied")
             const updatedData: UpdatedPostDataType = data;

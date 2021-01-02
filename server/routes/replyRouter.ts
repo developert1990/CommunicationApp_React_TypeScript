@@ -5,6 +5,7 @@ import express, { Request, Response } from 'express';
 import Post from '../models/postTextModel';
 import User from '../models/userModel';
 import { replySchemaType } from './../models/postTextModel';
+import Notification from '../models/notificationModel';
 
 
 const replyRouter = express.Router();
@@ -35,12 +36,12 @@ replyRouter.get('/list/:postId', isAuth, expressAsyncHandler(async (req: Request
     res.status(200).send(replies);
 }));
 
-// 여기 add 할때 repliedBy 를 그냥 객체 스트링인 _id를 받아온다 이걸 populate해야한다
+
 // add reply API
 replyRouter.put('/add/:postId/:userId', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
     // console.log('req.body', req.body.reply)
     // console.log('req.body.postId', req.params.postId)
-
+    console.log("리플라이 추가하는 api들어옴")
     const postId = req.params.postId;
     const userId = req.params.userId;
     const comment = req.body.reply as string;
@@ -56,6 +57,14 @@ replyRouter.put('/add/:postId/:userId', isAuth, expressAsyncHandler(async (req: 
 
         typedPost.replies.push(reply);
         const updatePost = await typedPost.save();
+
+        // follow 에 관한 notification 해주기 위함
+        if (updatePost) {
+            // 순서대로 해당포스트를 올린 유저, 해당포스트에 like를 누른 유저(즉 로그인한 유저), notify type, 해당 포스트의 id
+            //userTo: string, userFrom: string, notificationType: string, entityId: string
+            await Notification.insertNotification(typedPost.postedBy, userId, "reply", typedPost._id)
+        }
+
         const populatedPostLists = await getUpdatedPost(updatePost);
         res.status(201).send({ message: "Replied successfully", updatePost: populatedPostLists });
     } else {

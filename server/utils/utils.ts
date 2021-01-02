@@ -1,9 +1,12 @@
+import { ChatMessageSchemaType } from './../models/chatMessageModel';
+import { ChatSchemaType } from './../models/chatModel';
 import { postSchemaType } from './../models/postTextModel';
 import { NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { CustomRequest, userFromDBType } from '../types';
 import { Response } from 'express';
 import User from '../models/userModel';
+import Notification from '../models/notificationModel';
 
 export const generateToken = (user: userFromDBType) => {
     // console.log('process.env.JWT_SECRET', process.env.JWT_SECRET);
@@ -68,4 +71,16 @@ export const getUpdatedPost = async (post: postSchemaType) => {
     const result = await User.populate(post, [{ path: "postedBy" }, { path: "replies.repliedBy" }]);
     // const result = await User.populate(post, [{ path: "postedBy" }, { path: "replies.repliedBy" }, { path: "likes" }]);
     return result;
+}
+
+
+// 여기서 하는  역할은 message를 보낸 사람은 제외하고 나머지 채팅방의 유저에게 Notify 되게끔 해줌.
+export const insertNotification = (chat: ChatSchemaType, message: ChatMessageSchemaType) => {
+    chat.users.map(async (user) => {
+        // string 으로 안바꿔 주면 type 이 각각 object라서 작동하지 않음
+        if (user._id.toString() === message.sender._id.toString()) return;
+
+        await Notification.insertNotification(user._id, message.sender._id, "newMessage", message.chat._id);
+
+    })
 }

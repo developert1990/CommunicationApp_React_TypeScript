@@ -1,7 +1,7 @@
 import { UserSchemaType } from './userModel';
 import { ChatSchemaType } from './chatModel';
 
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export interface ChatMessageSchemaType extends Document {
     _id: string;
@@ -9,6 +9,8 @@ export interface ChatMessageSchemaType extends Document {
     content: string,
     chat: ChatSchemaType,
     readBy: UserSchemaType[],
+    createdAt: string;
+    updateAt: string;
 }
 
 const chatMessageSchema = new mongoose.Schema({

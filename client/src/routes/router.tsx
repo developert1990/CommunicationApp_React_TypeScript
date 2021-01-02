@@ -9,6 +9,7 @@ import { Row } from 'react-bootstrap';
 import { ThirdColumn } from '../components/ThirdColumn';
 import { SearchScreen } from '../screens/SearchScreen';
 import { ChatScreen } from '../screens/ChatScreen';
+import { NotificationScreen } from '../screens/NotificationScreen';
 
 export const Router = () => {
     return (
@@ -22,6 +23,7 @@ export const Router = () => {
                     <CheckValidChatRoute path="/message/chatRoom/:roomNum" component={ChatScreen} />
                     <PrivateRoute path="/message" component={MessageScreen} exact />
                     <PrivateRoute path="/message/new" component={NewMessageScreen} />
+                    <PrivateRoute path="/notification" component={NotificationScreen} />
                     <Route path="/invalidPage" component={InvalidPage} />
                     <PrivateRoute component={ThirdColumn} exact />
                     <Route path="/signin" component={SigninScreen} />

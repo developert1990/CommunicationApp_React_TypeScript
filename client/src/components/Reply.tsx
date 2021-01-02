@@ -79,7 +79,6 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
 
     return (
         <div>
-            {console.log('sortedReplies', sortedReplies)}
             { sortedReplies && sortedReplies.length !== 0 &&
                 <div >
                     {
@@ -95,9 +94,8 @@ export const Reply: React.FC<ReplyPropsType> = ({ post, signinInfo, updatedPostD
                                             <span>{reply.repliedBy.firstName + " " + reply.repliedBy.lastName}</span>
                                             <span> {reply.comment}</span>
                                         </div>
-
                                         {
-                                            (reply._id === post._id || signinInfo._id === post.postedBy._id) &&
+                                            (reply.repliedBy._id === signinInfo._id || signinInfo._id === post.postedBy._id) &&
                                             <span className="deleteReplyBtn">
                                                 <button className="deleteReplyIcon" onClick={() => handleDelete(reply._id, post._id)}>
                                                     <DeleteOutlinedIcon />
