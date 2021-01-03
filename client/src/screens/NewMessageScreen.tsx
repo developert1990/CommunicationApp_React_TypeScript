@@ -26,7 +26,7 @@ export const NewMessageScreen = () => {
     const userDetailInfoStore = useSelector((state: initialAppStateType) => state.userDetailStore);
     const { userDetail: userDetailInfo } = userDetailInfoStore;
 
-    console.log('userDetail', userDetailInfo)
+    // console.log('userDetail', userDetailInfo)
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -63,15 +63,21 @@ export const NewMessageScreen = () => {
         const userList = JSON.stringify(selectedUserList); // 이 전체 유저의 리스트를 Axios로 서버로 전송해야하는데 string값으로 전송만 가능하기때문에 이렇게 변환해 준다.
         const signinUserDetail = JSON.stringify(userDetailInfo);
         const { data } = await Axios.post(`${API_BASE}/chats`, { userList, signinUserDetail }, {
-            // headers: { Authorization: `Hong ${signinInfo.token}` },
             withCredentials: true,
 
         });
         const chat = data;
+        console.log('유저 다 저장하고 채팅방만드는 api 부른 데이터 chat: ', chat)
         if (!chat || !chat._id) { return alert("Invalid response from the server") };
 
-        history.push(`/message/${chat._id}`)
+        // const { data: chatRoomData } = await Axios.get(
+        //     `${API_BASE}/chats/chatRoom/byUserId/${selectedUserList[0]._id}`,
+        //     {
+        //         withCredentials: true,
+        //     }
+        // );
 
+        history.push({ pathname: `/message/chatRoom/${chat._id}`, state: { userInfoDataFromNewMessageComponent: { ...userDetailInfo, roomId: chat._id } } })
 
     }
 

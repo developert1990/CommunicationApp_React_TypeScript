@@ -30,7 +30,7 @@ export const getUnReadNotification = () => async (dispatch: ThunkDispatch<any, a
         const { data } = await Axios.get(`${API_BASE}/notifications/unread`, {
             withCredentials: true,
         })
-        console.log('unread data: ', data)
+        // console.log('unread data: ', data)
         dispatch({ type: UNREAD_NOTIFICATION_SUCCESS, payload: data })
     } catch (error) {
         dispatch({

@@ -21,6 +21,7 @@ interface locationType extends Location {
         chat?: ChatType;
         chatListInfo?: ChatType[];
         userInfoData?: SigninType;
+        userInfoDataFromNewMessageComponent?: SigninType;
     };
 }
 
@@ -35,6 +36,7 @@ export const ChatScreen = () => {
     const chatRoomId = location.pathname.split("/")[3];
     const typedLocation = location as locationType;
 
+    console.log('typedLocation', typedLocation)
 
     // 내가 로그인한 정보
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
@@ -95,7 +97,7 @@ export const ChatScreen = () => {
             setMsgContents("");
             return;
         }
-        console.log("서밋: ", msgcontents)
+        // console.log("서밋: ", msgcontents)
         dispatch(sendChatMessage(msgcontents, chatRoomId));
         setMsgContents("");
     }
@@ -108,7 +110,6 @@ export const ChatScreen = () => {
     }
 
 
-
     const typingDotsRef = useRef<HTMLDivElement>(null);
 
 
@@ -116,8 +117,8 @@ export const ChatScreen = () => {
 
     useEffect(() => {
         if (message) {
-            console.log('message 보내졋음: ', message)
-            socket.emit("sendMessage", chatRoomId, message);
+            // console.log('message 보내졋음: ', message)
+            // socket.emit("sendMessage", chatRoomId, message);
 
             if (chatMessagesRef && chatMessagesRef.current) {
                 const pick = chatMessagesRef.current;
@@ -139,15 +140,14 @@ export const ChatScreen = () => {
         }
         (
             async () => {
-
                 // const chat = typedLocation.state.chat;
                 if (typedLocation.state?.chat) {
                     console.log("처음원래 있는 채팅창")
                     dispatch(selectedChat(chatRoomId))
                     dispatch(getChatMessages(chatRoomId))
-                } else {
+                } else if (typedLocation.state?.userInfoData) {
+                    console.log("프로필에서 메세지버튼눌렀을때 이쪽으로")
                     const otherUserId = typedLocation.state?.userInfoData?._id;
-                    console.log("1:1채팅 열기위해 들어옴")
                     const { data } = await Axios.get(
                         `${API_BASE}/chats/chatRoom/byUserId/${otherUserId}`,
                         {
@@ -155,14 +155,23 @@ export const ChatScreen = () => {
                         }
                     );
 
-                    // console.log("1:1 채팅 data: ", data);
-                    dispatch(selectedChat(data._id));
                     history.push({ pathname: `/message/chatRoom/${data._id}`, state: "Add string value to avoid 404 error" })
+                    console.log("1:1 채팅 data: ", data);
+                } else {
+                    console.log("메세지에서 새로운 매세지 버튼 누르고 들어오는")
+                    console.log(typedLocation.state?.userInfoData?._id, 'PRINTING USER ID');
+
+
+                    console.log("1:1채팅 열기위해 들어옴")
+
+
+                    // @ts-ignore
+                    dispatch(selectedChat(typedLocation.state.userInfoDataFromNewMessageComponent.roomId));
                 }
             }
         )();
 
-    }, [chatRoomId, dispatch, history, typedLocation.state?.chat, typedLocation.state?.userInfoData?._id,]);
+    }, [chatRoomId, dispatch, typedLocation.state?.chat, typedLocation.state?.userInfoData?._id,]);
 
 
     const chatMessagesRef = useRef<HTMLUListElement>(null);
@@ -218,8 +227,6 @@ export const ChatScreen = () => {
             socket.emit("noContents", chatRoomId);
         }
     }, [chatRoomId, msgcontents])
-
-
 
 
 

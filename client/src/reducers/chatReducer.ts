@@ -9,7 +9,7 @@ export interface ChatMessageType extends Document {
     sender: SigninType;
     content: string;
     chat: ChatType;
-    readBy: SigninType[];
+    readBy: SigninType[] | string[];
     createdAt: string;
 
 }
@@ -21,6 +21,7 @@ export interface ChatType {
     latestMessage: ChatMessageType;
     updatedAt: string;
     users: SigninType[];
+    messages: ChatMessageType[];
     _id: string;
 }
 

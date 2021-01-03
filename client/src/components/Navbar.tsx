@@ -22,7 +22,7 @@ export const Navbar = () => {
 
     // console.log('unReadNotifications: ', unReadNotifications)
 
-    console.log('unReadMessages: ', unReadMessages)
+    // console.log('unReadMessages: ', unReadMessages)
 
     const dispatch = useDispatch();
     const history = useHistory();

@@ -20,7 +20,7 @@ export const NotificationScreen = () => {
 
     // 각 알림을 클릭 햇을 경우 db에서 notification collection에 open 을 false 에서 true로 변경하기위함
     const handleNotification = async (notification: notificationType) => {
-        console.log('notification: ', notification);
+        // console.log('notification: ', notification);
         await Axios.put(`${API_BASE}/notifications/markNotiOpened/${notification._id}`, {}, {
             withCredentials: true,
         });

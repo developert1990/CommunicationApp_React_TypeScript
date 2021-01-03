@@ -78,6 +78,8 @@ export const getChatMessages = (chatId: string) => async (dispatch: ThunkDispatc
     }
 }
 
+
+
 // 해당 유저의 모든 채팅룸의 읽지 않은 메세지 받기
 export const getUnreadMessages = () => async (dispatch: ThunkDispatch<any, any, any>) => {
     dispatch({ type: GET_UNREAD_MESSAGES_REQUEST });

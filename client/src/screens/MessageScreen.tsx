@@ -11,6 +11,7 @@ import { API_BASE } from '../config';
 import { io, Socket } from 'socket.io-client';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import Alert from '@material-ui/lab/Alert';
+import { SigninType } from '../reducers/userReducer';
 
 
 
@@ -58,7 +59,6 @@ export const MessageScreen = () => {
     }
 
 
-
     useEffect(() => {
         dispatch(chatList())
     }, [dispatch])
@@ -82,6 +82,13 @@ export const MessageScreen = () => {
                                     <div>
                                         {
                                             chatListInfo.map((chat) => {
+                                                // console.log('chat.messages: ', chat.messages)
+                                                // console.log('signinInfo._id: ', signinInfo._id)
+                                                const numOfUnreadMsg = chat.messages.filter((message) => !message.readBy.includes(signinInfo._id as string & SigninType)).length
+                                                // console.log('numOfUnreadMsg: ', numOfUnreadMsg)
+
+
+
                                                 const getLatestMessage = () => {
                                                     if (chat.latestMessage && chat.latestMessage !== null) {
                                                         const sender = chat.latestMessage.sender;
@@ -102,6 +109,7 @@ export const MessageScreen = () => {
                                                             <span className="heading ellipsis">{chat.chatName ? chat.chatName : getChatName(chat)}</span>
                                                             <span className="subText ellipsis">{getLatestMessage()}</span>
                                                         </div>
+                                                        <div>{numOfUnreadMsg}</div>
                                                     </Link>
                                                 )
                                             })
