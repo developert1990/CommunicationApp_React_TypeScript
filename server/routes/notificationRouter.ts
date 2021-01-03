@@ -47,12 +47,22 @@ notificationRouter.put('/markAllNotiOpened/', isAuth, expressAsyncHandler(async 
 
 // 해당유저의 모든 unread notification 받아온다. (읽지 않은 notification 들);
 notificationRouter.get('/unread', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-    console.log("읽지 않은 noti 가지러 들어옴");
     const signinUserId = req.session.user._id;
     const unReadNotification = await Notification.find({ userTo: signinUserId, notificationType: { $ne: "newMessage" }, opened: false }).populate("userTo").populate("userFrom").sort({ createdAt: -1 })
-    console.log('unReadNotification', unReadNotification);
+
     if (unReadNotification) {
         res.status(200).send(unReadNotification);
+    } else {
+        res.status(400).send({ message: "There is an error to get notifications.." })
+    }
+}));
+
+notificationRouter.delete('/deleteAll', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    console.log("모든 노티 삭제")
+    const signinUserId = req.session.user._id;
+    const deletedAllNoti = await Notification.remove({ userTo: signinUserId, notificationType: { $ne: "newMessage" } });
+    if (deletedAllNoti) {
+        res.status(200).send("Deleted all notification successfully.");
     } else {
         res.status(400).send({ message: "There is an error to get notifications.." })
     }
