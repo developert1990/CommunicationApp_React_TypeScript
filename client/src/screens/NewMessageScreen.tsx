@@ -66,18 +66,11 @@ export const NewMessageScreen = () => {
             withCredentials: true,
 
         });
-        const chat = data;
-        console.log('유저 다 저장하고 채팅방만드는 api 부른 데이터 chat: ', chat)
-        if (!chat || !chat._id) { return alert("Invalid response from the server") };
+        const chatRoom = data;
+        console.log('유저 다 저장하고 채팅방만드는 api 부른 데이터 chatRoom: ', chatRoom)
+        if (!chatRoom || !chatRoom._id) { return alert("Invalid response from the server") };
 
-        // const { data: chatRoomData } = await Axios.get(
-        //     `${API_BASE}/chats/chatRoom/byUserId/${selectedUserList[0]._id}`,
-        //     {
-        //         withCredentials: true,
-        //     }
-        // );
-
-        history.push({ pathname: `/message/chatRoom/${chat._id}`, state: { userInfoDataFromNewMessageComponent: { ...userDetailInfo, roomId: chat._id } } })
+        history.push({ pathname: `/message/chatRoom/${chatRoom._id}`, state: { userInfoDataFromNewMessageComponent: chatRoom._id } })
 
     }
 

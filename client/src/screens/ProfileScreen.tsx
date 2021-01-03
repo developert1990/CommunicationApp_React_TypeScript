@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, Route, useLocation } from 'react-router-dom';
+import { Link, Route, useHistory, useLocation } from 'react-router-dom';
 import { initialAppStateType } from '../store';
 import { userInfo, userDetail } from '../actions/userActions';
 import { API_BASE } from '../config';
@@ -27,6 +27,7 @@ import Alert from '@material-ui/lab/Alert';
 export const ProfileScreen = () => {
     const location = useLocation();
     const dispatch = useDispatch();
+    const history = useHistory();
     const postedUser = location.state;
     const typedUser = postedUser as SigninType;
     const userId = typedUser._id
@@ -35,7 +36,7 @@ export const ProfileScreen = () => {
 
     // 내가 클릭한 유저의 정보
     const userInfoStore = useSelector((state: initialAppStateType) => state.userInfoStore);
-    const { userInfo: userInfoData, error, loading } = userInfoStore;
+    const { userInfo: clickedUserInfoData, error, loading } = userInfoStore;
 
     // 내가 로그인한 정보
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
@@ -53,18 +54,18 @@ export const ProfileScreen = () => {
     const filter = (result: SigninType) => {
         // console.log('signinInfo?._id: ', signinInfo?._id)
         // console.log('result.following.filter=>>> ', result.followers.filter(data => data))
-        return userInfoData && result?.following && (
+        return clickedUserInfoData && result?.following && (
             result.followers.filter(data => data === signinInfo?._id).length === 0
         )
             ? false : true
     }
 
     // 팔로우 버튼 클릭 할 경우에 바뀌는 state
-    const [followBtnCheck, setFollowBtnCheck] = useState<boolean>(userInfoData as SigninType && filter(userInfoData as SigninType));
+    const [followBtnCheck, setFollowBtnCheck] = useState<boolean>(clickedUserInfoData as SigninType && filter(clickedUserInfoData as SigninType));
     // 팔로우 버튼 클릭할때 팔로워 숫자 변화주는 state
-    const [numOfFollowers, setNumOfFollowers] = useState<number>(userInfoData as SigninType && userInfoData?.followers.length as number);
+    const [numOfFollowers, setNumOfFollowers] = useState<number>(clickedUserInfoData as SigninType && clickedUserInfoData?.followers.length as number);
     // 선택한 유저의 following state 보여줌
-    // const [numOfFollowing, setNumOfFollowing] = useState<number>(userInfoData as SigninType && userInfoData?.following.length as number);
+    // const [numOfFollowing, setNumOfFollowing] = useState<number>(clickedUserInfoData as SigninType && clickedUserInfoData?.following.length as number);
 
 
     // Post 랑 Replies 버튼 클릭시 bottom border색 주기 위함
@@ -81,7 +82,7 @@ export const ProfileScreen = () => {
     // *************************************************************
 
     const handleFollow = async () => {
-        const { data } = await Axios.put(`${API_BASE}/users/follow/${userInfoData?._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
+        const { data } = await Axios.put(`${API_BASE}/users/follow/${clickedUserInfoData?._id}`, {}, { // put Request 는 반드시 body가 포함되어야 하는것 같다.
             // headers: { Authorization: `Hong ${signinInfo.token}` },
             withCredentials: true,
         });
@@ -112,20 +113,20 @@ export const ProfileScreen = () => {
 
     // Follow modal control ----------------------------------------
     const [show, setShow] = useState(false);
-    const [sendFollowers, setSendFollowers] = useState<string>(userInfoData?._id as string);
+    const [sendFollowers, setSendFollowers] = useState<string>(clickedUserInfoData?._id as string);
     const [chooseBtn, setChooseBtn] = useState<string>('');
     const handleClose = () => setShow(false);
 
     // Following 하는거 보기
     const handleShowFollowing = () => {
-        setSendFollowers(userInfoData?._id as string);
+        setSendFollowers(clickedUserInfoData?._id as string);
         setChooseBtn("following");
         setShow(true);
     }
 
     // Followers 보기
     const handleShowFollowers = () => {
-        setSendFollowers(userInfoData?._id as string);
+        setSendFollowers(clickedUserInfoData?._id as string);
         setChooseBtn("followers");
         setShow(true);
     }
@@ -140,6 +141,19 @@ export const ProfileScreen = () => {
     }
     const handleCloseImageUpload = () => {
         setShowImgUploadModal(false);
+    }
+
+    const handleCreateChatRoom = async () => {
+        console.log("프로필에서 메세지버튼눌렀을때 이쪽으로")
+        const otherUserId = clickedUserInfoData?._id
+        const { data } = await Axios.get(
+            `${API_BASE}/chats/chatRoom/byUserId/${otherUserId}`,
+            {
+                withCredentials: true,
+            }
+        );
+
+        history.push({ pathname: `/message/chatRoom/${data._id}`, state: "Add string value to avoid 404 error" })
     }
 
     // -----------------------------------------------------
@@ -162,19 +176,19 @@ export const ProfileScreen = () => {
             {
                 loading ? <LoadingSpinner /> :
                     error ? <Alert severity="warning">There is an error to load page..</Alert> :
-                        userInfoData && (
+                        clickedUserInfoData && (
 
                             <div className="mainSectionContainer col-10 col-md-8">
                                 <div className="profileHeaderContainer">
                                     <div className="coverPhotoSection">
                                         <div className="coverPhotoContainer">
                                             {
-                                                userInfoData.coverPic !== undefined && (
-                                                    <img src={`${API_BASE}/uploads/coverImg/${userInfoData.coverPic}`} alt="cover" />
+                                                clickedUserInfoData.coverPic !== undefined && (
+                                                    <img src={`${API_BASE}/uploads/coverImg/${clickedUserInfoData.coverPic}`} alt="cover" />
                                                 )
                                             }
                                             {
-                                                userInfoData._id === signinInfo._id && (
+                                                clickedUserInfoData._id === signinInfo._id && (
                                                     <button
                                                         onClick={handleShowCoverImageUpload}
                                                         className="coverPhotoButton">
@@ -187,9 +201,9 @@ export const ProfileScreen = () => {
                                             </Modal>
                                         </div>
                                         <div className="userImageContainer">
-                                            <img src={`${API_BASE}/uploads/images/${userInfoData.profilePic}`} alt="profile" />
+                                            <img src={`${API_BASE}/uploads/images/${clickedUserInfoData.profilePic}`} alt="profile" />
                                             {
-                                                userInfoData._id === signinInfo._id && (
+                                                clickedUserInfoData._id === signinInfo._id && (
                                                     <button
                                                         onClick={handleShowImageUpload}
                                                         className="profilePictureButton"><AddAPhotoIcon />
@@ -205,16 +219,13 @@ export const ProfileScreen = () => {
                                     <div className="profileButtonContainer">
                                         {
                                             // 여기 !== 이렇게 바꿔야함
-                                            userInfoData._id !== signinInfo._id && (
+                                            clickedUserInfoData._id !== signinInfo._id && (
                                                 <div>
-                                                    <Link to={{
-                                                        pathname: `/message/chatRoom/${userInfoData._id}`,
-                                                        state: { userInfoData }
-                                                    }} className="profileButton">
+                                                    <button onClick={handleCreateChatRoom} className="profileButton">
                                                         <EmailIcon />
-                                                    </Link>
+                                                    </button>
                                                     <button onClick={handleFollow} className="profileButton">{
-                                                        followBtnCheck === undefined ? filter(userInfoData) ? "Following" : "Follow" :
+                                                        followBtnCheck === undefined ? filter(clickedUserInfoData) ? "Following" : "Follow" :
                                                             followBtnCheck ? "Following" : "Follow"
                                                     }
                                                     </button>
@@ -225,24 +236,24 @@ export const ProfileScreen = () => {
                                     </div>
                                     {/* Modal */}
                                     <div className="userDetailsContainer">
-                                        <span className="displayName">{userInfoData.firstName} {userInfoData.lastName}</span>
-                                        <span className="username">@{userInfoData.userName}</span>
-                                        {/* <span className="description">{userInfoData.description}</span> */}
+                                        <span className="displayName">{clickedUserInfoData.firstName} {clickedUserInfoData.lastName}</span>
+                                        <span className="username">@{clickedUserInfoData.userName}</span>
+                                        {/* <span className="description">{clickedUserInfoData.description}</span> */}
                                         {/* {console.log('numOfFollowers: ', numOfFollowers)}
-                            {console.log('userInfoData.followers.length: ', userInfoData.followers.length)} */}
+                            {console.log('clickedUserInfoData.followers.length: ', clickedUserInfoData.followers.length)} */}
                                         <div className="followersContainer">
                                             <button
-                                                className={userInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
+                                                className={clickedUserInfoData.following.length === 0 ? "btnInActive" : "btnActive"}
                                                 onClick={handleShowFollowing}
-                                                disabled={userInfoData.following.length === 0 ? true : false}>
-                                                <span className="value">{userInfoData.following.length}</span>
+                                                disabled={clickedUserInfoData.following.length === 0 ? true : false}>
+                                                <span className="value">{clickedUserInfoData.following.length}</span>
                                                 <span className="name">Following</span>
                                             </button>
                                             <button
-                                                className={userInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
+                                                className={clickedUserInfoData.followers.length === 0 ? "btnInActive" : "btnActive"}
                                                 onClick={handleShowFollowers}
-                                                disabled={userInfoData.followers.length === 0 ? true : false}>
-                                                <span className="value">{numOfFollowers !== undefined ? numOfFollowers : userInfoData.followers.length}</span>
+                                                disabled={clickedUserInfoData.followers.length === 0 ? true : false}>
+                                                <span className="value">{numOfFollowers !== undefined ? numOfFollowers : clickedUserInfoData.followers.length}</span>
                                                 <span className="name">Followers</span>
                                             </button>
                                         </div>
@@ -257,15 +268,15 @@ export const ProfileScreen = () => {
 
                                 <div className="tabsContainer">
                                     <Link to={{
-                                        pathname: `/profile/${userInfoData.userName}`,
-                                        state: userInfoData
+                                        pathname: `/profile/${clickedUserInfoData.userName}`,
+                                        state: clickedUserInfoData
                                     }}
                                         className={`tab ${activePost ? "active" : ""}`}
                                         onClick={handleActivePost}
                                     >Posts</Link>
                                     <Link to={{
-                                        pathname: `/profile/${userInfoData.userName}/replies`,
-                                        state: userInfoData
+                                        pathname: `/profile/${clickedUserInfoData.userName}/replies`,
+                                        state: clickedUserInfoData
                                     }}
                                         className={`tab ${activeReplies ? "active" : ""}`}
                                         onClick={handleActiveReplies}
