@@ -14,11 +14,11 @@ import { UserImage } from './UserImage';
 import { Reply } from './Reply';
 import { io, Socket } from 'socket.io-client';
 import { newNotificationUsingSocket } from './socketio';
-
-let socket: Socket = io("http://localhost:9003");
+import { useSocket } from '../hooks';
 
 export interface PostsPropsType {
     post: postDataType;
+    socket?: Socket;
 }
 
 export interface UpdatedPostDataType {
@@ -26,7 +26,8 @@ export interface UpdatedPostDataType {
     updatePost: postDataType;
 }
 
-export const Posts: React.FC<PostsPropsType> = ({ post }) => {
+export const Posts: React.FC<PostsPropsType> = ({ post, socket }) => {
+
     const [updatedPostData, setUpdatedPostData] = useState<postDataType>(post);
     const [show, setShow] = useState<boolean>(false);
     const [text, setText] = useState<string>('');
@@ -45,6 +46,7 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
 
     const handleLikeBtn = async (postId: string) => {
+
         console.log('userInfoDetail: ', userInfoDetail)
         console.log('post: ', post)
         const { data } = await Axios.put(`${API_BASE}/postText/like/${postId}`, userInfoDetail, {
@@ -90,8 +92,8 @@ export const Posts: React.FC<PostsPropsType> = ({ post }) => {
 
     useEffect(() => {
         console.log("라이크 눌러서 여기 들어옴 왜냐하면 updatedPostData(like를 클릭 받은 유저데이터)가 변하기 때문에")
-        socket.emit("newFollower", post.postedBy._id);
-    }, [post.postedBy._id, updatedPostData])
+        socket?.emit("newFollower", post.postedBy._id);
+    }, [post.postedBy._id, socket, updatedPostData])
 
 
 

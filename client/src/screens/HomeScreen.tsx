@@ -6,10 +6,11 @@ import { Posts } from '../components/Posts';
 import { UserImage } from '../components/UserImage';
 import { initialAppStateType } from '../store';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { useSocket } from '../hooks';
 
 
 export const HomeScreen = () => {
-
+    const { socket } = useSocket();
     const [text, setText] = useState<string>('');
 
     const allPostListStroe = useSelector((state: initialAppStateType) => state.allPostListReducer);
@@ -69,7 +70,7 @@ export const HomeScreen = () => {
                         {
                             allList &&
                             allList.map((post) => {
-                                return <Posts post={post} key={post.createdAt} />
+                                return <Posts post={post} key={post.createdAt} socket={socket} />
                             })
 
                         }

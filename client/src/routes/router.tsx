@@ -15,9 +15,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { initialAppStateType } from '../store';
 import { getUnReadNotification } from '../actions/notificationAction';
 import { newNotificationUsingSocket } from '../components/socketio';
+import { useSocket } from '../hooks';
 
 
-let socket: Socket = io("http://localhost:9003");
+// let socket: Socket = io("http://localhost:9003");
 
 export const Router = () => {
 
@@ -26,23 +27,23 @@ export const Router = () => {
 
 
     const dispatch = useDispatch();
+    const { socket } = useSocket();
     console.log("라우터 tsx")
     useEffect(() => {
         if (signinInfo) {
             console.log("소켓 newFollow reveive하러 옴 로그인유저: ", signinInfo._id)
-            // newNotificationUsingSocket(signinInfo._id)
+            // newNotificationUsingSocket(signinInfo._id, socket)
             socket.emit("join", signinInfo._id, (error: Error) => {
                 if (error) {
                     alert(error);
                 }
             })
         }
-    }, [signinInfo, signinInfo?._id]);
+    }, [signinInfo, signinInfo._id, socket]);
 
     socket.on("receive notification", () => {
         console.log("노티 받았다.")
         dispatch(getUnReadNotification());
-
     })
 
 
