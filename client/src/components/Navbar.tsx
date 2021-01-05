@@ -11,8 +11,6 @@ import { initialAppStateType } from '../store';
 import { io, Socket } from 'socket.io-client';
 
 
-// let socket: Socket = io("http://localhost:9003");;
-
 export const Navbar = () => {
 
     const signinInfoStore = useSelector((state: initialAppStateType) => state.signinStore);
@@ -25,9 +23,6 @@ export const Navbar = () => {
     const { messages: unReadMessages } = unReadMessagesStore;
 
 
-
-    console.log('unReadMessages: ', unReadMessages)
-
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -37,6 +32,8 @@ export const Navbar = () => {
         dispatch(signout());
         history.push('/signin');
     }
+
+
 
     useEffect(() => {
         dispatch(getUnReadNotification());

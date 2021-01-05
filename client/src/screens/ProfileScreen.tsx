@@ -20,10 +20,12 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { Modal } from 'react-bootstrap';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import Alert from '@material-ui/lab/Alert';
+import { getUnReadNotification } from '../actions/notificationAction';
 
 
 
-let socket: Socket = io("http://localhost:9003");;
+
+let socket: Socket = io("http://localhost:9003");
 
 export const ProfileScreen = () => {
     const location = useLocation();
@@ -91,14 +93,22 @@ export const ProfileScreen = () => {
         const result = await data as SigninType;
         const checkFollowFromData = filter(result);
         setFollowBtnCheck(checkFollowFromData)
-
-        // newNotificationUsingSocket(clickedUserInfoData?._id as string);
-
         setNumOfFollowers(result.followers.length);
-        socket.on("receive newFollow", () => {
-            console.log("팔로우한다.")
-        })
     }
+
+    useEffect(() => {
+        if (numOfFollowers) {
+
+            console.log(numOfFollowers)
+            socket.emit("newFollower", userId);
+        }
+    }, [numOfFollowers, userId])
+
+
+    useEffect(() => {
+        newNotificationUsingSocket(clickedUserInfoData?._id as string)
+    }, [clickedUserInfoData?._id, dispatch, userId])
+
 
 
 

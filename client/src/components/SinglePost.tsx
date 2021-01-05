@@ -36,7 +36,6 @@ export const SinglePost: React.FC<SinglePostPropsType> = ({ post, setShow, handl
 
     const handleDelete = async (postId: string) => {
         dispatch(postDelete(postId));
-
     }
 
     const commentsHandle = (postId: string) => {

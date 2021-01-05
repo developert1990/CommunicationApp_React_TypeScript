@@ -135,7 +135,6 @@ userRouter.put('/follow/:toFollowId', isAuth, expressAsyncHandler(async (req: Cu
     console.log("팔로우버튼눌러서 들어");
     const toFollowId = req.params.toFollowId;
     const signedUserId = req.session.user._id;
-    console.log('signedUserId ', signedUserId)
     const user = await User.findById(toFollowId);
     const typedUser = user as UserSchemaType;
     if (user) {
@@ -143,7 +142,7 @@ userRouter.put('/follow/:toFollowId', isAuth, expressAsyncHandler(async (req: Cu
         const option = isFollowing ? "$pull" : "$addToSet";
         // 로그인한 유저의 계정db에 following 에 내가 follow를 하는 유저의 아이디를 저장
         await User.findByIdAndUpdate(signedUserId, { [option]: { following: toFollowId } }, { new: true });
-        console.log('isFollowing: ', isFollowing)
+        // console.log('isFollowing: ', isFollowing)
 
         // 내가 follow 하는 유저의 계정db에 나를 follow한 유저의 아이디를 저장
         const result = await User.findByIdAndUpdate(toFollowId, { [option]: { followers: signedUserId } }, { new: true });
@@ -161,7 +160,7 @@ userRouter.put('/follow/:toFollowId', isAuth, expressAsyncHandler(async (req: Cu
 }));
 
 userRouter.get('/:selectedUserId/followers', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
-    console.log("followers 파퓰레이트d")
+    // console.log("followers 파퓰레이트d")
     const selectedUserId = req.params.selectedUserId;
     const user = await User.findById({ _id: selectedUserId }).populate("followers");
     const typedUser = user as UserSchemaType;
@@ -176,7 +175,7 @@ userRouter.get('/:selectedUserId/followers', isAuth, expressAsyncHandler(async (
 
 
 userRouter.get('/:selectedUserId/following', isAuth, expressAsyncHandler(async (req: Request, res: Response) => {
-    console.log("following 파퓰레이트d")
+    // console.log("following 파퓰레이트d")
     const selectedUserId = req.params.selectedUserId;
     const user = await User.findById({ _id: selectedUserId }).populate("following");
     const typedUser = user as UserSchemaType;

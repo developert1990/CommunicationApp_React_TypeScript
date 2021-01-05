@@ -127,11 +127,13 @@ const io = new Server(server, {
     }
 })
 
+// const clients: {[key: string]: Socket} = {}
 
 io.on("connect", (socket: Socket) => {
     console.log('소켓 connected!')
+    // clients[socket.id] = socket;
     socket.on("join", (room) => {
-        // console.log('room 방에 들어옴', room)
+        console.log('room 방에 들어옴', room)
         socket.join(room)
     });
 
@@ -154,11 +156,15 @@ io.on("connect", (socket: Socket) => {
 
     // socket.emit()  :  direct 로 emit 하면 나 자신에게만 보임...
 
-    // socket.on("newFollower", (userId) => {
-    //     console.log("newFollwer들어옴: ", userId)
-    //     socket.in(userId).emit("receive newFollow")
-    // })
+    socket.on("newFollower", (userId) => {
+        console.log("newFollwer들어옴 방 ===>> ", userId)
+        socket.to(userId).emit("receive notification")
+    })
 
+    // socket.on("newFollower", (userId, socketId) => {
+    //     console.log("newFollwer들어옴 방 ===>> ", userId)
+    //     socket.to(userId).emit("receive notification")
+    // })
 
 
 
