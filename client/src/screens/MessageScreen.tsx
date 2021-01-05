@@ -82,8 +82,7 @@ export const MessageScreen = () => {
                                     <div>
                                         {
                                             chatListInfo.map((chat) => {
-                                                // console.log('chat.messages: ', chat.messages)
-                                                // console.log('signinInfo._id: ', signinInfo._id)
+
                                                 const numOfUnreadMsg = chat.messages.filter((message) => !message.readBy.includes(signinInfo._id as string & SigninType)).length
                                                 // console.log('numOfUnreadMsg: ', numOfUnreadMsg)
 

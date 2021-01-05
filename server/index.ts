@@ -89,7 +89,7 @@ app.use(session({
 
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log('req.session.id 아이디 있는지 검사: ', req.session.id)
+    // console.log('req.session.id 아이디 있는지 검사: ', req.session.id)
     next();
 })
 
@@ -130,16 +130,19 @@ const io = new Server(server, {
 
 io.on("connect", (socket: Socket) => {
     console.log('소켓 connected!')
-    socket.on("join", (room) => socket.join(room));
+    socket.on("join", (room) => {
+        // console.log('room 방에 들어옴', room)
+        socket.join(room)
+    });
 
     socket.on("typing", (room) => {
-        console.log("타이핑 받음")
+        // console.log("타이핑 받음")
         // 자신 빼고 다른 유저한테만 보여줌..
         socket.in(room).emit("typing")
     });
 
     socket.on("noContents", (room) => {
-        console.log("타이핑 다 없앰")
+        // console.log("타이핑 다 없앰")
         socket.in(room).emit("noContents")
     })
 
@@ -150,6 +153,12 @@ io.on("connect", (socket: Socket) => {
     });
 
     // socket.emit()  :  direct 로 emit 하면 나 자신에게만 보임...
+
+    // socket.on("newFollower", (userId) => {
+    //     console.log("newFollwer들어옴: ", userId)
+    //     socket.in(userId).emit("receive newFollow")
+    // })
+
 
 
 

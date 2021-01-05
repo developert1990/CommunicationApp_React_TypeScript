@@ -3,7 +3,7 @@ import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "
 import { Button, Modal } from 'react-bootstrap';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from "react-router-dom";
-import { getChatMessages, selectedChat, sendChatMessage } from '../actions/chatAction';
+import { getChatMessages, getUnreadMessages, selectedChat, sendChatMessage } from '../actions/chatAction';
 import { API_BASE } from "../config";
 import { ChatMessageType, ChatType } from "../reducers/chatReducer";
 import { SigninType } from "../reducers/userReducer";
@@ -163,11 +163,13 @@ export const ChatScreen = () => {
 
     useEffect(() => {
         console.log("한번실행됨: ", chatMessagesRef)
+        // 해당 채팅룸 들어오면 바로 읽음으로 표시되어 읽지않은것을 다시 불러온다.
+        dispatch(getUnreadMessages());
         if (getChatMessagesData) {
             setChatArr(getChatMessagesData);
         }
 
-    }, [getChatMessagesData])
+    }, [dispatch, getChatMessagesData])
 
     console.log('getChatMessagesData: ', getChatMessagesData)
 
@@ -188,8 +190,12 @@ export const ChatScreen = () => {
 
         socket.on("noContents", () => typingDotsRef.current?.classList.remove("show"))
 
-        socket.on("receive message", (newMessage: ChatMessageType) => {
+        socket.on("receive message", async (newMessage: ChatMessageType) => {
             console.log('newMessage: ', newMessage);
+            // 채팅방에 있을때 받은 메세지를바로 읽음 으로 바꾸기 시도 (readBy에 로그인한 유저 아이디 추가)
+            await Axios.put(`${API_BASE}/chats/addUserInReadBy/${chatRoomId}`, {}, {
+                withCredentials: true,
+            })
             typingDotsRef.current?.classList.remove("show");
             if (newMessage) {
                 setChatArr((chatArr) => [...chatArr, newMessage]);

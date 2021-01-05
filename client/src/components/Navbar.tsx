@@ -7,7 +7,11 @@ import { getUnreadMessages } from '../actions/chatAction'
 import { getUnReadNotification } from '../actions/notificationAction'
 import { signout } from '../actions/userActions'
 import { API_BASE } from '../config'
-import { initialAppStateType } from '../store'
+import { initialAppStateType } from '../store';
+import { io, Socket } from 'socket.io-client';
+
+
+// let socket: Socket = io("http://localhost:9003");;
 
 export const Navbar = () => {
 
@@ -20,9 +24,9 @@ export const Navbar = () => {
     const unReadMessagesStore = useSelector((state: initialAppStateType) => state.unReadMessagesStore);
     const { messages: unReadMessages } = unReadMessagesStore;
 
-    // console.log('unReadNotifications: ', unReadNotifications)
 
-    // console.log('unReadMessages: ', unReadMessages)
+
+    console.log('unReadMessages: ', unReadMessages)
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -36,8 +40,9 @@ export const Navbar = () => {
 
     useEffect(() => {
         dispatch(getUnReadNotification());
-        dispatch(getUnreadMessages());
+        // dispatch(getUnreadMessages());
     }, [dispatch])
+
 
     return (
         <div className="nav col-2"> {/* 이 태그의 크기를 항상 10중에 2로 해준다. */}
@@ -50,7 +55,11 @@ export const Navbar = () => {
                     <i className="fas fa-bell"></i>
                 </Badge>
             </Link>
-            <Link to="/message"><i className="fas fa-comment"></i></Link>
+            <Link to="/message">
+                <Badge badgeContent={unReadMessages && unReadMessages.length} color="secondary">
+                    <i className="fas fa-comment"></i>
+                </Badge>
+            </Link>
             <Link to={{
                 pathname: `/profile/${signinInfo.userName}`,
                 state: signinInfo,

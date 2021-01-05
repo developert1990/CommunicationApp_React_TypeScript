@@ -61,7 +61,6 @@ export const sendChatMessage = (content: string, chatId: string) => async (dispa
 // 해당채팅룸의 메세지 받으러 들어옴
 export const getChatMessages = (chatId: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
     dispatch({ type: GET_MESSAGES_REQUEST });
-    console.log("채팅메세지 받으러 action")
     try {
         const { data } = await Axios.get(`${API_BASE}/chats/messages/${chatId}`, {
             withCredentials: true,
@@ -87,7 +86,6 @@ export const getUnreadMessages = () => async (dispatch: ThunkDispatch<any, any, 
         const { data } = await Axios.get(`${API_BASE}/chats/unreadMessages`, {
             withCredentials: true,
         });
-        console.log('읽지 않은 ㅁㅔ세지 data: ', data)
         dispatch({ type: GET_UNREAD_MESSAGES_SUCCESS, payload: data });
     } catch (error) {
         dispatch({

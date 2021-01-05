@@ -46,7 +46,7 @@ postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomReques
     const postLists = await Post.find({ "postedBy": req.userId }).sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
-        console.log('populatedPostLists: ', populatedPostLists);
+        // console.log('populatedPostLists: ', populatedPostLists);
         res.status(200).send(populatedPostLists); // 201번은 무언가가 성공적으로 create 되었다는 뜻이다.
     } else {
         res.status(401).send({ message: "Posted data not found" });
@@ -58,7 +58,7 @@ postTextRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomReques
 // 가입된 유저의 모든 post의 List 뽑은 API
 postTextRouter.get('/allList', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     // console.log("list cookies: ", req.cookies);
-    console.log('모든포스트리스트 session.user: ', req.session.user)
+    // console.log('모든포스트리스트 session.user: ', req.session.user)
     const postLists = await Post.find().sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
@@ -91,7 +91,7 @@ postTextRouter.put('/like/:postId', isAuth, expressAsyncHandler(async (req: Cust
     // insert post likes
     const updatePost = await Post.findByIdAndUpdate(postId, { [option]: { likes: userId } }, { new: true });
     const typedUpdatePost = updatePost as postSchemaType;
-    console.log('typedUpdatePost: ', typedUpdatePost.postedBy)
+    // console.log('typedUpdatePost: ', typedUpdatePost.postedBy)
     const populatedPostLists = await getUpdatedPost(typedUpdatePost);
 
     // follow 에 관한 notification 해주기 위함
@@ -126,7 +126,7 @@ postTextRouter.get('/list/:userId', isAuth, expressAsyncHandler(async (req: Cust
     const postLists = await Post.find({ "postedBy": req.params.userId }).sort({ "createdAt": -1 });
     if (postLists) {
         const populatedPostLists = await User.populate(postLists, [{ path: "postedBy" }, { path: "replies.repliedBy" }]); // 두번째 replies.repliedBy 는 어레이 안에 있는 참조객체를 populate시킴 !!!!!!!!!!!!
-        console.log('populatedPostLists: ', populatedPostLists);
+        // console.log('populatedPostLists: ', populatedPostLists);
         res.status(200).send(populatedPostLists); // 201번은 무언가가 성공적으로 create 되었다는 뜻이다.
     } else {
         res.status(401).send({ message: "Posted data not found" });

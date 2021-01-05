@@ -157,7 +157,7 @@ export const unReadMessagesReducer = (state = unRedMessagesInitialState, action:
         case GET_UNREAD_MESSAGES_REQUEST:
             return { loading: true };
         case GET_UNREAD_MESSAGES_SUCCESS:
-            return { loading: false, chatList: action.payload };
+            return { loading: false, messages: action.payload };
         case GET_UNREAD_MESSAGES_FAIL:
             return { loading: false, error: action.payload };
         case GET_UNREAD_MESSAGES_RESET:

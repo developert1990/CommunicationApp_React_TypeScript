@@ -10,6 +10,8 @@ import Chat from '../models/chatModel';
 import Message from '../models/chatMessageModel';
 import { config } from 'dotenv/types';
 
+mongoose.set('useFindAndModify', false);
+
 
 const chatRouter = express.Router();
 
@@ -115,7 +117,7 @@ chatRouter.get('/chatRoom/byUserId/:otherUserId', isAuth, expressAsyncHandler(as
 chatRouter.put('/changeChatName/:chatRoomId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const chatRoomId = req.params.chatRoomId;
     const chatName = req.body;
-
+    console.log("제목바꾸는 api")
     const chat = await Chat.findByIdAndUpdate(chatRoomId, chatName);
     const updatedChat = await Chat.findOne({ _id: chatRoomId });
     if (chat) {
@@ -136,14 +138,18 @@ chatRouter.post('/sendMessage', isAuth, expressAsyncHandler(async (req: CustomRe
         chat: req.body.chatId,
         readBy: req.session.user._id,
     }
+    console.log("메세지 생성하기전: ")
     const result = await Message.create(newMessage as ChatMessageSchemaType);
-    // const updateReadBy = await Message.findOneAndUpdate()
+    console.log("메세지 생성하고 넘어감")
+
     const populatedResult = await result.populate("sender").populate("chat").execPopulate(); //  messages collections 에서 방금 send된 하나의 message
     const message = populatedResult as ChatMessageSchemaType;
 
     // chat collection 에 messages를 update한다.
     await Chat.findByIdAndUpdate(req.body.chatId, { $push: { messages: result } }, { new: true });
 
+    // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
+    // await addUserIdReadBy(req.body.chatId, req.session.user._id)
 
     // 메세지를 보내고 나면 채팅 목록이 최근 보낸것부터 정렬이되도록 하기 위해서 업데이트 해줌 데이터를 업데이트 해주면 updatedAt 부분이 update가 되기 때문이다.
     const chat = await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: populatedResult })
@@ -165,14 +171,13 @@ chatRouter.post('/sendMessage', isAuth, expressAsyncHandler(async (req: CustomRe
 
 // 해당 채당방의 채팅 메세지들 보내는 api
 chatRouter.get('/messages/:chatId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
-
+    console.log("채팅방열었을때 메세지들 보냄")
     const userId = req.session.user._id;
     const chatRoomId = req.params.chatId;
 
 
-
     // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
-    await Message.updateMany({ chat: chatRoomId }, { $addToSet: { readBy: userId } })
+    // addUserIdReadBy(chatRoomId, userId)
 
     const messages = await Message.find({ chat: chatRoomId }).populate("sender");
 
@@ -190,11 +195,24 @@ chatRouter.get('/messages/:chatId', isAuth, expressAsyncHandler(async (req: Cust
 chatRouter.get('/unreadMessages', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     console.log("unread message api 들어옴");
     const userId = req.session.user._id;
-    // const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).populate("latestMessage").sort({ updatedAt: -1 })
+    // 해당 유저의 모든 채팅방을 일단 찾는다.
+    const chats = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).populate("latestMessage").sort({ updatedAt: -1 });
+    // 위에서 찾은 채팅방의 id를 array로 뽑는다.
+    const chatsId = chats.map((chat) => chat._id);
+    // 채팅방의 id를 이용해서 message collection에 chat id와 매칭되고 readBy 에 userId가 포함이 되지 않는 messages들을 찾는다.
+    const unreadMsgs = await Message.find({ chat: { $in: chatsId }, readBy: { $nin: userId } });
+
+    res.status(200).send(unreadMsgs);
+
 }))
 
 
-
+chatRouter.put('/addUserInReadBy/:chatId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
+    console.log("readBy 바로 추가 하러 들어옴")
+    // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
+    // addUserIdReadBy(req.params.chatId, req.session.user._id)
+    res.status(200).send("success");
+}))
 
 
 

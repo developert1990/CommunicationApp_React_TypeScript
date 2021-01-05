@@ -12,8 +12,8 @@ import Axios from 'axios';
 import { USER_INFO_RESET } from '../constants/userConstants';
 import { ImgUploadModal } from '../components/ImgUploadModal';
 import { CoverImgUploadModal } from '../components/CoverImgUploadModal';
-
-
+import { io, Socket } from 'socket.io-client';
+import { newNotificationUsingSocket } from '../components/socketio';
 
 import EmailIcon from '@material-ui/icons/Email';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
@@ -23,6 +23,7 @@ import Alert from '@material-ui/lab/Alert';
 
 
 
+let socket: Socket = io("http://localhost:9003");;
 
 export const ProfileScreen = () => {
     const location = useLocation();
@@ -90,8 +91,15 @@ export const ProfileScreen = () => {
         const result = await data as SigninType;
         const checkFollowFromData = filter(result);
         setFollowBtnCheck(checkFollowFromData)
+
+        // newNotificationUsingSocket(clickedUserInfoData?._id as string);
+
         setNumOfFollowers(result.followers.length);
+        socket.on("receive newFollow", () => {
+            console.log("팔로우한다.")
+        })
     }
+
 
 
     useEffect(() => {

@@ -3,7 +3,6 @@ import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from '
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { searchUsers } from '../actions/searchAction';
-import { SearchUsers } from '../components/SearchUsers';
 import { API_BASE } from '../config';
 import { SigninType } from '../reducers/userReducer';
 import { initialAppStateType } from '../store';
@@ -82,22 +81,6 @@ export const NewMessageScreen = () => {
         dispatch(userDetail());
     }, [dispatch])
 
-    // const [newList, setNewList] = useState<SigninType[]>([]);
-    // if (users && users.length !== 0) {
-    //     const test = users.filter((user) => !selectedUserList.includes(user));
-    //     console.log('users: ', users)
-    //     console.log('selectedUserList: ', selectedUserList)
-    //     console.log('test: ', test)
-    // }
-
-    // const a = [{ a: "1" }, { a: "2" }, { a: "3" }];
-    // const b = [{ a: "1" }]
-
-    // if (users && users.length !== 0) {
-    // const newA = users.map((user) => selectedUserList.find(k => k._id !== user._id));
-    // const newB = newA.filter((data) => data !== undefined);
-    // console.log('newB: ', newB)
-    // }
 
     return (
         <div className="mainSectionContainer col-10 col-md-8">

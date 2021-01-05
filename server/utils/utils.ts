@@ -1,4 +1,4 @@
-import { ChatMessageSchemaType } from './../models/chatMessageModel';
+import Message, { ChatMessageSchemaType } from './../models/chatMessageModel';
 import { ChatSchemaType } from './../models/chatModel';
 import { postSchemaType } from './../models/postTextModel';
 import { NextFunction } from 'express';
@@ -83,4 +83,12 @@ export const insertNotification = (chat: ChatSchemaType, message: ChatMessageSch
         await Notification.insertNotification(user._id, message.sender._id, "newMessage", message.chat._id);
 
     })
+}
+
+
+// 채팅 message collection 에서 readBy에 userId 를 추가해서 읽었다고 표시해주기 위한 것
+
+export const addUserIdReadBy = async (chatId: string, userId: string) => {
+    console.log("함수들어옴")
+    await Message.updateMany({ chat: chatId }, { $addToSet: { readBy: userId } })
 }
