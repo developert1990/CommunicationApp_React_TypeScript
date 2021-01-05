@@ -40,7 +40,7 @@ export const Navbar = () => {
 
     useEffect(() => {
         dispatch(getUnReadNotification());
-        // dispatch(getUnreadMessages());
+        dispatch(getUnreadMessages());
     }, [dispatch])
 
 

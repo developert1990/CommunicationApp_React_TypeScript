@@ -91,4 +91,5 @@ export const insertNotification = (chat: ChatSchemaType, message: ChatMessageSch
 export const addUserIdReadBy = async (chatId: string, userId: string) => {
     console.log("함수들어옴")
     await Message.updateMany({ chat: chatId }, { $addToSet: { readBy: userId } })
+    return;
 }

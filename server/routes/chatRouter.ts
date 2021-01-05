@@ -4,7 +4,7 @@ import User, { UserSchemaType } from './../models/userModel';
 import { ChatSchemaType } from './../models/chatModel';
 import expressAsyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
-import { isAuth, insertNotification } from './../utils/utils';
+import { isAuth, insertNotification, addUserIdReadBy } from './../utils/utils';
 import express, { Request, Response } from 'express';
 import Chat from '../models/chatModel';
 import Message from '../models/chatMessageModel';
@@ -22,7 +22,6 @@ chatRouter.get('/list', isAuth, expressAsyncHandler(async (req: CustomRequest, r
     const chatList = await Chat.find({ users: { $elemMatch: { $eq: req.session.user._id } } }).populate({ path: "users" }).populate("latestMessage").populate("messages").sort({ updatedAt: -1 })
     const populateSender = await User.populate(chatList, { path: "latestMessage.sender" });
 
-    // console.log('populatedChatlist: ', chatList)
     if (populateSender) {
         res.status(200).send(populateSender)
     } else {
@@ -62,8 +61,6 @@ chatRouter.post('/', isAuth, expressAsyncHandler(async (req: Request, res: Respo
 chatRouter.get('/chatRoom/:chatRoomId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     const userId = req.session.user._id;
     const chatRoomId = req.params.chatRoomId;
-    // console.log('userId: ', userId)
-    // console.log("채팅정보 가지러 들어옴: ", chatRoomId)
     const chat = await Chat.findOne({ _id: chatRoomId, users: { $elemMatch: { $eq: userId } } }).populate("users");
     // console.log('chat: ', chat)
     if (chat) {
@@ -78,8 +75,6 @@ chatRouter.get('/chatRoom/byUserId/:otherUserId', isAuth, expressAsyncHandler(as
     console.log("1:1 뽕아보러 들어옴")
     const otherUserId = req.params.otherUserId;
     const signinId = req.session.user._id;
-    // console.log('otherUserId: ', otherUserId)
-    // console.log('signinId: ', signinId)
 
     const chat = await Chat.findOneAndUpdate(
         // filter
@@ -121,8 +116,6 @@ chatRouter.put('/changeChatName/:chatRoomId', isAuth, expressAsyncHandler(async 
     const chat = await Chat.findByIdAndUpdate(chatRoomId, chatName);
     const updatedChat = await Chat.findOne({ _id: chatRoomId });
     if (chat) {
-        // console.log('chat: ', chat)
-        // console.log('updatedChat', updatedChat)
         res.status(200).send(updatedChat);
     } else {
         console.log("Can not update chat room name .. ")
@@ -149,7 +142,7 @@ chatRouter.post('/sendMessage', isAuth, expressAsyncHandler(async (req: CustomRe
     await Chat.findByIdAndUpdate(req.body.chatId, { $push: { messages: result } }, { new: true });
 
     // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
-    // await addUserIdReadBy(req.body.chatId, req.session.user._id)
+    await addUserIdReadBy(req.body.chatId, req.session.user._id)
 
     // 메세지를 보내고 나면 채팅 목록이 최근 보낸것부터 정렬이되도록 하기 위해서 업데이트 해줌 데이터를 업데이트 해주면 updatedAt 부분이 update가 되기 때문이다.
     const chat = await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: populatedResult })
@@ -177,7 +170,7 @@ chatRouter.get('/messages/:chatId', isAuth, expressAsyncHandler(async (req: Cust
 
 
     // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
-    // addUserIdReadBy(chatRoomId, userId)
+    addUserIdReadBy(chatRoomId, userId)
 
     const messages = await Message.find({ chat: chatRoomId }).populate("sender");
 
@@ -210,7 +203,7 @@ chatRouter.get('/unreadMessages', isAuth, expressAsyncHandler(async (req: Custom
 chatRouter.put('/addUserInReadBy/:chatId', isAuth, expressAsyncHandler(async (req: CustomRequest, res: Response) => {
     console.log("readBy 바로 추가 하러 들어옴")
     // 해당채팅방 들어가면 message collection의 readby에 메세지보낸 유저의 아이디가 추가된다. 조건에 $push를 하면 무조건 push 가 되고 addToSet을하면 만약 해당 값이 없을 경우에 push를 한다.
-    // addUserIdReadBy(req.params.chatId, req.session.user._id)
+    addUserIdReadBy(req.params.chatId, req.session.user._id)
     res.status(200).send("success");
 }))
 
