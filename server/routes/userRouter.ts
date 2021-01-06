@@ -43,7 +43,7 @@ userRouter.post('/register', expressAsyncHandler(async (req: CustomRequest, res:
         } else { // user not found
             console.log('user 생성하러 옴')
             const userData: userDataType = req.body;
-            userData.password = bcrypt.hashSync(password, 8);
+            userData.password = await bcrypt.hash(password, 8);
             const user = new User(userData);
             const createdUser = await user.save();
             req.session.user = createdUser;
